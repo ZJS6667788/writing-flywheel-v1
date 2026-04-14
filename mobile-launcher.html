@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>写作飞轮 · 手机端</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --card: #1a1d27;
+    --border: #2a2d3a;
+    --accent: #7c6af7;
+    --accent2: #5ecbf7;
+    --accent3: #f77c6a;
+    --gold: #f7c76a;
+    --text: #e8eaf0;
+    --muted: #8890a4;
+    --success: #6af7a5;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    min-height: 100vh;
+    padding: 0 16px 40px;
+  }
+
+  .header {
+    text-align: center;
+    padding: 24px 0 16px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 16px;
+  }
+
+  .header h1 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: 1px;
+  }
+
+  .header .sub {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  /* --- Refresh Bar --- */
+  .refresh-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+  }
+
+  .refresh-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .refresh-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .refresh-note {
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .refresh-note strong {
+    color: var(--accent2);
+  }
+
+  .refresh-btn {
+    background: rgba(124,106,247,0.15);
+    border: 1px solid rgba(124,106,247,0.3);
+    color: var(--accent);
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .refresh-btn:hover {
+    background: rgba(124,106,247,0.25);
+    border-color: var(--accent);
+  }
+
+  .refresh-btn:active {
+    transform: scale(0.96);
+  }
+
+  .status-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+
+  .status-chip {
+    flex: 1;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 10px;
+    text-align: center;
+  }
+
+  .status-chip .num {
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .status-chip .num.accent { color: var(--accent); }
+  .status-chip .num.accent2 { color: var(--accent2); }
+  .status-chip .num.accent3 { color: var(--gold); }
+
+  .status-chip .label {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+    letter-spacing: 0.5px;
+  }
+
+  .section-title {
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    padding-left: 2px;
+  }
+
+  /* --- Command Cards --- */
+  .cmd-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 18px 16px 14px;
+    margin-bottom: 14px;
+    cursor: pointer;
+    transition: border-color 0.15s, transform 0.1s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cmd-card:active {
+    transform: scale(0.98);
+    border-color: var(--accent);
+  }
+
+  .cmd-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    border-radius: 16px 16px 0 0;
+  }
+
+  .cmd-card:nth-child(1)::before { background: var(--accent); }
+  .cmd-card:nth-child(2)::before { background: var(--accent2); }
+  .cmd-card:nth-child(3)::before { background: var(--gold); }
+
+  .cmd-card .tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    margin-bottom: 8px;
+  }
+
+  .cmd-card:nth-child(1) .tag { background: rgba(124,106,247,0.15); color: var(--accent); }
+  .cmd-card:nth-child(2) .tag { background: rgba(94,203,247,0.15); color: var(--accent2); }
+  .cmd-card:nth-child(3) .tag { background: rgba(247,199,106,0.15); color: var(--gold); }
+
+  .cmd-card .cmd-text {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 6px;
+    font-family: "SF Mono", "Menlo", "Consolas", monospace;
+    word-break: break-all;
+  }
+
+  .cmd-card .cmd-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .cmd-card .copy-hint {
+    font-size: 11px;
+    color: var(--success);
+    margin-top: 8px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .cmd-card .copy-hint.show { opacity: 1; }
+  .cmd-card .copy-hint::before {
+    content: '✓';
+    font-size: 12px;
+  }
+
+  /* --- Template Section --- */
+  .template-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 14px;
+  }
+
+  .template-box .label {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .template-text {
+    background: #0d0f18;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 13px;
+    font-family: "SF Mono", "Menlo", "Consolas", monospace;
+    color: var(--accent2);
+    line-height: 1.7;
+    word-break: break-all;
+  }
+
+  /* --- Flow Diagram --- */
+  .flow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    margin: 20px 0;
+    overflow-x: auto;
+    padding: 4px 0;
+  }
+
+  .flow-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 72px;
+  }
+
+  .flow-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    margin-bottom: 6px;
+  }
+
+  .flow-step:nth-child(1) .flow-icon { background: rgba(124,106,247,0.15); }
+  .flow-step:nth-child(3) .flow-icon { background: rgba(94,203,247,0.15); }
+  .flow-step:nth-child(5) .flow-icon { background: rgba(247,199,106,0.15); }
+  .flow-step:nth-child(7) .flow-icon { background: rgba(106,247,165,0.15); }
+
+  .flow-label {
+    font-size: 11px;
+    color: var(--muted);
+    text-align: center;
+  }
+
+  .flow-arrow {
+    color: var(--border);
+    font-size: 18px;
+    margin: 0 4px;
+    padding-top: 14px;
+  }
+
+  /* --- Toast --- */
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--card);
+    border: 1px solid var(--success);
+    color: var(--success);
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: 500;
+    opacity: 0;
+    transition: opacity 0.3s, transform 0.3s;
+    pointer-events: none;
+    z-index: 999;
+    white-space: nowrap;
+  }
+
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* --- Divider --- */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 24px 0;
+  }
+
+  /* --- Recent entries preview --- */
+  .entry-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+
+  .entry-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .entry-id {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--accent);
+    background: rgba(124,106,247,0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+    flex-shrink: 0;
+    font-family: monospace;
+  }
+
+  .entry-title {
+    font-size: 13px;
+    color: var(--text);
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .entry-time {
+    font-size: 11px;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+
+  .entry-new {
+    font-size: 9px;
+    font-weight: 700;
+    background: var(--success);
+    color: #0f1117;
+    padding: 1px 5px;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>✦ 写作飞轮</h1>
+  <div class="sub">手机端快捷操作台</div>
+</div>
+
+<!-- Refresh Bar -->
+<div class="refresh-bar">
+  <div class="refresh-info">
+    <div class="refresh-title">📡 数据不同步？</div>
+    <div class="refresh-note">点击右侧按钮刷新页面，<strong>自动显示最新素材数</strong></div>
+  </div>
+  <button class="refresh-btn" onclick="location.reload()">
+    🔄 刷新
+  </button>
+</div>
+
+<!-- Status -->
+<div class="status-bar">
+  <div class="status-chip">
+    <div class="num accent" id="count-entries">3</div>
+    <div class="label">素材条目</div>
+  </div>
+  <div class="status-chip">
+    <div class="num accent2" id="count-ideas">—</div>
+    <div class="label">创意方向</div>
+  </div>
+  <div class="status-chip">
+    <div class="num accent3" id="count-drafts">—</div>
+    <div class="label">完稿</div>
+  </div>
+</div>
+
+<!-- Flywheel Flow -->
+<div class="section-title">飞轮流程</div>
+<div class="flow">
+  <div class="flow-step">
+    <div class="flow-icon">🔍</div>
+    <div class="flow-label">拆解</div>
+  </div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">
+    <div class="flow-icon">💡</div>
+    <div class="flow-label">找方向</div>
+  </div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">
+    <div class="flow-icon">✍️</div>
+    <div class="flow-label">写作</div>
+  </div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">
+    <div class="flow-icon">♻️</div>
+    <div class="flow-label">再拆解</div>
+  </div>
+</div>
+
+<!-- Command Cards -->
+<div class="section-title">快捷命令</div>
+
+<div class="cmd-card" onclick="copyAndShow(this, '/CONTENT-GOLDMINE\n[粘贴文章链接或正文]')">
+  <div class="tag">Skill 1</div>
+  <div class="cmd-text">/CONTENT-GOLDMINE</div>
+  <div class="cmd-desc">看到爆款文章，拆解结构+金句+创意积木</div>
+  <div class="copy-hint" id="hint1">已复制！去WorkBuddy粘贴发送</div>
+</div>
+
+<div class="cmd-card" onclick="copyAndShow(this, '/IDEA-SPARK')">
+  <div class="tag">Skill 2</div>
+  <div class="cmd-text">/IDEA-SPARK</div>
+  <div class="cmd-desc">从素材库提炼3-5个今天可写的创意方向</div>
+  <div class="copy-hint" id="hint2">已复制！去WorkBuddy粘贴发送</div>
+</div>
+
+<div class="cmd-card" onclick="copyAndShow(this, '/WRITING-CLONE [方向编号或标题]')">
+  <div class="tag">Skill 3</div>
+  <div class="cmd-text">/WRITING-CLONE [方向]</div>
+  <div class="cmd-desc">选定方向后，自动采集素材写出草稿</div>
+  <div class="copy-hint" id="hint3">已复制！去WorkBuddy粘贴发送</div>
+</div>
+
+<!-- Paste Template -->
+<div class="divider"></div>
+<div class="section-title">粘贴模板</div>
+<div class="template-box">
+  <div class="label">复制下方格式，粘贴到WorkBuddy使用</div>
+  <div class="template-text" id="template">/CONTENT-GOLDMINE
+https://mp.weixin.qq.com/s/xxxxxxxx</div>
+</div>
+
+<div class="template-box">
+  <div class="label">或直接粘贴文章正文</div>
+  <div class="template-text" id="template2">/CONTENT-GOLDMINE
+[在此粘贴文章正文内容]</div>
+</div>
+
+<!-- Recent Entries -->
+<div class="divider"></div>
+<div class="section-title">素材库预览</div>
+<div class="entry-list" id="entry-list">
+  <div class="entry-item">
+    <div class="entry-id">001</div>
+    <div class="entry-title">捡垃圾，是不是一种自我感动的善行</div>
+    <div class="entry-time">04-14</div>
+  </div>
+  <div class="entry-item">
+    <div class="entry-id">002</div>
+    <div class="entry-title">一位中科院院士的成绩单</div>
+    <div class="entry-time">04-14</div>
+  </div>
+  <div class="entry-item">
+    <div class="entry-id">003</div>
+    <div class="entry-title">自从知道了"熵"的概念…</div>
+    <div class="entry-time">04-14</div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">✓ 已复制到剪贴板</div>
+
+<script>
+  function copyAndShow(card, text) {
+    navigator.clipboard.writeText(text).then(function() {
+      var toast = document.getElementById('toast');
+      toast.classList.add('show');
+      setTimeout(function() { toast.classList.remove('show'); }, 2000);
+      var hints = card.querySelectorAll('.copy-hint');
+      hints.forEach(function(h) { h.classList.add('show'); });
+      setTimeout(function() { hints.forEach(function(h) { h.classList.remove('show'); }); }, 3000);
+    }).catch(function() {
+      var textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+      var toast = document.getElementById('toast');
+      toast.classList.add('show');
+      setTimeout(function() { toast.classList.remove('show'); }, 2000);
+    });
+  }
+</script>
+</body>
+</html>
