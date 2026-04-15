@@ -411,7 +411,7 @@
 <div id="idea-block">
   <div class="section-title">💡 创意方向</div>
 
-  <div class="block-head open" onclick="toggleBlock('idea-block')">
+  <div class="block-head open" onclick="toggleBlock('idea')">
     <span class="block-icon">💡</span>
     <span class="block-title">创意方向</span>
     <span class="block-count idea" id="idea-count-badge">3</span>
@@ -574,7 +574,7 @@
 <div id="draft-block">
   <div class="section-title">📄 完稿</div>
 
-  <div class="block-head" onclick="toggleBlock('draft-block')">
+  <div class="block-head open" onclick="toggleBlock('draft')">
     <span class="block-icon">📄</span>
     <span class="block-title">完稿作品</span>
     <span class="block-count draft" id="draft-count-badge">1</span>
@@ -932,19 +932,19 @@ function copyCmd(card, text) {
 //  区块展开/收起（创意方向 & 完稿）
 // ══════════════════════════════════════
 function toggleBlock(blockId) {
-  var head = document.querySelector('#' + blockId + ' .block-head');
-  var body = document.getElementById(blockId + '-body');
+  var block = document.getElementById(blockId);
+  var head = block.querySelector('.block-head');
+  var body = block.querySelector('.block-body');
   var isOpen = head.classList.contains('open');
 
-  // 收起所有区块
+  // 同步所有 block-head 与 block-body 的 open 状态
   document.querySelectorAll('.block-head').forEach(function(h) { h.classList.remove('open'); });
   document.querySelectorAll('.block-body').forEach(function(b) { b.classList.remove('open'); });
 
-  // 展开点击的
   if (!isOpen) {
     head.classList.add('open');
     if (body) body.classList.add('open');
-    setTimeout(function() { head.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 50);
+    setTimeout(function() { block.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 50);
   }
 }
 
