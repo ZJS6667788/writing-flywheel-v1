@@ -587,34 +587,43 @@
 
         <!-- Recent & Quick -->
         <div class="recent-section">
-            <div class="entries-list">
+            <div class="entries-list" id="desktop-entries-list">
                 <div class="entries-header">
                     <h3>📁 素材库</h3>
-                    <span style="font-size:12px;color:var(--text-dim);">3 条记录</span>
+                    <span style="font-size:12px;color:var(--text-dim);" id="desktop-count">3 条记录</span>
                 </div>
-                <div class="entry-item" onclick="openEntry('ENTRY-001')">
-                    <div class="entry-id">001</div>
-                    <div class="entry-info">
+                <!-- 001 -->
+                <div class="entry-item" id="desktop-card-001">
+                    <div class="entry-id" style="cursor:pointer;" onclick="openEntry('ENTRY-001')" title="查看完整拆解">001</div>
+                    <div class="entry-info" style="cursor:pointer;" onclick="openEntry('ENTRY-001')">
                         <div class="entry-title">捡垃圾，是不是一种自我感动的善行</div>
-                        <div class="entry-meta">微信公众号 · 2026-04-14</div>
+                        <div class="entry-meta">真实故事计划 · 2026-04-14</div>
                     </div>
                     <div class="entry-structure">悖论转折</div>
+                    <a href="https://mp.weixin.qq.com/s/35LxCdlJnDwhZr-dxswytQ" target="_blank" style="font-size:12px;color:#5ecbf7;text-decoration:none;flex-shrink:0;padding:4px 8px;background:rgba(94,203,247,0.1);border-radius:6px;border:1px solid rgba(94,203,247,0.2);" title="打开原文">原文 ↗</a>
+                    <button onclick="desktopDelete('001')" style="font-size:12px;color:#f76a6a;background:rgba(247,106,106,0.1);border:1px solid rgba(247,106,106,0.2);padding:4px 8px;border-radius:6px;cursor:pointer;flex-shrink:0;" title="删除条目">🗑</button>
                 </div>
-                <div class="entry-item" onclick="openEntry('ENTRY-002')">
-                    <div class="entry-id">002</div>
-                    <div class="entry-info">
+                <!-- 002 -->
+                <div class="entry-item" id="desktop-card-002">
+                    <div class="entry-id" style="cursor:pointer;" onclick="openEntry('ENTRY-002')" title="查看完整拆解">002</div>
+                    <div class="entry-info" style="cursor:pointer;" onclick="openEntry('ENTRY-002')">
                         <div class="entry-title">一位中科院院士的成绩单</div>
-                        <div class="entry-meta">微信公众号 · 2026-04-14</div>
+                        <div class="entry-meta">宋诗之河 · 2026-04-14</div>
                     </div>
                     <div class="entry-structure">行动代替形容</div>
+                    <a href="https://mp.weixin.qq.com/s/PEs3wGfnM9Ct-9kkd8DYpQ" target="_blank" style="font-size:12px;color:#5ecbf7;text-decoration:none;flex-shrink:0;padding:4px 8px;background:rgba(94,203,247,0.1);border-radius:6px;border:1px solid rgba(94,203,247,0.2);" title="打开原文">原文 ↗</a>
+                    <button onclick="desktopDelete('002')" style="font-size:12px;color:#f76a6a;background:rgba(247,106,106,0.1);border:1px solid rgba(247,106,106,0.2);padding:4px 8px;border-radius:6px;cursor:pointer;flex-shrink:0;" title="删除条目">🗑</button>
                 </div>
-                <div class="entry-item" onclick="openEntry('ENTRY-003')">
-                    <div class="entry-id">003</div>
-                    <div class="entry-info">
+                <!-- 003 -->
+                <div class="entry-item" id="desktop-card-003">
+                    <div class="entry-id" style="cursor:pointer;" onclick="openEntry('ENTRY-003')" title="查看完整拆解">003</div>
+                    <div class="entry-info" style="cursor:pointer;" onclick="openEntry('ENTRY-003')">
                         <div class="entry-title">自从知道了"熵"的概念，我再也不玩手机了</div>
-                        <div class="entry-meta">微信公众号 · 2026-04-14</div>
+                        <div class="entry-meta">青野成长 · 2026-04-14</div>
                     </div>
                     <div class="entry-structure">科学概念包装</div>
+                    <a href="https://mp.weixin.qq.com/s/mAVUpEUu_OdHxX8KmqJ7vw" target="_blank" style="font-size:12px;color:#5ecbf7;text-decoration:none;flex-shrink:0;padding:4px 8px;background:rgba(94,203,247,0.1);border-radius:6px;border:1px solid rgba(94,203,247,0.2);" title="打开原文">原文 ↗</a>
+                    <button onclick="desktopDelete('003')" style="font-size:12px;color:#f76a6a;background:rgba(247,106,106,0.1);border:1px solid rgba(247,106,106,0.2);padding:4px 8px;border-radius:6px;cursor:pointer;flex-shrink:0;" title="删除条目">🗑</button>
                 </div>
             </div>
 
@@ -665,6 +674,23 @@
 
         function openEntry(id) {
             window.open('material-library/entries/' + id + '.md', '_blank');
+        }
+
+        function desktopDelete(id) {
+            if (!confirm('确认从显示中移除 ENTRY-' + id + '？\n\n注意：这只移除页面显示，若要彻底删除请在 WorkBuddy 中操作。')) return;
+            var card = document.getElementById('desktop-card-' + id);
+            if (card) {
+                card.style.transition = 'opacity 0.3s, transform 0.3s';
+                card.style.opacity = '0';
+                card.style.transform = 'translateX(20px)';
+                setTimeout(function() {
+                    card.remove();
+                    var list = document.getElementById('desktop-entries-list');
+                    var remaining = list.querySelectorAll('.entry-item').length;
+                    var countEl = document.getElementById('desktop-count');
+                    if (countEl) countEl.textContent = remaining + ' 条记录';
+                }, 320);
+            }
         }
     </script>
 
