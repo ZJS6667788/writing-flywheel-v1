@@ -496,6 +496,159 @@
     color: var(--danger);
   }
 
+  /* ===========================
+     快速拆解入口
+  =========================== */
+  .quick-dissect {
+    background: linear-gradient(135deg, rgba(124,106,247,0.1) 0%, rgba(94,203,247,0.08) 100%);
+    border: 1.5px solid rgba(124,106,247,0.35);
+    border-radius: 16px;
+    padding: 16px 14px 14px;
+    margin-bottom: 22px;
+    position: relative;
+    overflow: hidden;
+  }
+  .quick-dissect::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 16px 16px 0 0;
+  }
+  .quick-dissect-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .quick-dissect-icon {
+    font-size: 20px;
+    line-height: 1;
+  }
+  .quick-dissect-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .quick-dissect-sub {
+    font-size: 11px;
+    color: var(--muted);
+    margin-left: auto;
+  }
+
+  .qd-input-wrap {
+    position: relative;
+    margin-bottom: 10px;
+  }
+  .qd-input {
+    width: 100%;
+    background: rgba(15,17,23,0.8);
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    padding: 11px 12px 11px 12px;
+    font-size: 13px;
+    color: var(--text);
+    outline: none;
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+  }
+  .qd-input:focus {
+    border-color: var(--accent);
+  }
+  .qd-input::placeholder {
+    color: rgba(136,144,164,0.55);
+    font-size: 12px;
+  }
+  .qd-paste-btn {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(124,106,247,0.15);
+    color: var(--accent);
+    border: none;
+    border-radius: 7px;
+    padding: 5px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .qd-paste-btn:active { opacity: 0.7; }
+
+  .qd-result {
+    display: none;
+    background: rgba(15,17,23,0.9);
+    border: 1px solid rgba(94,203,247,0.3);
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+  }
+  .qd-result.show { display: block; }
+  .qd-result-label {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.5px;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+  }
+  .qd-result-cmd {
+    font-size: 12px;
+    color: var(--accent2);
+    font-family: "SF Mono","Menlo","Consolas",monospace;
+    word-break: break-all;
+    line-height: 1.6;
+  }
+
+  .qd-btns {
+    display: flex;
+    gap: 8px;
+  }
+  .qd-btn {
+    flex: 1;
+    padding: 11px 0;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .qd-btn:active { transform: scale(0.96); }
+  .qd-btn-go {
+    background: linear-gradient(135deg, var(--accent), #5e6af7);
+    color: #fff;
+  }
+  .qd-btn-go:disabled {
+    background: rgba(124,106,247,0.2);
+    color: rgba(124,106,247,0.5);
+    cursor: not-allowed;
+    transform: none;
+  }
+  .qd-btn-clear {
+    background: rgba(136,144,164,0.1);
+    color: var(--muted);
+    border: 1px solid var(--border);
+    flex: 0 0 auto;
+    padding: 11px 16px;
+  }
+  .qd-tip {
+    font-size: 11px;
+    color: var(--success);
+    text-align: center;
+    margin-top: 8px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .qd-tip.show { opacity: 1; }
+
   /* Template */
   .template-box {
     background: var(--card);
@@ -572,6 +725,43 @@
     <div class="flow-icon">♻️</div>
     <div class="flow-label">再拆解</div>
   </div>
+</div>
+
+<!-- Quick Dissect -->
+<div class="section-title">⚡ 快速拆解</div>
+<div class="quick-dissect">
+  <div class="quick-dissect-header">
+    <span class="quick-dissect-icon">🔍</span>
+    <span class="quick-dissect-title">粘贴文章链接，一键拆解</span>
+    <span class="quick-dissect-sub">直接生成命令</span>
+  </div>
+
+  <div class="qd-input-wrap">
+    <input
+      class="qd-input"
+      id="qd-input"
+      type="url"
+      inputmode="url"
+      placeholder="粘贴微信文章链接  https://mp.weixin.qq.com/s/..."
+      oninput="qdOnInput()"
+      autocomplete="off"
+      autocorrect="off"
+      autocapitalize="off"
+      spellcheck="false"
+    />
+    <button class="qd-paste-btn" onclick="qdPaste()">📋 粘贴</button>
+  </div>
+
+  <div class="qd-result" id="qd-result">
+    <div class="qd-result-label">生成的命令（复制后去 WorkBuddy 发送）</div>
+    <div class="qd-result-cmd" id="qd-result-cmd"></div>
+  </div>
+
+  <div class="qd-btns">
+    <button class="qd-btn qd-btn-go" id="qd-go-btn" onclick="qdGo()" disabled>🚀 生成并复制命令</button>
+    <button class="qd-btn qd-btn-clear" onclick="qdClear()">✕</button>
+  </div>
+  <div class="qd-tip" id="qd-tip">✓ 命令已复制！打开 WorkBuddy，粘贴发送即可</div>
 </div>
 
 <!-- Command Cards -->
@@ -786,6 +976,56 @@ https://mp.weixin.qq.com/s/xxxxxxxx</div>
 <div class="toast" id="toast"></div>
 
 <script>
+// ===== 快速拆解入口 =====
+function qdOnInput() {
+  var val = document.getElementById('qd-input').value.trim();
+  var btn = document.getElementById('qd-go-btn');
+  var resultEl = document.getElementById('qd-result');
+  var cmdEl = document.getElementById('qd-result-cmd');
+  if (val.length > 5) {
+    var cmd = '/CONTENT-GOLDMINE\n' + val;
+    cmdEl.textContent = cmd;
+    resultEl.classList.add('show');
+    btn.disabled = false;
+  } else {
+    resultEl.classList.remove('show');
+    btn.disabled = true;
+  }
+  document.getElementById('qd-tip').classList.remove('show');
+}
+
+function qdPaste() {
+  if (navigator.clipboard && navigator.clipboard.readText) {
+    navigator.clipboard.readText().then(function(text) {
+      document.getElementById('qd-input').value = text;
+      qdOnInput();
+    }).catch(function() {
+      showToast('请手动长按输入框粘贴', true);
+    });
+  } else {
+    showToast('请长按输入框选择「粘贴」', true);
+  }
+}
+
+function qdGo() {
+  var val = document.getElementById('qd-input').value.trim();
+  if (!val) return;
+  var cmd = '/CONTENT-GOLDMINE\n' + val;
+  copyText(cmd);
+  var tip = document.getElementById('qd-tip');
+  tip.classList.add('show');
+  clearTimeout(tip._t);
+  tip._t = setTimeout(function() { tip.classList.remove('show'); }, 3500);
+  showToast('✓ 命令已复制！去 WorkBuddy 粘贴发送');
+}
+
+function qdClear() {
+  document.getElementById('qd-input').value = '';
+  document.getElementById('qd-result').classList.remove('show');
+  document.getElementById('qd-go-btn').disabled = true;
+  document.getElementById('qd-tip').classList.remove('show');
+}
+
 // ===== 展开 / 收起 =====
 function toggleEntry(id) {
   var card = document.getElementById('card-' + id);
