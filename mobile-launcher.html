@@ -38,9 +38,25 @@
   .header h1 { font-size: 22px; font-weight: 700; letter-spacing: 1px; }
   .header .sub { font-size: 13px; color: var(--muted); margin-top: 4px; }
 
+  /* ── Search Bar ── */
+  .search-bar { display: none; margin-bottom: 18px; }
+  .search-bar.active { display: block; }
+  .search-input-wrap { display: flex; gap: 8px; margin-bottom: 8px; }
+  .search-input { flex: 1; background: var(--card); border: 1px solid var(--accent); border-radius: 10px; padding: 10px 12px; font-size: 14px; color: var(--text); outline: none; font-family: inherit; }
+  .search-close { background: var(--card); border: 1px solid var(--border); color: var(--muted); border-radius: 8px; padding: 8px 12px; font-size: 12px; cursor: pointer; }
+  .search-results { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 10px; max-height: 200px; overflow-y: auto; }
+  .search-result-item { padding: 8px 10px; border-radius: 8px; cursor: pointer; transition: background 0.15s; }
+  .search-result-item:hover { background: rgba(124,106,247,0.1); }
+  .search-result-type { font-size: 10px; color: var(--accent); font-weight: 600; }
+  .search-result-title { font-size: 13px; color: var(--text); margin-top: 2px; }
+  .search-no-result { text-align: center; color: var(--muted); font-size: 13px; padding: 20px; }
+
   /* ── Refresh Bar ── */
-  .refresh-bar { display: flex; align-items: center; justify-content: space-between; background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 10px 14px; margin-bottom: 18px; gap: 10px; }
+  .refresh-bar { display: flex; align-items: center; justify-content: space-between; background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 10px 14px; margin-bottom: 18px; gap: 8px; }
   .refresh-info { flex: 1; }
+  .search-btn { background: rgba(124,106,247,0.15); border: 1px solid rgba(124,106,247,0.3); color: var(--accent); padding: 8px 12px; border-radius: 8px; font-size: 13px; cursor: pointer; flex-shrink: 0; transition: all 0.2s; }
+  .search-btn:active { transform: scale(0.96); }
+  .search-btn.active { background: var(--accent); color: #fff; }
   .refresh-title { font-size: 13px; font-weight: 600; }
   .refresh-note { font-size: 11px; color: var(--muted); margin-top: 2px; }
   .refresh-note strong { color: var(--accent2); }
@@ -80,11 +96,6 @@
   
   /* 命令选项卡 */
   .cmd-tabs { display: flex; gap: 6px; margin-bottom: 12px; }
-  .cmd-tab { flex: 1; background: rgba(15,17,23,0.6); border: 1px solid var(--border2); border-radius: 10px; padding: 8px 4px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 2px; transition: all 0.15s; }
-  .cmd-tab:active { transform: scale(0.96); }
-  .cmd-tab.active { background: rgba(124,106,247,0.2); border-color: var(--accent); }
-  .cmd-tab.active[data-cmd="IDEA-GEN"] { background: rgba(94,203,247,0.2); border-color: var(--accent2); }
-  .cmd-tab.active[data-cmd="WRITING-CLONE"] { background: rgba(247,199,106,0.2); border-color: var(--gold); }
   .tab-num { font-size: 11px; font-weight: 700; color: var(--accent); }
   .cmd-tab.active[data-cmd="IDEA-GEN"] .tab-num { color: var(--accent2); }
   .cmd-tab.active[data-cmd="WRITING-CLONE"] .tab-num { color: var(--gold); }
@@ -120,6 +131,15 @@
   .cmd-btn-clear { background: rgba(136,144,164,0.1); color: var(--muted); border: 1px solid var(--border); flex: 0 0 auto; padding: 11px 16px; }
   .cmd-tip { font-size: 11px; color: var(--success); text-align: center; margin-top: 8px; opacity: 0; transition: opacity 0.3s; }
   .cmd-tip.show { opacity: 1; }
+  .copy-hint { font-size: 11px; color: var(--success); margin-top: 6px; opacity: 0; transition: opacity 0.3s; }
+  .copy-hint.show { opacity: 1; }
+  
+  /* Tab 激活态增强 */
+  .cmd-tab { flex: 1; background: rgba(15,17,23,0.6); border: 1px solid var(--border2); border-radius: 10px; padding: 8px 4px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 2px; transition: all 0.15s; }
+  .cmd-tab:active { transform: scale(0.96); }
+  .cmd-tab.active { background: rgba(124,106,247,0.2); border: 1.5px solid var(--accent); box-shadow: 0 0 0 2px rgba(124,106,247,0.15); }
+  .cmd-tab.active[data-cmd="IDEA-GEN"] { background: rgba(94,203,247,0.2); border-color: var(--accent2); box-shadow: 0 0 0 2px rgba(94,203,247,0.15); }
+  .cmd-tab.active[data-cmd="WRITING-CLONE"] { background: rgba(247,199,106,0.2); border-color: var(--gold); box-shadow: 0 0 0 2px rgba(247,199,106,0.15); }
 
   /* ── Command Cards ── */
   .cmd-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 16px 14px 12px; margin-bottom: 12px; cursor: pointer; transition: border-color 0.15s, transform 0.1s; position: relative; overflow: hidden; }
@@ -136,6 +156,9 @@
   .cmd-card .cmd-desc { font-size: 13px; color: var(--muted); line-height: 1.5; }
   .cmd-card .copy-hint { font-size: 11px; color: var(--success); margin-top: 6px; opacity: 0; transition: opacity 0.3s; }
   .cmd-card .copy-hint.show { opacity: 1; }
+  
+  /* 统一复制提示样式 */
+  .统一复制提示 { font-size: 11px; color: var(--success); margin-top: 6px; opacity: 0; transition: opacity 0.3s; }
 
   /* ── Divider ── */
   .divider { height: 1px; background: var(--border); margin: 22px 0; }
@@ -341,12 +364,22 @@
   <div class="sub">手机端快捷操作台</div>
 </div>
 
+<!-- Search Bar -->
+<div class="search-bar" id="search-bar">
+  <div class="search-input-wrap">
+    <input class="search-input" id="search-input" type="text" placeholder="搜索素材/创意方向" oninput="doSearch(this.value)"/>
+    <button class="search-close" onclick="closeSearch()">✕</button>
+  </div>
+  <div class="search-results" id="search-results"></div>
+</div>
+
 <!-- Refresh Bar -->
 <div class="refresh-bar">
   <div class="refresh-info">
     <div class="refresh-title">📡 数据有更新？</div>
     <div class="refresh-note">点击右侧按钮刷新，<strong>获取最新数据</strong></div>
   </div>
+  <button class="search-btn" onclick="toggleSearch()">🔍</button>
   <button class="refresh-btn" onclick="location.reload()">🔄 刷新</button>
 </div>
 
@@ -441,21 +474,21 @@
   <div class="tag">1.0 基础</div>
   <div class="cmd-text">/CONTENT-GOLDMINE</div>
   <div class="cmd-desc">微信公众号链接 → 拆解入库（结构+金句+积木）</div>
-  <div class="copy-hint">✓ 已复制！去WorkBuddy粘贴发送</div>
+  <div class="copy-hint">✓ 已复制！去 WorkBuddy 粘贴发送</div>
 </div>
 
 <div class="cmd-card" onclick="copyCmd(this, '/IDEA-GEN\n[网站链接/文字/文件]')">
   <div class="tag">2.0 叠加</div>
   <div class="cmd-text">/IDEA-GEN</div>
   <div class="cmd-desc">已有素材库 + 新信息源 → 生成创意方向或直接出稿</div>
-  <div class="copy-hint">✓ 已复制！去WorkBuddy粘贴发送</div>
+  <div class="copy-hint">✓ 已复制！去 WorkBuddy 粘贴发送</div>
 </div>
 
 <div class="cmd-card" onclick="copyCmd(this, '/WRITING-CLONE [标题]')">
   <div class="tag">3.0 执行</div>
   <div class="cmd-text">/WRITING-CLONE [标题]</div>
   <div class="cmd-desc">采集素材 → 执行写作 → 存入完稿库</div>
-  <div class="copy-hint">✓ 已复制！去WorkBuddy粘贴发送</div>
+  <div class="copy-hint">✓ 已复制！去 WorkBuddy 粘贴发送</div>
 </div>
 
 <!-- ═══════════════════════════════════════
@@ -1056,9 +1089,9 @@
           <button class="entry-btn btn-delete" onclick="askDelete('001')">🗑</button>
         </div>
         <div class="delete-confirm" id="dc-001">
-          <div class="delete-confirm-text"><strong>⚠️ 确认删除？</strong>此操作仅从页面移除显示，条目文件需到WorkBuddy用指令删除。</div>
+          <div class="delete-confirm-text"><strong>⚠️ 删除说明</strong>页面删除仅为隐藏，实际文件仍在 WorkBuddy 素材库中。如需彻底删除，请在 WorkBuddy 中操作。</div>
           <div class="delete-confirm-btns">
-            <button class="btn-confirm-delete" onclick="doDelete('001')">确认删除</button>
+            <button class="btn-confirm-delete" onclick="doDelete('001')">确认隐藏</button>
             <button class="btn-cancel-delete" onclick="cancelDelete('001')">取消</button>
           </div>
         </div>
@@ -1104,9 +1137,9 @@
           <button class="entry-btn btn-delete" onclick="askDelete('002')">🗑</button>
         </div>
         <div class="delete-confirm" id="dc-002">
-          <div class="delete-confirm-text"><strong>⚠️ 确认删除？</strong>此操作仅从页面移除显示，条目文件需到WorkBuddy用指令删除。</div>
+          <div class="delete-confirm-text"><strong>⚠️ 删除说明</strong>页面删除仅为隐藏，实际文件仍在 WorkBuddy 素材库中。如需彻底删除，请在 WorkBuddy 中操作。</div>
           <div class="delete-confirm-btns">
-            <button class="btn-confirm-delete" onclick="doDelete('002')">确认删除</button>
+            <button class="btn-confirm-delete" onclick="doDelete('002')">确认隐藏</button>
             <button class="btn-cancel-delete" onclick="cancelDelete('002')">取消</button>
           </div>
         </div>
@@ -1152,9 +1185,9 @@
           <button class="entry-btn btn-delete" onclick="askDelete('003')">🗑</button>
         </div>
         <div class="delete-confirm" id="dc-003">
-          <div class="delete-confirm-text"><strong>⚠️ 确认删除？</strong>此操作仅从页面移除显示，条目文件需到WorkBuddy用指令删除。</div>
+          <div class="delete-confirm-text"><strong>⚠️ 删除说明</strong>页面删除仅为隐藏，实际文件仍在 WorkBuddy 素材库中。如需彻底删除，请在 WorkBuddy 中操作。</div>
           <div class="delete-confirm-btns">
-            <button class="btn-confirm-delete" onclick="doDelete('003')">确认删除</button>
+            <button class="btn-confirm-delete" onclick="doDelete('003')">确认隐藏</button>
             <button class="btn-cancel-delete" onclick="cancelDelete('003')">取消</button>
           </div>
         </div>
@@ -1202,9 +1235,9 @@
           <button class="entry-btn btn-delete" onclick="askDelete('004')">🗑</button>
         </div>
         <div class="delete-confirm" id="dc-004">
-          <div class="delete-confirm-text"><strong>⚠️ 确认删除？</strong>此操作仅从页面移除显示，条目文件需到WorkBuddy用指令删除。</div>
+          <div class="delete-confirm-text"><strong>⚠️ 删除说明</strong>页面删除仅为隐藏，实际文件仍在 WorkBuddy 素材库中。如需彻底删除，请在 WorkBuddy 中操作。</div>
           <div class="delete-confirm-btns">
-            <button class="btn-confirm-delete" onclick="doDelete('004')">确认删除</button>
+            <button class="btn-confirm-delete" onclick="doDelete('004')">确认隐藏</button>
             <button class="btn-cancel-delete" onclick="cancelDelete('004')">取消</button>
           </div>
         </div>
@@ -1253,6 +1286,80 @@ function showToast(msg, isDanger) {
   t.classList.add('show');
   clearTimeout(t._timer);
   t._timer = setTimeout(function() { t.classList.remove('show'); }, 2500);
+}
+
+// ══════════════════════════════════════
+//  搜索功能
+// ══════════════════════════════════════
+function toggleSearch() {
+  var bar = document.getElementById('search-bar');
+  var btn = document.querySelector('.search-btn');
+  if (bar.classList.contains('active')) {
+    bar.classList.remove('active');
+    btn.classList.remove('active');
+    document.getElementById('search-input').value = '';
+    document.getElementById('search-results').innerHTML = '';
+  } else {
+    bar.classList.add('active');
+    btn.classList.add('active');
+    document.getElementById('search-input').focus();
+  }
+}
+function closeSearch() {
+  var bar = document.getElementById('search-bar');
+  var btn = document.querySelector('.search-btn');
+  bar.classList.remove('active');
+  btn.classList.remove('active');
+  document.getElementById('search-input').value = '';
+  document.getElementById('search-results').innerHTML = '';
+}
+function doSearch(keyword) {
+  var results = document.getElementById('search-results');
+  if (!keyword.trim()) {
+    results.innerHTML = '';
+    return;
+  }
+  keyword = keyword.toLowerCase();
+  var kws = keyword.split(/\s+/);
+  
+  // 素材库搜索
+  var entries = document.querySelectorAll('.entry-card');
+  var ideas = document.querySelectorAll('.idea-card');
+  var found = [];
+  
+  entries.forEach(function(card) {
+    var title = card.querySelector('.entry-title')?.textContent || '';
+    if (kws.every(function(k) { return title.toLowerCase().includes(k); })) {
+      found.push({ type: '📚 素材', title: title, id: card.id.replace('card-', '') });
+    }
+  });
+  
+  ideas.forEach(function(card) {
+    var title = card.querySelector('.idea-title')?.textContent || '';
+    if (kws.every(function(k) { return title.toLowerCase().includes(k); })) {
+      found.push({ type: '💡 创意', title: title, id: card.id.replace('idea-card-', '') });
+    }
+  });
+  
+  if (found.length === 0) {
+    results.innerHTML = '<div class="search-no-result">没有找到匹配的素材或创意方向</div>';
+  } else {
+    results.innerHTML = found.map(function(item) {
+      return '<div class="search-result-item" onclick="searchResultClick(\'' + item.type + '\',' + item.id + ')">' +
+             '<div class="search-result-type">' + item.type + '</div>' +
+             '<div class="search-result-title">' + item.title + '</div></div>';
+    }).join('');
+  }
+}
+function searchResultClick(type, id) {
+  closeSearch();
+  if (type.indexOf('素材') > -1) {
+    toggleEntry(id);
+    setTimeout(function() { document.getElementById('card-' + id)?.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 100);
+  } else {
+    toggleIdea(id);
+    setTimeout(function() { document.getElementById('idea-card-' + id)?.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 100);
+  }
 }
 function scrollToSection(id) {
   var el = document.getElementById(id);
@@ -1516,7 +1623,7 @@ function doDelete(id) {
       list.innerHTML = '<div class="empty-block"><div class="emoji">📭</div><div>素材库已清空<br>使用 /CONTENT-GOLDMINE 添加新素材</div></div>';
     }
   }, 320);
-  showToast('🗑 已从显示中移除，记得在 WorkBuddy 也删除', true);
+  showToast('✓ 已隐藏，文件仍在 WorkBuddy 素材库中', false);
 }
 </script>
 <script>
