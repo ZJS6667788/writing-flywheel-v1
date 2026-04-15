@@ -1049,5 +1049,25 @@ function doDelete(id) {
   showToast('🗑 已从显示中移除，记得在 WorkBuddy 也删除', true);
 }
 </script>
+<script>
+// 动态加载真实数据（看板数字自动同步）
+fetch('data.json?t=' + Date.now())
+  .then(r => r.json())
+  .then(data => {
+    // 顶部看板数字
+    var e = document.getElementById('count-entries');
+    var i = document.getElementById('count-ideas');
+    var d = document.getElementById('count-drafts');
+    if (e) { e.textContent = data.entries; e.classList.add('pop'); }
+    if (i) { i.textContent = data.ideas;   i.classList.add('pop'); }
+    if (d) { d.textContent = data.drafts; d.classList.add('pop'); }
+    // 区块标题栏数字（idea-count-badge / draft-count-badge）
+    var ib = document.getElementById('idea-count-badge');
+    var db = document.getElementById('draft-count-badge');
+    if (ib) ib.textContent = data.ideas;
+    if (db) db.textContent = data.drafts;
+  })
+  .catch(function(){}); // 无 data.json 时静默忽略，保持 HTML 硬编码兜底
+</script>
 </body>
 </html>
