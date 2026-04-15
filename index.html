@@ -49,26 +49,46 @@
   /* Section */
   .section-title { font-size: 12px; color: var(--text-dim); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
 
-  /* Quick Dissect */
-  .qd-box { background: linear-gradient(135deg, rgba(255,107,53,0.08) 0%, rgba(78,205,196,0.05) 100%); border: 1.5px solid rgba(255,107,53,0.3); border-radius: 16px; padding: 20px; margin-bottom: 28px; }
-  .qd-title { font-size: 15px; font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
-  .qd-input-row { display: flex; gap: 10px; margin-bottom: 12px; }
-  .qd-input { flex: 1; background: rgba(0,0,0,0.4); border: 1px solid var(--border2); border-radius: 10px; padding: 12px 14px; font-size: 13px; color: var(--text); font-family: inherit; outline: none; transition: border-color 0.2s; }
-  .qd-input:focus { border-color: var(--accent); }
-  .qd-input::placeholder { color: rgba(136,136,136,0.5); }
-  .qd-paste-btn { background: rgba(255,107,53,0.12); color: var(--accent); border: 1px solid rgba(255,107,53,0.3); border-radius: 10px; padding: 12px 18px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: all 0.15s; }
-  .qd-paste-btn:hover { background: rgba(255,107,53,0.2); }
-  .qd-result { display: none; background: rgba(0,0,0,0.4); border: 1px solid rgba(78,205,196,0.3); border-radius: 10px; padding: 12px 14px; margin-bottom: 12px; }
-  .qd-result.show { display: block; }
-  .qd-result-label { font-size: 11px; color: var(--text-dim); letter-spacing: 0.5px; margin-bottom: 6px; text-transform: uppercase; }
-  .qd-result-cmd { font-size: 13px; color: var(--accent2); font-family: "SF Mono","Menlo","Consolas",monospace; word-break: break-all; line-height: 1.6; }
-  .qd-btns { display: flex; gap: 10px; }
-  .qd-go { flex: 1; background: linear-gradient(135deg, var(--accent), #e55a2b); color: #fff; border: none; border-radius: 10px; padding: 12px; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.15s; }
-  .qd-go:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(255,107,53,0.3); }
-  .qd-go:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
-  .qd-clear { background: rgba(136,136,136,0.08); color: var(--text-dim); border: 1px solid var(--border); border-radius: 10px; padding: 12px 18px; font-size: 13px; cursor: pointer; white-space: nowrap; }
-  .qd-tip { font-size: 12px; color: var(--success); margin-top: 8px; opacity: 0; transition: opacity 0.3s; }
-  .qd-tip.show { opacity: 1; }
+  /* Command Generator */
+  .cmd-box { background: linear-gradient(135deg, rgba(255,107,53,0.08) 0%, rgba(78,205,196,0.05) 100%); border: 1.5px solid rgba(255,107,53,0.3); border-radius: 16px; padding: 20px; margin-bottom: 28px; }
+  .cmd-title { font-size: 15px; font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+  
+  /* 命令选项卡 */
+  .cmd-tabs { display: flex; gap: 8px; margin-bottom: 14px; }
+  .cmd-tab { flex: 1; background: rgba(0,0,0,0.3); border: 1px solid var(--border2); border-radius: 10px; padding: 10px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; transition: all 0.15s; }
+  .cmd-tab:hover { border-color: var(--accent); }
+  .cmd-tab.active { background: rgba(255,107,53,0.15); border-color: var(--accent); }
+  .cmd-tab.active[data-cmd="IDEA-GEN"] { background: rgba(78,205,196,0.15); border-color: var(--accent2); }
+  .cmd-tab.active[data-cmd="WRITING-CLONE"] { background: rgba(255,230,109,0.15); border-color: var(--accent3); }
+  .tab-num { font-size: 12px; font-weight: 700; color: var(--accent); }
+  .cmd-tab.active[data-cmd="IDEA-GEN"] .tab-num { color: var(--accent2); }
+  .cmd-tab.active[data-cmd="WRITING-CLONE"] .tab-num { color: var(--accent3); }
+  .tab-name { font-size: 12px; color: var(--text-dim); }
+  .cmd-tab.active .tab-name { color: var(--text); }
+  
+  /* 提示区域 */
+  .cmd-hint { background: rgba(0,0,0,0.2); border-radius: 8px; padding: 10px 14px; margin-bottom: 12px; font-size: 12px; color: var(--text-dim); display: flex; align-items: center; gap: 8px; }
+  .cmd-hint-icon { font-size: 14px; }
+  
+  .cmd-input-row { display: flex; gap: 10px; margin-bottom: 12px; }
+  .cmd-input { flex: 1; background: rgba(0,0,0,0.4); border: 1px solid var(--border2); border-radius: 10px; padding: 12px 14px; font-size: 13px; color: var(--text); font-family: inherit; outline: none; transition: border-color 0.2s; }
+  .cmd-input:focus { border-color: var(--accent); }
+  .cmd-input::placeholder { color: rgba(136,136,136,0.5); }
+  .cmd-paste-btn { background: rgba(255,107,53,0.12); color: var(--accent); border: 1px solid rgba(255,107,53,0.3); border-radius: 10px; padding: 12px 18px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: all 0.15s; }
+  .cmd-paste-btn:hover { background: rgba(255,107,53,0.2); }
+  .cmd-result { display: none; background: rgba(0,0,0,0.4); border: 1px solid rgba(78,205,196,0.3); border-radius: 10px; padding: 12px 14px; margin-bottom: 12px; }
+  .cmd-result.show { display: block; }
+  .cmd-result-label { font-size: 11px; color: var(--text-dim); letter-spacing: 0.5px; margin-bottom: 6px; text-transform: uppercase; }
+  .cmd-result-cmd { font-size: 13px; color: var(--accent2); font-family: "SF Mono","Menlo","Consolas",monospace; word-break: break-all; line-height: 1.6; }
+  .cmd-btns { display: flex; gap: 10px; }
+  .cmd-go { flex: 1; background: linear-gradient(135deg, var(--accent), #e55a2b); color: #fff; border: none; border-radius: 10px; padding: 12px; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.15s; }
+  .cmd-go:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(255,107,53,0.3); }
+  .cmd-go:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+  .cmd-copy { background: linear-gradient(135deg, var(--accent2), #3ab5b0); color: #fff; border: none; border-radius: 10px; padding: 12px 18px; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.15s; display: none; }
+  .cmd-copy.show { display: block; }
+  .cmd-clear { background: rgba(136,136,136,0.08); color: var(--text-dim); border: 1px solid var(--border); border-radius: 10px; padding: 12px 18px; font-size: 13px; cursor: pointer; white-space: nowrap; }
+  .cmd-tip { font-size: 12px; color: var(--success); margin-top: 8px; opacity: 0; transition: opacity 0.3s; }
+  .cmd-tip.show { opacity: 1; }
 
   /* Skill Cards */
   .skill-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; cursor: pointer; transition: border-color 0.15s, transform 0.1s; position: relative; overflow: hidden; }
@@ -262,23 +282,52 @@
     </div>
   </div>
 
-  <!-- Quick Dissect -->
-  <div class="section-title">⚡ 快速拆解</div>
-  <div class="qd-box">
-    <div class="qd-title">🔍 粘贴微信文章链接，一键生成拆解命令</div>
-    <div class="qd-input-row">
-      <input class="qd-input" id="qd-input" type="url" placeholder="https://mp.weixin.qq.com/s/..." oninput="qdOnInput()" autocomplete="off"/>
-      <button class="qd-paste-btn" onclick="qdPaste()">📋 粘贴</button>
+  <!-- Command Generator -->
+  <div class="section-title">⚡ 命令生成器</div>
+  <div class="cmd-box">
+    <div class="cmd-title">🎯 选择命令 + 输入内容 → 生成完整命令</div>
+    
+    <!-- 命令选项卡 -->
+    <div class="cmd-tabs">
+      <button class="cmd-tab active" data-cmd="CONTENT-GOLDMINE" onclick="selectCmdTab(this)">
+        <span class="tab-num">1.0</span>
+        <span class="tab-name">拆解入库</span>
+      </button>
+      <button class="cmd-tab" data-cmd="IDEA-GEN" onclick="selectCmdTab(this)">
+        <span class="tab-num">2.0</span>
+        <span class="tab-name">创意生成</span>
+      </button>
+      <button class="cmd-tab" data-cmd="WRITING-CLONE" onclick="selectCmdTab(this)">
+        <span class="tab-num">3.0</span>
+        <span class="tab-name">执行写作</span>
+      </button>
     </div>
-    <div class="qd-result" id="qd-result">
-      <div class="qd-result-label">生成的命令</div>
-      <div class="qd-result-cmd" id="qd-result-cmd"></div>
+    
+    <!-- 提示 -->
+    <div class="cmd-hint" id="cmd-hint">
+      <span class="cmd-hint-icon">💡</span>
+      <span>微信公众号链接 → 拆解结构 + 金句 + 创意积木 → 存入素材库</span>
     </div>
-    <div class="qd-btns">
-      <button class="qd-go" id="qd-go-btn" onclick="qdGo()" disabled>🚀 生成并复制命令</button>
-      <button class="qd-clear" onclick="qdClear()">✕ 清空</button>
+    
+    <!-- 输入 -->
+    <div class="cmd-input-row">
+      <input class="cmd-input" id="cmd-input" type="text" placeholder="粘贴微信公众号链接" oninput="cmdOnInput()" autocomplete="off"/>
+      <button class="cmd-paste-btn" onclick="cmdPaste()">📋 粘贴</button>
     </div>
-    <div class="qd-tip" id="qd-tip">✓ 命令已复制！去 WorkBuddy 粘贴发送</div>
+    
+    <!-- 结果 -->
+    <div class="cmd-result" id="cmd-result">
+      <div class="cmd-result-label">生成的命令</div>
+      <div class="cmd-result-cmd" id="cmd-result-cmd"></div>
+    </div>
+    
+    <!-- 按钮 -->
+    <div class="cmd-btns">
+      <button class="cmd-go" id="cmd-go-btn" onclick="cmdGo()" disabled>🚀 生成命令</button>
+      <button class="cmd-copy" id="cmd-copy-btn" onclick="cmdCopy()">📋 复制</button>
+      <button class="cmd-clear" onclick="cmdClear()">✕ 清空</button>
+    </div>
+    <div class="cmd-tip" id="cmd-tip">✓ 命令已复制！去 WorkBuddy 粘贴发送</div>
   </div>
 
   <!-- Skill Cards -->
@@ -1045,41 +1094,94 @@ function scrollToSection(id) {
   if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-// ── Quick Dissect ──
-function qdOnInput() {
-  var val = document.getElementById('qd-input').value.trim();
-  var btn = document.getElementById('qd-go-btn');
-  var resultEl = document.getElementById('qd-result');
-  var cmdEl = document.getElementById('qd-result-cmd');
-  if (val.length > 5) {
-    cmdEl.textContent = '/CONTENT-GOLDMINE\n' + val;
-    resultEl.classList.add('show'); btn.disabled = false;
-  } else {
-    resultEl.classList.remove('show'); btn.disabled = true;
+// ── Command Generator ──
+var currentCmd = 'CONTENT-GOLDMINE';
+
+var cmdConfig = {
+  'CONTENT-GOLDMINE': {
+    prefix: '/CONTENT-GOLDMINE ',
+    placeholder: '粘贴微信公众号链接',
+    hint: '微信公众号链接 → 拆解结构 + 金句 + 创意积木 → 存入素材库'
+  },
+  'IDEA-GEN': {
+    prefix: '/IDEA-GEN ',
+    placeholder: '粘贴网站链接 / 输入文字内容',
+    hint: '已有素材库 + 新信息源 → 生成创意方向或直接出稿'
+  },
+  'WRITING-CLONE': {
+    prefix: '/WRITING-CLONE ',
+    placeholder: '输入文章标题',
+    hint: '采集素材 → 执行写作 → 存入完稿库'
   }
-  document.getElementById('qd-tip').classList.remove('show');
+};
+
+function selectCmdTab(btn) {
+  document.querySelectorAll('.cmd-tab').forEach(function(t) { t.classList.remove('active'); });
+  btn.classList.add('active');
+  currentCmd = btn.dataset.cmd;
+  var config = cmdConfig[currentCmd];
+  document.getElementById('cmd-input').placeholder = config.placeholder;
+  document.getElementById('cmd-hint').querySelector('span:last-child').textContent = config.hint;
+  cmdOnInput();
 }
-function qdPaste() {
+
+function cmdOnInput() {
+  var val = document.getElementById('cmd-input').value.trim();
+  var btn = document.getElementById('cmd-go-btn');
+  var copyBtn = document.getElementById('cmd-copy-btn');
+  var resultEl = document.getElementById('cmd-result');
+  var cmdEl = document.getElementById('cmd-result-cmd');
+  if (val.length > 0) {
+    var config = cmdConfig[currentCmd];
+    cmdEl.textContent = config.prefix + val;
+    resultEl.classList.add('show');
+    btn.disabled = false;
+    copyBtn.classList.add('show');
+  } else {
+    resultEl.classList.remove('show');
+    btn.disabled = true;
+    copyBtn.classList.remove('show');
+  }
+  document.getElementById('cmd-tip').classList.remove('show');
+}
+
+function cmdPaste() {
   if (navigator.clipboard && navigator.clipboard.readText) {
     navigator.clipboard.readText().then(function(t) {
-      document.getElementById('qd-input').value = t; qdOnInput();
+      document.getElementById('cmd-input').value = t; cmdOnInput();
     }).catch(function() { showToast('请手动粘贴', true); });
   } else { showToast('请手动粘贴', true); }
 }
-function qdGo() {
-  var val = document.getElementById('qd-input').value.trim();
+
+function cmdGo() {
+  var val = document.getElementById('cmd-input').value.trim();
   if (!val) return;
-  copyText('/CONTENT-GOLDMINE\n' + val);
-  var tip = document.getElementById('qd-tip');
+  var config = cmdConfig[currentCmd];
+  var fullCmd = config.prefix + val;
+  copyText(fullCmd);
+  var tip = document.getElementById('cmd-tip');
   tip.classList.add('show');
   clearTimeout(tip._t); tip._t = setTimeout(function() { tip.classList.remove('show'); }, 3500);
   showToast('✓ 命令已复制！去 WorkBuddy 粘贴发送');
 }
-function qdClear() {
-  document.getElementById('qd-input').value = '';
-  document.getElementById('qd-result').classList.remove('show');
-  document.getElementById('qd-go-btn').disabled = true;
-  document.getElementById('qd-tip').classList.remove('show');
+
+function cmdCopy() {
+  var val = document.getElementById('cmd-result-cmd').textContent;
+  if (val) {
+    copyText(val);
+    var tip = document.getElementById('cmd-tip');
+    tip.classList.add('show');
+    clearTimeout(tip._t); tip._t = setTimeout(function() { tip.classList.remove('show'); }, 3500);
+    showToast('✓ 命令已复制！');
+  }
+}
+
+function cmdClear() {
+  document.getElementById('cmd-input').value = '';
+  document.getElementById('cmd-result').classList.remove('show');
+  document.getElementById('cmd-go-btn').disabled = true;
+  document.getElementById('cmd-copy-btn').classList.remove('show');
+  document.getElementById('cmd-tip').classList.remove('show');
 }
 
 // ── Skill Cards ──
