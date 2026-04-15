@@ -880,5 +880,25 @@ function doDelete(id) {
   showToast('🗑 已从显示中移除，请在 WorkBuddy 也删除文件', true);
 }
 </script>
+<script>
+// 动态加载真实数据
+fetch('data.json?t=' + Date.now())
+  .then(r => r.json())
+  .then(data => {
+    var e = document.getElementById('count-entries');
+    var i = document.getElementById('count-ideas');
+    var d = document.getElementById('count-drafts');
+    if (e) e.textContent = data.entries;
+    if (i) i.textContent = data.ideas;
+    if (d) d.textContent = data.drafts;
+    var eb = document.getElementById('entry-badge');
+    var ib = document.getElementById('idea-badge');
+    var db = document.getElementById('draft-badge');
+    if (eb) eb.textContent = data.entries + ' 条';
+    if (ib) ib.textContent = data.ideas + ' 个方向';
+    if (db) db.textContent = data.drafts + ' 篇';
+  })
+  .catch(function(){});
+</script>
 </body>
 </html>
