@@ -450,8 +450,8 @@
   <!-- ═══════════════════════════
        完稿
   ═══════════════════════════ -->
-  <div class="block-card" id="block-draft">
-    <div class="block-head" onclick="toggleBlock('draft')">
+  <div class="block-card open" id="block-draft">
+    <div class="block-head open" onclick="toggleBlock('draft')">
       <span class="block-icon">📄</span>
       <span class="block-title">完稿作品</span>
       <span class="block-count draft" id="draft-badge">0 篇</span>
@@ -501,8 +501,8 @@
   <!-- ═══════════════════════════
        素材库
   ═══════════════════════════ -->
-  <div class="block-card open" id="entry-section">
-    <div class="block-head" onclick="toggleBlock('entry')">
+  <div class="block-card open" id="block-entry">
+    <div class="block-head open" onclick="toggleBlock('entry')">
       <span class="block-icon">📚</span>
       <span class="block-title">素材库</span>
       <span class="block-count idea" id="entry-badge">4 条</span>
@@ -799,7 +799,7 @@ function toggleBlock(id) {
   var isOpen = card && card.classList.contains('open');
   if (card) {
     card.classList.toggle('open');
-    if (body) body.style.display = isOpen ? 'none' : 'block';
+    if (body) body.classList.toggle('open');
   }
 }
 
