@@ -181,6 +181,15 @@
   .draft-status-badge.pending { background: rgba(255,230,109,0.1); color: var(--warn); border: 1px solid rgba(255,230,109,0.25); }
   .draft-status-badge.done { background: rgba(78,205,196,0.1); color: var(--accent2); border: 1px solid rgba(78,205,196,0.25); }
 
+  /* 完稿正文预览 */
+  .draft-preview { padding: 14px 16px; border-top: 1px solid rgba(78,205,196,0.1); margin-top: 10px; }
+  .draft-preview-label { font-size: 11px; color: var(--text-dim); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 10px; }
+  .draft-preview-content { background: rgba(255,255,255,0.02); border: 1px solid rgba(78,205,196,0.1); border-radius: 10px; padding: 14px; font-size: 13px; color: var(--text); line-height: 1.75; }
+  .draft-preview-content p { margin: 0 0 10px; }
+  .draft-preview-content p:last-child { margin-bottom: 0; }
+  .draft-preview-more { color: var(--text-dim); font-size: 12px; text-align: center; margin-top: 10px; }
+  .draft-preview-footer { font-size: 11px; color: var(--text-dim); text-align: center; margin-top: 10px; }
+
   /* 素材库 */
   .entry-list { display: flex; flex-direction: column; gap: 12px; padding: 16px 20px; }
   .entry-card { background: var(--card2); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; transition: border-color 0.2s; }
@@ -810,7 +819,7 @@
         <div class="draft-card" id="draft-001">
           <div class="draft-head" onclick="toggleDraft('001')">
             <span class="draft-id">DRAFT-001</span>
-            <span class="draft-title">广州出了28条，汕尾人买房要注意什么？</span>
+            <span class="draft-title">逃离北上广的人，最后发现答案在海边</span>
             <span class="draft-expand">▼</span>
           </div>
           <div class="draft-detail">
@@ -825,9 +834,21 @@
                 <button class="version-btn" onclick="event.stopPropagation()">📂 查看文件</button>
               </div>
             </div>
+            <div class="draft-preview">
+              <div class="draft-preview-label">📝 正文预览</div>
+              <div class="draft-preview-content">
+                <p><strong>你有没有想过：一个人可以在深圳什么都有，却在最繁华的地方，感到彻底的失落？</strong></p>
+                <p>林小满就经历了这一切。她来自汕尾甲子镇，从小是"别人家的孩子"。成绩好、会读书、会考试，一路从镇里考到省城，再从省城考进深圳。</p>
+                <p>2019年，林小满四十岁，在深圳有房、有车、有户口，是所有人眼里的"成功样本"。然而某天晚上，她站在华强北的天桥上，突然不知道自己到底在干什么。</p>
+                <p>身边的人都在匆匆赶路，每个人都低着头、盯着手机。她站在人流里，突然意识到：<strong>自己已经很久没有见过日落了。</strong></p>
+                <p>那是她第一次认真地问自己：这一切，到底是为了什么？</p>
+                <p class="draft-preview-more">...</p>
+              </div>
+              <div class="draft-preview-footer">全文约 1850 字，适合微信公众号发布</div>
+            </div>
             <div class="draft-status">
-              <span class="draft-status-badge pending">
-                <span>⏳</span> 待发布
+              <span class="draft-status-badge done">
+                <span>✅</span> 草稿完成
               </span>
             </div>
           </div>
