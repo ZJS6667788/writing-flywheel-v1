@@ -23,8 +23,15 @@
   .logo-icon { width: 36px; height: 36px; background: var(--accent); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 18px; font-weight: 800; }
   .logo-text { font-size: 18px; font-weight: 700; }
   .logo-sub { font-size: 12px; color: var(--text-dim); }
+  .header-right { display: flex; align-items: center; gap: 12px; }
   .refresh-btn { background: var(--card); border: 1px solid var(--border); color: var(--text-dim); padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 13px; transition: all 0.2s; }
   .refresh-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .sync-status { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-dim); padding: 6px 12px; background: var(--card); border-radius: 20px; border: 1px solid var(--border); }
+  .sync-status.ok { color: var(--accent2); border-color: rgba(78,205,196,0.3); }
+  .sync-status.fail { color: var(--warn); border-color: rgba(255,230,109,0.3); }
+  .sync-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .sync-status.loading .sync-dot { animation: pulse 1s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
   /* Main Layout */
   .main { max-width: 1200px; margin: 0 auto; padding: 28px 32px 60px; }
@@ -269,7 +276,13 @@
       <div class="logo-sub">桌面端控制台</div>
     </div>
   </div>
-  <button class="refresh-btn" onclick="location.reload()">🔄 刷新数据</button>
+  <div class="header-right">
+    <div class="sync-status loading" id="sync-status">
+      <span class="sync-dot"></span>
+      <span class="sync-text">同步中</span>
+    </div>
+    <button class="refresh-btn" onclick="location.reload()">🔄 刷新数据</button>
+  </div>
 </div>
 
 <div class="main">
@@ -286,7 +299,7 @@
     </div>
     <div class="status-chip" onclick="toggleBlock('idea')">
       <span class="status-icon">💡</span>
-      <div class="status-num accent2" id="count-ideas">2</div>
+      <div class="status-num accent2" id="count-ideas">10</div>
       <div class="status-info">
         <div class="status-label">创意方向</div>
         <div class="status-hint">点击展开 · 可直接写稿</div>
@@ -294,7 +307,7 @@
     </div>
     <div class="status-chip" onclick="toggleBlock('draft')">
       <span class="status-icon">📄</span>
-      <div class="status-num accent3" id="count-drafts">0</div>
+      <div class="status-num accent3" id="count-drafts">1</div>
       <div class="status-info">
         <div class="status-label">完稿作品</div>
         <div class="status-hint">点击展开 · 查看各版本</div>
@@ -881,7 +894,7 @@
     <div class="block-head open" onclick="toggleBlock('entry')">
       <span class="block-icon">📚</span>
       <span class="block-title">素材库</span>
-      <span class="block-count idea" id="entry-badge">4 条</span>
+      <span class="block-count idea" id="entry-badge">8 条</span>
       <span class="block-expand">▼</span>
     </div>
     <div class="block-body" style="display:block">
@@ -1076,6 +1089,194 @@
               <div class="delete-confirm-btns">
                 <button class="btn-confirm-delete" onclick="event.stopPropagation(); doDelete('004')">确认删除</button>
                 <button class="btn-cancel-delete" onclick="event.stopPropagation(); cancelDelete('004')">取消</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ENTRY-005 -->
+        <div class="entry-card" id="card-005">
+          <div class="entry-head" onclick="toggleEntry('005')">
+            <span class="entry-id">005</span>
+            <span class="entry-title">汕尾买房避坑清单</span>
+            <span class="entry-meta">原创 · 2026-04-15</span>
+            <span class="entry-expand-icon">▼</span>
+          </div>
+          <div class="entry-detail">
+            <div class="entry-source">
+              <span class="entry-source-label">原文</span>
+              <span class="entry-source-link">原创内容</span>
+            </div>
+            <div class="entry-structure-wrap">
+              <div class="entry-label">核心结构</div>
+              <div class="entry-structure">反常识痛点切入 → 五坑横排展开 → 已在坑里怎么办 → 行动号召收束</div>
+            </div>
+            <div class="entry-quotes-wrap">
+              <div class="entry-label">精选金句</div>
+              <div class="entry-quotes">
+                <div class="entry-quote">这不是故事，这是汕尾楼市的日常。</div>
+                <div class="entry-quote">房子是用来住的，不是用来赌的。</div>
+              </div>
+            </div>
+            <div class="entry-bricks-wrap">
+              <div class="entry-label">创意积木</div>
+              <div class="brick-tags">
+                <span class="brick-tag">人物踩坑开头</span>
+                <span class="brick-tag">能X≠好X悖论</span>
+                <span class="brick-tag">三问清单法</span>
+              </div>
+            </div>
+            <div class="entry-actions">
+              <button class="entry-btn btn-copy-cg" onclick="event.stopPropagation(); copyEntryCmd('005')">📋 复制拆解命令</button>
+              <a class="entry-btn btn-open-link" href="#" target="_blank">🔗 原文</a>
+              <button class="entry-btn btn-delete" onclick="event.stopPropagation(); askDelete('005')">🗑 删除</button>
+            </div>
+            <div class="delete-confirm" id="dc-005">
+              <div class="delete-confirm-text"><strong>⚠️ 确认删除？</strong> 此操作仅从页面移除显示，条目文件需到 WorkBuddy 用指令删除。</div>
+              <div class="delete-confirm-btns">
+                <button class="btn-confirm-delete" onclick="event.stopPropagation(); doDelete('005')">确认删除</button>
+                <button class="btn-cancel-delete" onclick="event.stopPropagation(); cancelDelete('005')">取消</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ENTRY-006 -->
+        <div class="entry-card" id="card-006">
+          <div class="entry-head" onclick="toggleEntry('006')">
+            <span class="entry-id">006</span>
+            <span class="entry-title">公积金贷款三大"潜规则"</span>
+            <span class="entry-meta">原创 · 2026-04-15</span>
+            <span class="entry-expand-icon">▼</span>
+          </div>
+          <div class="entry-detail">
+            <div class="entry-source">
+              <span class="entry-source-label">原文</span>
+              <span class="entry-source-link">原创内容</span>
+            </div>
+            <div class="entry-structure-wrap">
+              <div class="entry-label">核心结构</div>
+              <div class="entry-structure">蹲点采访切入 → 三条潜规则并列 → 关键动作清单 → 写给被拒的人</div>
+            </div>
+            <div class="entry-quotes-wrap">
+              <div class="entry-label">精选金句</div>
+              <div class="entry-quotes">
+                <div class="entry-quote">10个人里有8个以为自己懂了，其实连门都没摸到。</div>
+                <div class="entry-quote">断缴=清零，从头算年限。</div>
+              </div>
+            </div>
+            <div class="entry-bricks-wrap">
+              <div class="entry-label">创意积木</div>
+              <div class="brick-tags">
+                <span class="brick-tag">蹲点采访开头</span>
+                <span class="brick-tag">潜规则框架</span>
+                <span class="brick-tag">公式句</span>
+              </div>
+            </div>
+            <div class="entry-actions">
+              <button class="entry-btn btn-copy-cg" onclick="event.stopPropagation(); copyEntryCmd('006')">📋 复制拆解命令</button>
+              <a class="entry-btn btn-open-link" href="#" target="_blank">🔗 原文</a>
+              <button class="entry-btn btn-delete" onclick="event.stopPropagation(); askDelete('006')">🗑 删除</button>
+            </div>
+            <div class="delete-confirm" id="dc-006">
+              <div class="delete-confirm-text"><strong>⚠️ 确认删除？</strong> 此操作仅从页面移除显示，条目文件需到 WorkBuddy 用指令删除。</div>
+              <div class="delete-confirm-btns">
+                <button class="btn-confirm-delete" onclick="event.stopPropagation(); doDelete('006')">确认删除</button>
+                <button class="btn-cancel-delete" onclick="event.stopPropagation(); cancelDelete('006')">取消</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ENTRY-007 -->
+        <div class="entry-card" id="card-007">
+          <div class="entry-head" onclick="toggleEntry('007')">
+            <span class="entry-id">007</span>
+            <span class="entry-title">又抢地！金茂大战保利，2.6万/平吞下老西关江景靓地</span>
+            <span class="entry-meta">广州房产 · 2026-04-15</span>
+            <span class="entry-expand-icon">▼</span>
+          </div>
+          <div class="entry-detail">
+            <div class="entry-source">
+              <span class="entry-source-label">原文</span>
+              <span class="entry-source-link">广州房产公众号</span>
+            </div>
+            <div class="entry-structure-wrap">
+              <div class="entry-label">核心结构</div>
+              <div class="entry-structure">竞拍悬念 → 结局揭晓 → 反差强化 → 优势纵深 → 前景预测</div>
+            </div>
+            <div class="entry-quotes-wrap">
+              <div class="entry-label">精选金句</div>
+              <div class="entry-quotes">
+                <div class="entry-quote">有点意外，该地块由金茂拿下了，而且还是在保利手上抢下的！</div>
+                <div class="entry-quote">老西关近几年体量最大的地块，没有之一。</div>
+              </div>
+            </div>
+            <div class="entry-bricks-wrap">
+              <div class="entry-label">创意积木</div>
+              <div class="brick-tags">
+                <span class="brick-tag">双雄对决开头</span>
+                <span class="brick-tag">意外强化句</span>
+                <span class="brick-tag">数据对比矩阵</span>
+              </div>
+            </div>
+            <div class="entry-actions">
+              <button class="entry-btn btn-copy-cg" onclick="event.stopPropagation(); copyEntryCmd('007')">📋 复制拆解命令</button>
+              <a class="entry-btn btn-open-link" href="#" target="_blank">🔗 原文</a>
+              <button class="entry-btn btn-delete" onclick="event.stopPropagation(); askDelete('007')">🗑 删除</button>
+            </div>
+            <div class="delete-confirm" id="dc-007">
+              <div class="delete-confirm-text"><strong>⚠️ 确认删除？</strong> 此操作仅从页面移除显示，条目文件需到 WorkBuddy 用指令删除。</div>
+              <div class="delete-confirm-btns">
+                <button class="btn-confirm-delete" onclick="event.stopPropagation(); doDelete('007')">确认删除</button>
+                <button class="btn-cancel-delete" onclick="event.stopPropagation(); cancelDelete('007')">取消</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ENTRY-008 -->
+        <div class="entry-card" id="card-008">
+          <div class="entry-head" onclick="toggleEntry('008')">
+            <span class="entry-id">008</span>
+            <span class="entry-title">《地铁吐血女孩的二三事》拆解</span>
+            <span class="entry-meta">真实故事计划 · 2026-04-15</span>
+            <span class="entry-expand-icon">▼</span>
+          </div>
+          <div class="entry-detail">
+            <div class="entry-source">
+              <span class="entry-source-label">原文</span>
+              <a class="entry-source-link" href="https://mp.weixin.qq.com/s/rw8ejIYtpMPkORDHVXPWjA" target="_blank">mp.weixin.qq.com/s/rw8ejIYtpMPkORDHVXPWjA</a>
+            </div>
+            <div class="entry-structure-wrap">
+              <div class="entry-label">核心结构</div>
+              <div class="entry-structure">戏剧性瞬间切入 → 8年病史回溯 → 核心矛盾揭示 → 情感转折 → 心态蜕变 → 行动升华</div>
+            </div>
+            <div class="entry-quotes-wrap">
+              <div class="entry-label">精选金句</div>
+              <div class="entry-quotes">
+                <div class="entry-quote">她宁愿弄脏自己的外套，也不愿弄脏别人的鞋子。</div>
+                <div class="entry-quote">生命这场仗应当打得漂亮。</div>
+              </div>
+            </div>
+            <div class="entry-bricks-wrap">
+              <div class="entry-label">创意积木</div>
+              <div class="brick-tags">
+                <span class="brick-tag">开头钩子</span>
+                <span class="brick-tag">身份反转</span>
+                <span class="brick-tag">细节驱动</span>
+              </div>
+            </div>
+            <div class="entry-actions">
+              <button class="entry-btn btn-copy-cg" onclick="event.stopPropagation(); copyEntryCmd('008')">📋 复制拆解命令</button>
+              <a class="entry-btn btn-open-link" href="https://mp.weixin.qq.com/s/rw8ejIYtpMPkORDHVXPWjA" target="_blank">🔗 原文</a>
+              <button class="entry-btn btn-delete" onclick="event.stopPropagation(); askDelete('008')">🗑 删除</button>
+            </div>
+            <div class="delete-confirm" id="dc-008">
+              <div class="delete-confirm-text"><strong>⚠️ 确认删除？</strong> 此操作仅从页面移除显示，条目文件需到 WorkBuddy 用指令删除。</div>
+              <div class="delete-confirm-btns">
+                <button class="btn-confirm-delete" onclick="event.stopPropagation(); doDelete('008')">确认删除</button>
+                <button class="btn-cancel-delete" onclick="event.stopPropagation(); cancelDelete('008')">取消</button>
               </div>
             </div>
           </div>
@@ -1390,6 +1591,16 @@ function doDelete(id) {
 </script>
 <script>
 // 动态加载真实数据
+function updateSyncStatus(status, text) {
+  var el = document.getElementById('sync-status');
+  if (!el) return;
+  el.className = 'sync-status ' + status;
+  var dot = el.querySelector('.sync-dot');
+  var txt = el.querySelector('.sync-text');
+  if (dot) dot.textContent = '';
+  if (txt) txt.textContent = text;
+}
+
 fetch('data.json?t=' + Date.now())
   .then(r => r.json())
   .then(data => {
@@ -1405,8 +1616,13 @@ fetch('data.json?t=' + Date.now())
     if (eb) eb.textContent = data.entries + ' 条';
     if (ib) ib.textContent = data.ideas + ' 个方向';
     if (db) db.textContent = data.drafts + ' 篇';
+    // 更新同步状态
+    var updated = data.updated || new Date().toLocaleString('zh-CN', {month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit'}).replace(/\//g, '-');
+    updateSyncStatus('ok', '已同步 ' + updated);
   })
-  .catch(function(){});
+  .catch(function(){
+    updateSyncStatus('fail', '同步失败');
+  });
 </script>
 </body>
 </html>
