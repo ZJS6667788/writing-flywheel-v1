@@ -295,6 +295,16 @@
   .draft-preview-content p:last-child { margin-bottom: 0; }
   .draft-preview-more { color: var(--muted); font-size: 11px; text-align: center; margin-top: 8px; }
   .draft-preview-footer { font-size: 10px; color: var(--muted); text-align: center; margin-top: 8px; }
+  .draft-full-section { padding: 12px 14px; border-top: 1px solid rgba(106,247,165,0.1); }
+  .draft-full-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 10px 16px; background: rgba(106,247,165,0.08); border: 1px solid rgba(106,247,165,0.2); border-radius: 8px; color: #6af7a5; font-size: 13px; cursor: pointer; transition: all 0.2s; }
+  .draft-full-btn:hover { background: rgba(106,247,165,0.15); }
+  .draft-full-icon { font-size: 10px; }
+  .draft-full-content { margin-top: 12px; background: rgba(255,255,255,0.03); border: 1px solid rgba(106,247,165,0.15); border-radius: 10px; padding: 14px; font-size: 13px; line-height: 1.8; color: var(--text); }
+  .draft-full-content p { margin: 0 0 10px; }
+  .draft-full-content p:last-child { margin-bottom: 0; }
+  .draft-full-content h3 { font-size: 15px; color: #6af7a5; margin: 0 0 12px; border-bottom: 1px solid rgba(106,247,165,0.1); padding-bottom: 8px; }
+  .draft-full-content hr { border: none; border-top: 1px solid rgba(106,247,165,0.1); margin: 16px 0; }
+  .draft-full-loading { text-align: center; color: var(--muted); font-size: 13px; padding: 20px; }
 
   /* ── 空状态 ── */
   .empty-block { text-align: center; padding: 24px 20px; color: var(--muted); font-size: 13px; }
@@ -1053,6 +1063,13 @@
           </div>
           <div class="draft-preview-footer">全文约 1850 字，适合微信公众号发布</div>
         </div>
+        <div class="draft-full-section">
+          <button class="draft-full-btn" onclick="loadDraftFull('001')">
+            <span class="draft-full-icon" id="draft-001-full-icon">▶</span>
+            <span class="draft-full-text" id="draft-001-full-text">展开全文</span>
+          </button>
+          <div class="draft-full-content" id="draft-001-full-content"></div>
+        </div>
         <div class="draft-status">
           <span class="draft-status-badge done">
             <span>✅</span> 草稿完成
@@ -1762,6 +1779,70 @@ function toggleDraft(id) {
     card.classList.add('open');
     setTimeout(function() { card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 50);
   }
+}
+
+// 加载完稿全文
+var draftFullCache = {};
+function loadDraftFull(id) {
+  var container = document.getElementById('draft-' + id + '-full-content');
+  var icon = document.getElementById('draft-' + id + '-full-icon');
+  var text = document.getElementById('draft-' + id + '-full-text');
+  if (!container || !icon || !text) return;
+
+  if (container.style.display === 'block') {
+    container.style.display = 'none';
+    icon.textContent = '▶';
+    text.textContent = '展开全文';
+    return;
+  }
+
+  if (draftFullCache[id]) {
+    container.innerHTML = draftFullCache[id];
+    container.style.display = 'block';
+    icon.textContent = '▼';
+    text.textContent = '收起全文';
+    return;
+  }
+
+  container.innerHTML = '<div class="draft-full-loading">📖 正在加载全文...</div>';
+  container.style.display = 'block';
+  icon.textContent = '▼';
+  text.textContent = '收起全文';
+
+  var filePath = 'material-library/drafts/draft-' + id + '-v1.md';
+  fetch(filePath + '?t=' + Date.now())
+    .then(function(res) { return res.text(); })
+    .then(function(text) {
+      var html = parseDraftMarkdown(text);
+      draftFullCache[id] = html;
+      container.innerHTML = html;
+    })
+    .catch(function() {
+      container.innerHTML = '<div class="draft-full-loading">❌ 加载失败，请刷新重试</div>';
+    });
+}
+
+function parseDraftMarkdown(text) {
+  var lines = text.split('\n');
+  var html = [];
+  var inCode = false;
+  for (var i = 0; i < lines.length; i++) {
+    var line = lines[i];
+    if (line.match(/^```/)) { inCode = !inCode; continue; }
+    if (inCode) { html.push('<p>' + escapeHtml(line) + '</p>'); continue; }
+    if (line.match(/^#{3}\s/)) continue;
+    if (line.match(/^---$/)) { html.push('<hr>'); continue; }
+    if (line.match(/^##\s/)) { html.push('<h3>' + line.replace(/^##\s/, '') + '</h3>'); continue; }
+    if (line.trim() === '') continue;
+    line = line.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    line = escapeHtml(line);
+    html.push('<p>' + line + '</p>');
+  }
+  return html.join('');
+}
+
+function escapeHtml(text) {
+  return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
 // ══════════════════════════════════════
