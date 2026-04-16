@@ -385,8 +385,8 @@
 <!-- Refresh Bar -->
 <div class="refresh-bar">
   <div class="refresh-info">
-    <div class="refresh-title">📡 数据有更新？</div>
-    <div class="refresh-note">点击右侧按钮刷新，<strong>获取最新数据</strong></div>
+    <div class="refresh-title">📡 同步状态：<span id="sync-status">🔄</span></div>
+    <div class="refresh-note">自动同步看板数据 · <span id="update-time">--:--</span></div>
   </div>
   <button class="search-btn" onclick="toggleSearch()">🔍</button>
   <button class="refresh-btn" onclick="location.reload()">🔄 刷新</button>
@@ -1821,23 +1821,38 @@ function doDelete(id) {
 </script>
 <script>
 // 动态加载真实数据（看板数字自动同步）
-fetch('data.json?t=' + Date.now())
-  .then(r => r.json())
-  .then(data => {
-    // 顶部看板数字
-    var e = document.getElementById('count-entries');
-    var i = document.getElementById('count-ideas');
-    var d = document.getElementById('count-drafts');
-    if (e) { e.textContent = data.entries; e.classList.add('pop'); }
-    if (i) { i.textContent = data.ideas;   i.classList.add('pop'); }
-    if (d) { d.textContent = data.drafts; d.classList.add('pop'); }
-    // 区块标题栏数字（idea-count-badge / draft-count-badge）
-    var ib = document.getElementById('idea-count-badge');
-    var db = document.getElementById('draft-count-badge');
-    if (ib) ib.textContent = data.ideas;
-    if (db) db.textContent = data.drafts;
-  })
-  .catch(function(){}); // 无 data.json 时静默忽略，保持 HTML 硬编码兜底
+function syncData() {
+  var syncEl = document.getElementById('sync-status');
+  if (syncEl) syncEl.textContent = '🔄';
+  fetch('data.json?t=' + Date.now())
+    .then(r => r.json())
+    .then(data => {
+      // 顶部看板数字
+      var e = document.getElementById('count-entries');
+      var i = document.getElementById('count-ideas');
+      var d = document.getElementById('count-drafts');
+      if (e) { e.textContent = data.entries; e.classList.add('pop'); }
+      if (i) { i.textContent = data.ideas;   i.classList.add('pop'); }
+      if (d) { d.textContent = data.drafts; d.classList.add('pop'); }
+      // 区块标题栏数字
+      var ib = document.getElementById('idea-count-badge');
+      var db = document.getElementById('draft-count-badge');
+      if (ib) ib.textContent = data.ideas;
+      if (db) db.textContent = data.drafts;
+      // 更新时间
+      if (data.updated) {
+        var ut = document.getElementById('update-time');
+        if (ut) ut.textContent = data.updated;
+      }
+      // 同步成功
+      if (syncEl) syncEl.textContent = '✅';
+    })
+    .catch(function(){
+      // 同步失败提示
+      if (syncEl) syncEl.textContent = '⚠️';
+    });
+}
+syncData(); // 页面加载时自动同步
 </script>
 </body>
 </html>
