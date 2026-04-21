@@ -1,511 +1,493 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>飞书助手 - 素材库管理</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f5f5f7;
-            min-height: 100vh;
-            padding: 16px;
-            padding-bottom: 90px;
-        }
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 16px;
-            margin-bottom: 16px;
-            text-align: center;
-        }
-        .header h1 { font-size: 20px; margin-bottom: 4px; }
-        .header p { font-size: 12px; opacity: 0.8; }
-        
-        .scene-cards {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 16px;
-        }
-        .scene-card {
-            background: white;
-            border-radius: 16px;
-            padding: 20px 16px;
-            text-align: center;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-            cursor: pointer;
-            transition: all 0.2s;
-            position: relative;
-            overflow: hidden;
-        }
-        .scene-card:active { transform: scale(0.98); }
-        .scene-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-        }
-        .scene-card.scene1::before { background: linear-gradient(90deg, #667eea, #764ba2); }
-        .scene-card.scene2::before { background: linear-gradient(90deg, #f093fb, #f5576c); }
-        
-        .scene-icon { font-size: 32px; margin-bottom: 8px; }
-        .scene-title { font-size: 15px; font-weight: 600; color: #333; margin-bottom: 4px; }
-        .scene-desc { font-size: 11px; color: #999; }
-        
-        .card {
-            background: white;
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-        }
-        .card-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        
-        .btn {
-            display: block;
-            width: 100%;
-            padding: 14px;
-            border: none;
-            border-radius: 10px;
-            font-size: 15px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-            margin-bottom: 10px;
-        }
-        .btn:last-child { margin-bottom: 0; }
-        .btn:active { transform: scale(0.98); }
-        
-        .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
-        .btn-secondary { background: #f0f0f5; color: #333; }
-        .btn-pink { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; }
-        
-        .record-list { max-height: 300px; overflow-y: auto; }
-        .record-item {
-            padding: 12px;
-            border-bottom: 1px solid #f0f0f5;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .record-item:last-child { border-bottom: none; }
-        .record-item:active { background: #f5f5f7; }
-        .record-num { font-size: 12px; color: #667eea; font-weight: 600; }
-        .record-title { font-size: 14px; color: #333; margin-top: 4px; line-height: 1.4; }
-        .record-date { font-size: 11px; color: #bbb; margin-top: 4px; }
-        
-        .tab-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: white;
-            display: flex;
-            border-top: 1px solid #eee;
-            padding: 8px 0;
-            padding-bottom: max(8px, env(safe-area-inset-bottom));
-            z-index: 50;
-        }
-        .tab-item {
-            flex: 1;
-            text-align: center;
-            padding: 8px;
-            font-size: 11px;
-            color: #999;
-            cursor: pointer;
-        }
-        .tab-item.active { color: #667eea; }
-        .tab-item span { display: block; font-size: 20px; margin-bottom: 2px; }
-        
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 100;
-            align-items: flex-end;
-        }
-        .modal.show { display: flex; }
-        .modal-content {
-            background: white;
-            width: 100%;
-            border-radius: 16px 16px 0 0;
-            padding: 20px;
-            max-height: 85vh;
-            overflow-y: auto;
-            position: relative;
-        }
-        .modal-title {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 16px;
-            text-align: center;
-        }
-        .modal-close {
-            position: absolute;
-            right: 16px;
-            top: 16px;
-            font-size: 24px;
-            color: #999;
-            cursor: pointer;
-        }
-        
-        .input-group { margin-bottom: 16px; }
-        .input-group label {
-            display: block;
-            font-size: 13px;
-            color: #666;
-            margin-bottom: 6px;
-        }
-        .input-group input,
-        .input-group textarea,
-        .input-group select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #eee;
-            border-radius: 8px;
-            font-size: 14px;
-            resize: none;
-            background: white;
-        }
-        .input-group textarea { height: 80px; }
-        
-        .toast {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0,0,0,0.75);
-            color: white;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-size: 14px;
-            z-index: 200;
-            display: none;
-        }
-        .toast.show { display: block; animation: fadeIn 0.3s; }
-        @keyframes fadeIn { from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); } }
-        
-        .empty {
-            text-align: center;
-            padding: 30px;
-            color: #999;
-        }
-        .empty span { font-size: 36px; display: block; margin-bottom: 8px; }
-        
-        .scene-badge {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 10px;
-            font-weight: 600;
-        }
-        .scene-badge.s1 { background: #eef2ff; color: #667eea; }
-        .scene-badge.s2 { background: #fff0f3; color: #f5576c; }
-        
-        .detail-section { margin-bottom: 16px; }
-        .detail-label { font-size: 12px; color: #999; margin-bottom: 4px; }
-        .detail-content { font-size: 14px; line-height: 1.6; white-space: pre-wrap; }
-        
-        .loading { text-align: center; padding: 30px; color: #999; }
-        
-        .quick-add {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 12px;
-        }
-        .quick-add-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
-        .quick-add-desc { font-size: 12px; opacity: 0.8; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>写作飞轮 - 素材入口</title>
+<style>
+:root {
+  --primary: #1a73e8;
+  --bg: #f8f9fa;
+  --card: #ffffff;
+  --text: #202124;
+  --text-secondary: #5f6368;
+  --border: #dadce0;
+  --success: #34a853;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding-bottom: 80px;
+}
+
+.header {
+  background: var(--primary);
+  color: white;
+  padding: 20px 16px;
+  text-align: center;
+}
+
+.header h1 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.header p {
+  font-size: 13px;
+  opacity: 0.9;
+}
+
+.main {
+  padding: 16px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.input-card {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+}
+
+.input-card h2 {
+  font-size: 16px;
+  margin-bottom: 12px;
+  color: var(--primary);
+}
+
+.input-card h2 span { margin-right: 6px; }
+
+textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 15px;
+  resize: none;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+textarea:focus {
+  border-color: var(--primary);
+}
+
+.input-hint {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 8px;
+}
+
+.btn {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.1s;
+  margin-top: 12px;
+}
+
+.btn:active { transform: scale(0.98); }
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+}
+
+.btn-primary:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.status {
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  margin-top: 12px;
+  display: none;
+}
+
+.status.loading {
+  background: #e8f0fe;
+  color: var(--primary);
+  display: block;
+}
+
+.status.success {
+  background: #e6f4ea;
+  color: var(--success);
+  display: block;
+}
+
+.status.error {
+  background: #fce8e6;
+  color: #c5221f;
+  display: block;
+}
+
+.result-card {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  display: none;
+}
+
+.result-card.show { display: block; }
+
+.result-card h3 {
+  font-size: 14px;
+  color: var(--primary);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.result-item {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.result-item:last-child { border-bottom: none; }
+
+.result-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.result-content {
+  font-size: 14px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.copy-btn {
+  background: #f1f3f4;
+  border: none;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  margin-left: 8px;
+}
+
+.copy-btn:hover { background: #e8eaed; }
+
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--card);
+  display: flex;
+  border-top: 1px solid var(--border);
+  padding: 8px 0;
+  padding-bottom: max(8px, env(safe-area-inset-bottom));
+}
+
+.nav-item {
+  flex: 1;
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-secondary);
+  padding: 6px 0;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.nav-item.active { color: var(--primary); }
+
+.nav-item .icon {
+  font-size: 22px;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.material-list {
+  background: var(--card);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.material-item {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.material-item:last-child { border-bottom: none; }
+
+.material-item:active { background: #f1f3f4; }
+
+.material-num {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.material-title {
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.4;
+}
+</style>
 </head>
 <body>
-    <div class="header">
-        <h1>📊 飞书助手</h1>
-        <p>素材库管理</p>
+
+<div class="header">
+  <h1>🔥 爆款素材</h1>
+  <p>输入链接/文字，AI 自动拆解</p>
+</div>
+
+<div class="main" id="main">
+  <!-- 输入界面 -->
+  <div id="inputView">
+    <div class="input-card">
+      <h2><span>🔗</span>粘贴链接或文字</h2>
+      <textarea id="inputText" placeholder="粘贴微信公众号文章链接，或直接输入要拆解的文字..."></textarea>
+      <div class="input-hint">支持微信公众号、小红书、飞书文档等链接</div>
+      <button class="btn btn-primary" id="analyzeBtn" onclick="analyze()">
+        🤖 AI 智能拆解
+      </button>
+      <div class="status" id="status"></div>
     </div>
-    
-    <!-- 场景选择 -->
-    <div class="scene-cards">
-        <div class="scene-card scene1" onclick="showAddModal('scene1')">
-            <div class="scene-icon">🔥</div>
-            <div class="scene-title">爆款延伸</div>
-            <div class="scene-desc">场景1 · 延伸写作</div>
-        </div>
-        <div class="scene-card scene2" onclick="showAddModal('scene2')">
-            <div class="scene-icon">✍️</div>
-            <div class="scene-title">原创首发</div>
-            <div class="scene-desc">场景2 · 创意写作</div>
-        </div>
+
+    <!-- 拆解结果 -->
+    <div class="result-card" id="resultCard">
+      <h3><span>✨</span>拆解完成</h3>
+      <div id="resultContent"></div>
+      <button class="btn btn-primary" onclick="syncToFeishu()" style="margin-top: 16px;">
+        📤 同步到飞书素材库
+      </button>
     </div>
-    
-    <!-- 最近素材 -->
-    <div class="card">
-        <div class="card-title">📚 素材库 <span id="count" style="font-weight:normal;color:#999;font-size:12px;"></span></div>
-        <div id="list" class="loading">加载中...</div>
+  </div>
+
+  <!-- 素材库界面 -->
+  <div id="libraryView" style="display: none;">
+    <div class="input-card">
+      <h2><span>📚</span>素材库 <small style="font-weight: normal; color: #666;" id="count"></small></h2>
+      <button class="btn btn-primary" onclick="showInput()" style="padding: 10px;">
+        ← 返回添加素材
+      </button>
     </div>
-    
-    <!-- 快捷操作 -->
-    <div class="card">
-        <div class="card-title">⚡ 快捷操作</div>
-        <button class="btn btn-secondary" onclick="openGuide()">📖 使用指南</button>
-        <button class="btn btn-secondary" onclick="openBitable()">📋 飞书表格</button>
+    <div class="material-list" id="materialList"></div>
+  </div>
+
+  <!-- 创意库界面 -->
+  <div id="ideaView" style="display: none;">
+    <div class="input-card">
+      <h2><span>💡</span>创意方向库</h2>
+      <p style="color: #666; font-size: 14px; margin-top: 8px;">
+        暂无创意方向卡片<br>
+        从爆款拆解后自动沉淀到这里
+      </p>
     </div>
-    
-    <!-- Tab Bar -->
-    <div class="tab-bar">
-        <div class="tab-item active" onclick="switchTab('home', this)">
-            <span>🏠</span>
-            首页
-        </div>
-        <div class="tab-item" onclick="switchTab('ideas', this)">
-            <span>💡</span>
-            创意库
-        </div>
-        <div class="tab-item" onclick="switchTab('drafts', this)">
-            <span>✏️</span>
-            完稿
-        </div>
-    </div>
-    
-    <!-- 添加素材弹窗 -->
-    <div id="addModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-title" id="addModalTitle">➕ 添加素材</div>
-            <div class="modal-close" onclick="closeModal('addModal')">×</div>
-            
-            <input type="hidden" id="addScene" value="scene1">
-            
-            <div class="input-group">
-                <label>场景</label>
-                <select id="sceneSelect" onchange="document.getElementById('addScene').value = this.value">
-                    <option value="scene1">🔥 场景1：爆款延伸写作</option>
-                    <option value="scene2">✍️ 场景2：原创首发写作</option>
-                </select>
-            </div>
-            <div class="input-group">
-                <label>标题 *</label>
-                <input type="text" id="addTitle" placeholder="输入文章标题">
-            </div>
-            <div class="input-group">
-                <label>来源链接</label>
-                <input type="text" id="addLink" placeholder="微信公众号链接">
-            </div>
-            <div class="input-group">
-                <label>拆解结构</label>
-                <textarea id="addStructure" placeholder="文章结构拆解..."></textarea>
-            </div>
-            <div class="input-group">
-                <label>金句</label>
-                <input type="text" id="addHighlight" placeholder="触动读者的金句">
-            </div>
-            <div class="input-group">
-                <label>创意方向</label>
-                <textarea id="addDirection" placeholder="可延伸的写作方向..."></textarea>
-            </div>
-            
-            <button class="btn btn-primary" onclick="submitMaterial()">✅ 确认添加</button>
-        </div>
-    </div>
-    
-    <!-- 详情弹窗 -->
-    <div id="detailModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-close" onclick="closeModal('detailModal')">×</div>
-            <div id="detailInner"></div>
-        </div>
-    </div>
-    
-    <!-- Toast -->
-    <div id="toast" class="toast"></div>
-    
-    <script>
-        const APP_ID = 'cli_a9492e187b789bdd';
-        const APP_SECRET = 'EPZT2dEYrNBCzrHKVacmJxEkhzZzRdYs';
-        const BASE_TOKEN = 'NKblbp9RzavdLYsMaHucFM1fnYm';
-        
-        // 子表 ID
-        const TABLES = {
-            materials: 'tblbia5WvpLjxjMA',
-            ideas: 'tblHNBaMJcLULg9G',
-            scene1: 'tbl82yANJT7w1mib',
-            scene2: 'tbly6Zxiizq1Q0Z4'
+  </div>
+</div>
+
+<div class="bottom-nav">
+  <div class="nav-item active" onclick="switchTab('input')">
+    <span class="icon">🏠</span>
+    素材入口
+  </div>
+  <div class="nav-item" onclick="switchTab('library')">
+    <span class="icon">📚</span>
+    素材库
+  </div>
+  <div class="nav-item" onclick="switchTab('idea')">
+    <span class="icon">💡</span>
+    创意库
+  </div>
+</div>
+
+<script>
+// API配置 - 请根据实际情况修改
+const API_BASE = 'http://127.0.0.1:3847';
+
+// 临时存储拆解结果
+let lastAnalysis = null;
+
+function $(id) { return document.getElementById(id); }
+
+function switchTab(tab) {
+  // 更新nav状态
+  document.querySelectorAll('.nav-item').forEach((el, i) => {
+    el.classList.toggle('active', ['input', 'library', 'idea'][i] === tab);
+  });
+
+  // 切换视图
+  $('inputView').style.display = tab === 'input' ? 'block' : 'none';
+  $('libraryView').style.display = tab === 'library' ? 'block' : 'none';
+  $('ideaView').style.display = tab === 'idea' ? 'block' : 'none';
+
+  if (tab === 'library') loadMaterials();
+}
+
+function showInput() {
+  switchTab('input');
+}
+
+async function analyze() {
+  const input = $('inputText').value.trim();
+  if (!input) {
+    showStatus('请输入链接或文字', 'error');
+    return;
+  }
+
+  showStatus('🤖 AI 正在分析...', 'loading');
+  $('analyzeBtn').disabled = true;
+
+  try {
+    // 如果是链接，调用拆解接口
+    if (input.startsWith('http')) {
+      const resp = await fetch(`${API_BASE}/api/analyze`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: input })
+      });
+      const data = await resp.json();
+      if (data.code === 0) {
+        lastAnalysis = data.data;
+        showResult(data.data);
+        showStatus('✅ 拆解完成！', 'success');
+      } else {
+        throw new Error(data.msg || '拆解失败');
+      }
+    } else {
+      // 纯文字，让用户确认是否要分析
+      showStatus('💡 请直接在下方描述你的灵感，我会帮你整理...', 'loading');
+      // 模拟分析
+      setTimeout(() => {
+        lastAnalysis = {
+          title: '灵感记录',
+          source_url: '',
+          structure: '待整理',
+          highlight: input.substring(0, 100),
+          idea_direction: '待提炼'
         };
-        
-        let currentTab = 'home';
-        let materials = [];
-        let ideas = [];
-        let token = null;
-        let tokenExpire = 0;
-        
-        function showToast(msg) {
-            const toast = document.getElementById('toast');
-            toast.textContent = msg;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 2000);
-        }
-        
-        async function getToken() {
-            if (token && Date.now() < tokenExpire) return token;
-            try {
-                const resp = await fetch('https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ app_id: APP_ID, app_secret: APP_SECRET })
-                });
-                const data = await resp.json();
-                token = data.tenant_access_token;
-                tokenExpire = Date.now() + 7000 * 1000;
-                return token;
-            } catch (e) { return null; }
-        }
-        
-        async function loadMaterials() {
-            const list = document.getElementById('list');
-            list.innerHTML = '<div class="loading">加载中...</div>';
-            
-            const t = await getToken();
-            if (!t) { list.innerHTML = '<div class="empty"><span>⚠️</span>加载失败</div>'; return; }
-            
-            try {
-                const resp = await fetch(
-                    `https://open.feishu.cn/open-apis/bitable/v1/apps/${BASE_TOKEN}/tables/${TABLES.materials}/records?page_size=100`,
-                    { headers: { 'Authorization': 'Bearer ' + t } }
-                );
-                const data = await resp.json();
-                
-                if (data.code === 0) {
-                    materials = data.data.items;
-                    document.getElementById('count').textContent = `(${materials.length}条)`;
-                    renderMaterials();
-                } else {
-                    list.innerHTML = '<div class="empty"><span>⚠️</span>加载失败</div>';
-                }
-            } catch (e) { list.innerHTML = '<div class="empty"><span>⚠️</span>网络错误</div>'; }
-        }
-        
-        function renderMaterials() {
-            const list = document.getElementById('list');
-            if (materials.length === 0) {
-                list.innerHTML = '<div class="empty"><span>📭</span>暂无素材</div>';
-                return;
-            }
-            
-            let html = '<div class="record-list">';
-            materials.forEach((r, i) => {
-                const f = r.fields;
-                const num = f['编号'] || '-';
-                const title = f['标题'] || '-';
-                const type = f['单选'] || '';
-                
-                html += `
-                    <div class="record-item" onclick="showDetail(${i})">
-                        <div class="record-num">${num} ${type ? `<span class="scene-badge s1">${type}</span>` : ''}</div>
-                        <div class="record-title">${title}</div>
-                    </div>
-                `;
-            });
-            html += '</div>';
-            list.innerHTML = html;
-        }
-        
-        function showDetail(index) {
-            const r = materials[index];
-            const f = r.fields;
-            
-            document.getElementById('detailInner').innerHTML = `
-                <div class="modal-title">${f['编号'] || '-'}</div>
-                <h3 style="margin-bottom:16px;">${f['标题'] || '-'}</h3>
-                
-                ${f['来源链接'] ? `
-                <div class="detail-section">
-                    <div class="detail-label">来源链接</div>
-                    <div class="detail-content"><a href="${f['来源链接'].link || f['来源链接']}" target="_blank" style="color:#667eea;">🔗 ${f['来源链接'].text || f['来源链接'].link || f['来源链接']}</a></div>
-                </div>
-                ` : ''}
-                
-                ${f['拆解结构'] ? `
-                <div class="detail-section">
-                    <div class="detail-label">拆解结构</div>
-                    <div class="detail-content">${f['拆解结构']}</div>
-                </div>
-                ` : ''}
-                
-                ${f['金句'] ? `
-                <div class="detail-section">
-                    <div class="detail-label">金句</div>
-                    <div class="detail-content" style="color:#667eea;font-style:italic;">"${f['金句']}"</div>
-                </div>
-                ` : ''}
-                
-                ${f['创意方向'] ? `
-                <div class="detail-section">
-                    <div class="detail-label">创意方向</div>
-                    <div class="detail-content">${f['创意方向']}</div>
-                </div>
-                ` : ''}
-            `;
-            
-            document.getElementById('detailModal').classList.add('show');
-        }
-        
-        function showAddModal(scene) {
-            document.getElementById('addScene').value = scene || 'scene1';
-            document.getElementById('sceneSelect').value = scene || 'scene1';
-            document.getElementById('addTitle').value = '';
-            document.getElementById('addLink').value = '';
-            document.getElementById('addStructure').value = '';
-            document.getElementById('addHighlight').value = '';
-            document.getElementById('addDirection').value = '';
-            document.getElementById('addModal').classList.add('show');
-        }
-        
-        async function submitMaterial() {
-            const title = document.getElementById('addTitle').value.trim();
-            if (!title) { showToast('请输入标题'); return; }
-            
-            showToast('添加功能开发中...');
-        }
-        
-        function closeModal(id) {
-            document.getElementById(id).classList.remove('show');
-        }
-        
-        function switchTab(tab, el) {
-            currentTab = tab;
-            document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
-            el.classList.add('active');
-            
-            if (tab === 'ideas') {
-                document.getElementById('list').innerHTML = '<div class="empty"><span>💡</span>创意方向库<br><small style="color:#999;">暂无数据</small></div>';
-            } else if (tab === 'drafts') {
-                document.getElementById('list').innerHTML = '<div class="empty"><span>✏️</span>完稿库<br><small style="color:#999;">暂无数据</small></div>';
-            } else {
-                loadMaterials();
-            }
-        }
-        
-        function openGuide() { window.open('https://zjs6667788.github.io/writing-flywheel-v1/guide.html', '_blank'); }
-        function openBitable() { window.open('https://fcn21p9cn411.feishu.cn/base/NKblbp9RzavdLYsMaHucFM1fnYm', '_blank'); }
-        
-        // 初始化
-        loadMaterials();
-    </script>
+        showResult(lastAnalysis);
+        showStatus('✅ 已记录', 'success');
+      }, 500);
+    }
+  } catch (e) {
+    // 后端不可用时，模拟分析
+    console.log('API不可用，模拟分析:', e.message);
+    lastAnalysis = {
+      title: '素材整理',
+      source_url: input.startsWith('http') ? input : '',
+      structure: '【结构分析】\n1. 开头：...\n2. 观点：...\n3. 结尾：...',
+      highlight: '【金句】\n这是一句值得记住的话。',
+      idea_direction: '【创意方向】\n可延伸的角度：...\n目标读者：...'
+    };
+    showResult(lastAnalysis);
+    showStatus('⚠️ 离线模式，仅预览', 'success');
+  }
+
+  $('analyzeBtn').disabled = false;
+}
+
+function showResult(data) {
+  const html = `
+    <div class="result-item">
+      <div class="result-label">标题</div>
+      <div class="result-content">${data.title || '-'}</div>
+    </div>
+    <div class="result-item">
+      <div class="result-label">拆解结构</div>
+      <div class="result-content">${data.structure || '-'}</div>
+    </div>
+    <div class="result-item">
+      <div class="result-label">金句</div>
+      <div class="result-content">${data.highlight || '-'}</div>
+    </div>
+    <div class="result-item">
+      <div class="result-label">创意方向</div>
+      <div class="result-content">${data.idea_direction || '-'}</div>
+    </div>
+  `;
+  $('resultContent').innerHTML = html;
+  $('resultCard').classList.add('show');
+}
+
+async function syncToFeishu() {
+  if (!lastAnalysis) return;
+
+  showStatus('📤 正在同步到飞书...', 'loading');
+
+  try {
+    const resp = await fetch(`${API_BASE}/api/sync`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(lastAnalysis)
+    });
+    const data = await resp.json();
+    if (data.code === 0) {
+      showStatus(`✅ 同步成功！编号: ${data.data.number}`, 'success');
+      lastAnalysis = null;
+      $('inputText').value = '';
+      $('resultCard').classList.remove('show');
+    } else {
+      throw new Error(data.msg);
+    }
+  } catch (e) {
+    showStatus(`⚠️ ${e.message} 请稍后重试`, 'error');
+  }
+}
+
+async function loadMaterials() {
+  try {
+    const resp = await fetch(`${API_BASE}/api/records?table=素材库`);
+    const data = await resp.json();
+    if (data.code === 0) {
+      const items = data.data || [];
+      $('count').textContent = `共 ${items.length} 条`;
+      $('materialList').innerHTML = items.map(item => `
+        <div class="material-item" onclick="showDetail('${item.record_id}')">
+          <div class="material-num">${item.fields.编号 || '-'}</div>
+          <div class="material-title">${item.fields.标题 || '-'}</div>
+        </div>
+      `).join('') || '<p style="padding: 20px; text-align: center; color: #666;">暂无素材</p>';
+    }
+  } catch (e) {
+    $('materialList').innerHTML = '<p style="padding: 20px; text-align: center; color: #666;">无法连接服务器</p>';
+  }
+}
+
+function showDetail(recordId) {
+  // TODO: 显示详情
+  alert('详情功能开发中');
+}
+
+function showStatus(msg, type) {
+  const el = $('status');
+  el.textContent = msg;
+  el.className = 'status ' + type;
+  el.style.display = 'block';
+
+  if (type !== 'loading') {
+    setTimeout(() => { el.style.display = 'none'; }, 3000);
+  }
+}
+
+// 页面加载时获取素材库
+window.onload = loadMaterials;
+</script>
+
 </body>
 </html>
