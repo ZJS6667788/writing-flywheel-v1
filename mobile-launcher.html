@@ -377,8 +377,39 @@
   .template-box .t-label { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
   .template-text { background: #0d0f18; border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; font-size: 13px; font-family: "SF Mono","Menlo","Consolas",monospace; color: var(--accent2); line-height: 1.7; word-break: break-all; }
 </style>
+<script>
+// ══════════════════════════════════════
+//  草稿接收（从 mobile-flywheel.html 跳转）
+// ══════════════════════════════════════
+(function checkDraftMaterial() {
+  var draft = localStorage.getItem('draftMaterial');
+  var draftTime = parseInt(localStorage.getItem('draftMaterialTime') || '0');
+  if (draft && Date.now() - draftTime < 3600000) { // 1小时内
+    try {
+      var data = JSON.parse(draft);
+      // 存储供后续使用
+      window.pendingDraft = data;
+      // 标记页面加载后显示提示
+      window.showDraftBanner = true;
+    } catch(e) {}
+  }
+})();
+</script>
 </head>
 <body>
+
+<!-- 刚拆解素材悬浮提示 -->
+<div id="draft-banner" style="display:none; position:fixed; top:0; left:0; right:0; background:linear-gradient(135deg,#1976D2,#2196F3); color:white; padding:12px 16px; z-index:1000; box-shadow:0 4px 12px rgba(25,118,210,0.4);">
+  <div style="display:flex; align-items:center; gap:10px;">
+    <span style="font-size:20px;">✨</span>
+    <div style="flex:1;">
+      <div style="font-size:12px; opacity:0.9;">刚刚拆解</div>
+      <div style="font-size:14px; font-weight:600;" id="draft-banner-title">-</div>
+    </div>
+    <button onclick="useDraft()" style="background:rgba(255,255,255,0.2); border:1px solid rgba(255,255,255,0.4); color:white; padding:8px 14px; border-radius:8px; font-size:13px; cursor:pointer;">✍️ 写稿</button>
+    <button onclick="closeDraftBanner()" style="background:none; border:none; color:white; font-size:18px; cursor:pointer; padding:4px 8px;">✕</button>
+  </div>
+</div>
 
 <div class="header">
   <h1>✦ 写作飞轮</h1>
@@ -1937,6 +1968,54 @@ function syncData() {
     });
 }
 syncData(); // 页面加载时自动同步
+
+// ══════════════════════════════════════
+//  草稿处理
+// ══════════════════════════════════════
+function showDraftBannerFn() {
+  if (window.showDraftBanner && window.pendingDraft) {
+    var title = window.pendingDraft.title || '未命名素材';
+    document.getElementById('draft-banner-title').textContent = title;
+    document.getElementById('draft-banner').style.display = 'block';
+    // 自动填充到命令生成器
+    var cmdInput = document.getElementById('cmd-input');
+    if (cmdInput) {
+      cmdInput.value = window.pendingDraft.source_url || title;
+      cmdInput.focus();
+    }
+  }
+}
+
+function useDraft() {
+  if (window.pendingDraft) {
+    // 复制拆解内容到剪贴板
+    var content = '【拆解结构】\n' + (window.pendingDraft.structure || '') + 
+                  '\n\n【金句】\n' + (window.pendingDraft.highlight || '') +
+                  '\n\n【创意方向】\n' + (window.pendingDraft.idea_direction || '');
+    navigator.clipboard.writeText(content).catch(function(){});
+    showToast('✓ 已复制拆解内容！切换到 WRITING-CLONE 开始写稿');
+    // 选中写作命令
+    document.querySelectorAll('.cmd-tab').forEach(function(t) { 
+      t.classList.remove('active'); 
+      if (t.dataset.cmd === 'WRITING-CLONE') t.classList.add('active');
+    });
+    document.getElementById('cmd-input').placeholder = '输入文章标题';
+    closeDraftBanner();
+  }
+}
+
+function closeDraftBanner() {
+  document.getElementById('draft-banner').style.display = 'none';
+  localStorage.removeItem('draftMaterial');
+  localStorage.removeItem('draftMaterialTime');
+}
+
+// 页面加载后显示草稿提示
+if (window.addEventListener) {
+  window.addEventListener('load', showDraftBannerFn);
+} else {
+  window.onload = showDraftBannerFn;
+}
 </script>
 </body>
 </html>
