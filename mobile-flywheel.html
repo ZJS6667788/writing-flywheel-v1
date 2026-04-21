@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+<title>写作飞轮</title>
+<style>
+:root {
+  --primary: #E53935;
+  --secondary: #FF6F00;
+  --bg: #FAFAFA;
+  --card: #FFFFFF;
+  --text: #212121;
+  --text-light: #757575;
+  --border: #E0E0E0;
+  --success: #43A047;
+  --radius: 16px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding-bottom: 90px;
+}
+
+/* 顶部Hero */
+.hero {
+  background: linear-gradient(135deg, var(--primary) 0%, #FF5722 100%);
+  color: white;
+  padding: 32px 20px 40px;
+  text-align: center;
+  position: relative;
+}
+
+.hero h1 {
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.hero p {
+  font-size: 14px;
+  opacity: 0.95;
+}
+
+.hero-stat {
+  display: inline-flex;
+  background: rgba(255,255,255,0.2);
+  border-radius: 20px;
+  padding: 6px 16px;
+  margin-top: 12px;
+  font-size: 13px;
+}
+
+/* 主操作区 */
+.main-action {
+  padding: 0 16px;
+  margin-top: -24px;
+}
+
+.scenario-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.scenario-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 20px 16px;
+  text-align: center;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: 2px solid transparent;
+}
+
+.scenario-card:active {
+  transform: scale(0.97);
+}
+
+.scenario-card.active {
+  border-color: var(--primary);
+}
+
+.scenario-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 10px;
+  font-size: 24px;
+}
+
+.scenario-card:nth-child(1) .scenario-icon { background: #FFEBEE; }
+.scenario-card:nth-child(2) .scenario-icon { background: #FFF3E0; }
+
+.scenario-card h3 {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.scenario-card p {
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+/* 输入区 */
+.input-section {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  display: none;
+}
+
+.input-section.show { display: block; }
+
+.input-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.input-header h3 {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.back-btn {
+  background: none;
+  border: none;
+  font-size: 14px;
+  color: var(--primary);
+  cursor: pointer;
+}
+
+textarea {
+  width: 100%;
+  min-height: 100px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font-size: 15px;
+  resize: none;
+  outline: none;
+  transition: border-color 0.2s;
+  background: #FAFAFA;
+}
+
+textarea:focus {
+  border-color: var(--primary);
+  background: white;
+}
+
+.hint {
+  font-size: 12px;
+  color: var(--text-light);
+  margin-top: 8px;
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 16px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 12px;
+  transition: opacity 0.2s;
+}
+
+.btn-primary:active { opacity: 0.9; }
+.btn-primary:disabled { background: #BDBDBD; cursor: not-allowed; }
+
+/* 结果区 */
+.result-section {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-top: 16px;
+  display: none;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+.result-section.show { display: block; }
+
+.result-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.result-header h3 {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--success);
+}
+
+.save-btn {
+  background: var(--success);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.result-item {
+  margin-bottom: 16px;
+}
+
+.result-label {
+  font-size: 12px;
+  color: var(--text-light);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.result-content {
+  font-size: 14px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  color: #424242;
+}
+
+/* 底部快捷入口 */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  display: flex;
+  border-top: 1px solid var(--border);
+  padding: 10px 0;
+  padding-bottom: max(10px, env(safe-area-inset-bottom));
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+}
+
+.nav-item {
+  flex: 1;
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-light);
+  cursor: pointer;
+}
+
+.nav-item .icon {
+  font-size: 22px;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.nav-item.active { color: var(--primary); }
+.nav-item.active .icon { transform: scale(1.1); }
+
+/* Toast提示 */
+.toast {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0,0,0,0.8);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+
+.toast.show { opacity: 1; }
+
+/* 素材库列表 */
+.material-list {
+  padding: 16px;
+}
+
+.material-item {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+}
+
+.material-item .title {
+  font-size: 15px;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.material-item .meta {
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.material-item .tag {
+  display: inline-block;
+  background: #FFEBEE;
+  color: var(--primary);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  margin-right: 6px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-light);
+}
+
+.empty-state .icon { font-size: 48px; margin-bottom: 12px; }
+.empty-state p { font-size: 14px; }
+
+/* 场景切换动画 */
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.input-section.show, .result-section.show {
+  animation: slideIn 0.3s ease;
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>🔥 写作飞轮</h1>
+  <p>爆款自动滚进你的稿子</p>
+  <div class="hero-stat">
+    📊 本月：拆解 <span id="statAnalyze">-</span> 篇 · 灵感 <span id="statIdea">-</span> 条
+  </div>
+</div>
+
+<div class="main-action" id="mainView">
+  <div class="scenario-grid">
+    <div class="scenario-card" onclick="selectScenario('analyze')">
+      <div class="scenario-icon">🔥</div>
+      <h3>拆爆款</h3>
+      <p>链接丢进去<br>自动拆解结构</p>
+    </div>
+    <div class="scenario-card" onclick="selectScenario('idea')">
+      <div class="scenario-icon">💡</div>
+      <h3>记灵感</h3>
+      <p>随手记灵感<br>自动整理归档</p>
+    </div>
+  </div>
+
+  <div class="scenario-card" style="background: linear-gradient(135deg, #1976D2, #2196F3); color: white; text-align: left; padding: 20px;" onclick="window.open('mobile-launcher.html', '_self')">
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <span style="font-size: 32px;">📝</span>
+      <div>
+        <h3 style="color: white;">去写稿</h3>
+        <p style="color: rgba(255,255,255,0.85);">打开素材库，开始写作</p>
+      </div>
+      <span style="margin-left: auto;">→</span>
+    </div>
+  </div>
+
+  <div class="empty-state" id="emptyState" style="display: none;">
+    <div class="icon">📭</div>
+    <p>暂无素材</p>
+  </div>
+  <div id="materialList" class="material-list"></div>
+</div>
+
+<!-- 拆爆款输入 -->
+<div class="main-action">
+  <div class="input-section" id="inputSection">
+    <div class="input-header">
+      <button class="back-btn" onclick="backToMain()">← 返回</button>
+      <h3 id="inputTitle">拆爆款</h3>
+    </div>
+    <textarea id="inputText" placeholder="粘贴文章链接，或直接输入文字..."></textarea>
+    <div class="hint" id="inputHint">支持微信公众号、飞书文档等链接</div>
+    <button class="btn-primary" id="submitBtn" onclick="submit()">
+      🤖 开始分析
+    </button>
+  </div>
+
+  <div class="result-section" id="resultSection">
+    <div class="result-header">
+      <h3>✨ 分析完成</h3>
+      <button class="save-btn" onclick="saveToFeishu()">💾 保存素材</button>
+    </div>
+    <div id="resultContent"></div>
+    <button class="btn-primary" style="background: #1976D2; margin-top: 16px;" onclick="writeNow()">
+      ✍️ 立即写稿
+    </button>
+  </div>
+</div>
+
+<div class="bottom-nav">
+  <div class="nav-item active" onclick="switchTab('home')">
+    <span class="icon">🏠</span>
+    飞轮
+  </div>
+  <div class="nav-item" onclick="switchTab('library')">
+    <span class="icon">📚</span>
+    素材库
+  </div>
+  <div class="nav-item" onclick="switchTab('ideas')">
+    <span class="icon">💡</span>
+    创意
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// API配置
+const API_BASE = 'http://127.0.0.1:3847';
+const TABLES = {
+  素材库: { token: 'NKblbp9RzavdLYsMaHucFM1fnYm', id: 'tblbia5WvpLjxjMA' },
+  创意方向: { token: 'NKblbp9RzavdLYsMaHucFM1fnYm', id: 'tblHNBaMJcLULg9G' }
+};
+
+let currentScenario = null;
+let currentResult = null;
+
+function $(id) { return document.getElementById(id); }
+
+function showToast(msg, duration = 2000) {
+  const toast = $('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), duration);
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.nav-item').forEach((el, i) => {
+    el.classList.toggle('active', ['home', 'library', 'ideas'][i] === tab);
+  });
+
+  if (tab === 'library') {
+    loadMaterials();
+  } else if (tab === 'home') {
+    backToMain();
+  } else if (tab === 'ideas') {
+    showToast('创意库开发中');
+  }
+}
+
+function selectScenario(type) {
+  currentScenario = type;
+
+  document.querySelectorAll('.scenario-card').forEach(el => el.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+
+  $('inputTitle').textContent = type === 'analyze' ? '🔥 拆爆款' : '💡 记灵感';
+  $('inputHint').textContent = type === 'analyze' ? '支持微信公众号、飞书文档等链接' : '随手记下你的灵感...';
+  $('inputText').placeholder = type === 'analyze'
+    ? '粘贴文章链接，或直接输入要分析的文字...'
+    : '写下你的灵感、想法、金句...';
+  $('submitBtn').textContent = type === 'analyze' ? '🤖 开始分析' : '💾 保存灵感';
+
+  $('mainView').style.display = 'none';
+  $('inputSection').classList.add('show');
+  $('resultSection').classList.remove('show');
+
+  $('inputText').focus();
+}
+
+function backToMain() {
+  $('mainView').style.display = 'block';
+  $('inputSection').classList.remove('show');
+  $('resultSection').classList.remove('show');
+  document.querySelectorAll('.scenario-card').forEach(el => el.classList.remove('active'));
+  $('inputText').value = '';
+  currentScenario = null;
+}
+
+async function submit() {
+  const input = $('inputText').value.trim();
+  if (!input) {
+    showToast('请输入内容');
+    return;
+  }
+
+  $('submitBtn').disabled = true;
+  $('submitBtn').textContent = '⏳ 分析中...';
+
+  try {
+    let result;
+
+    if (currentScenario === 'analyze' && input.startsWith('http')) {
+      // URL分析
+      const resp = await fetch(`${API_BASE}/api/analyze`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: input })
+      });
+      const data = await resp.json();
+      if (data.code === 0) {
+        result = data.data;
+      } else {
+        throw new Error(data.msg);
+      }
+    } else {
+      // 文字分析/灵感保存
+      result = {
+        title: currentScenario === 'analyze' ? '素材整理' : '灵感记录',
+        source_url: input.startsWith('http') ? input : '',
+        structure: currentScenario === 'analyze'
+          ? '【内容结构分析】\n1. 开头钩子：\n2. 核心观点：\n3. 论证方式：\n4. 结尾升华：'
+          : '【灵感要点】',
+        highlight: currentScenario === 'analyze'
+          ? '【值得借鉴的表达】\n\n'
+          : input,
+        idea_direction: '【可延伸的角度】\n• 适用话题：\n• 目标读者：\n• 差异化角度：'
+      };
+    }
+
+    currentResult = result;
+    showResult(result);
+
+  } catch (e) {
+    // 离线模式
+    currentResult = {
+      title: '素材整理',
+      source_url: input.startsWith('http') ? input : '',
+      structure: '【内容结构分析】\n1. 开头钩子：\n2. 核心观点：\n3. 论证方式：\n4. 结尾升华：',
+      highlight: input.length > 100 ? input.substring(0, 100) + '...' : input,
+      idea_direction: '【可延伸的角度】\n• 适用话题：\n• 目标读者：\n• 差异化角度：'
+    };
+    showResult(currentResult);
+    showToast('⚠️ 离线模式');
+  }
+
+  $('submitBtn').disabled = false;
+  $('submitBtn').textContent = currentScenario === 'analyze' ? '🤖 开始分析' : '💾 保存灵感';
+}
+
+function showResult(result) {
+  const html = `
+    <div class="result-item">
+      <div class="result-label">标题</div>
+      <div class="result-content">${result.title || '-'}</div>
+    </div>
+    <div class="result-item">
+      <div class="result-label">结构拆解</div>
+      <div class="result-content">${result.structure || '-'}</div>
+    </div>
+    <div class="result-item">
+      <div class="result-label">值得借鉴</div>
+      <div class="result-content">${result.highlight || '-'}</div>
+    </div>
+    <div class="result-item">
+      <div class="result-label">创意方向</div>
+      <div class="result-content">${result.idea_direction || '-'}</div>
+    </div>
+  `;
+  $('resultContent').innerHTML = html;
+  $('resultSection').classList.add('show');
+  $('inputSection').classList.remove('show');
+
+  // 更新统计
+  const count = parseInt(localStorage.getItem('analyzeCount') || '0') + 1;
+  localStorage.setItem('analyzeCount', count);
+  $('statAnalyze').textContent = count;
+}
+
+async function saveToFeishu() {
+  if (!currentResult) return;
+
+  showToast('📤 同步中...');
+
+  try {
+    const resp = await fetch(`${API_BASE}/api/sync`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(currentResult)
+    });
+    const data = await resp.json();
+    if (data.code === 0) {
+      showToast('✅ 保存成功！编号: ' + data.data.number);
+      currentResult = null;
+      backToMain();
+    } else {
+      throw new Error(data.msg);
+    }
+  } catch (e) {
+    showToast('⚠️ ' + e.message);
+  }
+}
+
+function writeNow() {
+  // 跳转到素材库/写作界面
+  window.location.href = 'mobile-launcher.html';
+}
+
+async function loadMaterials() {
+  $('mainView').style.display = 'block';
+  $('inputSection').classList.remove('show');
+  $('resultSection').classList.remove('show');
+
+  try {
+    const resp = await fetch(`${API_BASE}/api/records?table=素材库`);
+    const data = await resp.json();
+
+    if (data.code === 0 && data.data.length > 0) {
+      $('emptyState').style.display = 'none';
+      $('materialList').innerHTML = data.data.slice(0, 10).map(item => `
+        <div class="material-item" onclick="openMaterial('${item.record_id}')">
+          <div class="title">${item.fields.标题 || '-'}</div>
+          <div class="meta">
+            <span class="tag">${item.fields.编号 || '-'}</span>
+            ${item.fields.来源链接 ? '<a href="' + item.fields.来源链接 + '" onclick="event.stopPropagation()">原文链接</a>' : ''}
+          </div>
+        </div>
+      `).join('');
+    } else {
+      $('emptyState').style.display = 'block';
+      $('materialList').innerHTML = '';
+    }
+  } catch (e) {
+    $('emptyState').style.display = 'block';
+  }
+}
+
+function openMaterial(recordId) {
+  showToast('详情页开发中');
+}
+
+// 初始化统计
+$('statAnalyze').textContent = localStorage.getItem('analyzeCount') || '0';
+$('statIdea').textContent = localStorage.getItem('ideaCount') || '0';
+</script>
+
+</body>
+</html>
