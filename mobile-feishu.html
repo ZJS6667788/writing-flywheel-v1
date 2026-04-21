@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>飞书助手 - 素材库管理</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f7;
+            min-height: 100vh;
+            padding: 16px;
+            padding-bottom: 80px;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        .header h1 { font-size: 20px; margin-bottom: 4px; }
+        .header p { font-size: 12px; opacity: 0.8; }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .card-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 10px;
+        }
+        .btn:active { transform: scale(0.98); }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .btn-secondary {
+            background: #f0f0f5;
+            color: #333;
+        }
+        .btn-danger {
+            background: #fff0f0;
+            color: #e74c3c;
+        }
+        .btn-success {
+            background: #f0fff4;
+            color: #27ae60;
+        }
+        
+        .record-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .record-item {
+            padding: 12px;
+            border-bottom: 1px solid #f0f0f5;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .record-item:last-child { border-bottom: none; }
+        .record-item:active { background: #f5f5f7; }
+        
+        .record-num {
+            font-size: 12px;
+            color: #667eea;
+            font-weight: 600;
+        }
+        .record-title {
+            font-size: 14px;
+            color: #333;
+            margin-top: 4px;
+            line-height: 1.4;
+        }
+        .record-link {
+            font-size: 12px;
+            color: #999;
+            margin-top: 4px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .delete-btn {
+            color: #e74c3c;
+            font-size: 13px;
+            padding: 6px 12px;
+            background: #fff0f0;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+        .loading::after {
+            content: '...';
+            animation: dots 1.5s infinite;
+        }
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
+        
+        .tab-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            display: flex;
+            border-top: 1px solid #eee;
+            padding: 8px 0;
+            padding-bottom: max(8px, env(safe-area-inset-bottom));
+        }
+        .tab-item {
+            flex: 1;
+            text-align: center;
+            padding: 8px;
+            font-size: 11px;
+            color: #999;
+            cursor: pointer;
+        }
+        .tab-item.active {
+            color: #667eea;
+        }
+        .tab-item span {
+            display: block;
+            font-size: 20px;
+            margin-bottom: 2px;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 100;
+            align-items: flex-end;
+        }
+        .modal.show { display: flex; }
+        .modal-content {
+            background: white;
+            width: 100%;
+            border-radius: 16px 16px 0 0;
+            padding: 20px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .modal-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        .modal-close {
+            position: absolute;
+            right: 16px;
+            top: 16px;
+            font-size: 24px;
+            color: #999;
+            cursor: pointer;
+        }
+        
+        .input-group {
+            margin-bottom: 16px;
+        }
+        .input-group label {
+            display: block;
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 6px;
+        }
+        .input-group input,
+        .input-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            font-size: 14px;
+            resize: none;
+        }
+        .input-group textarea { height: 100px; }
+        
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.75);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 200;
+            display: none;
+        }
+        .toast.show { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); } }
+        
+        .empty {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+        .empty span { font-size: 48px; display: block; margin-bottom: 12px; }
+        
+        .guide-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px;
+            background: #f8f8fc;
+            border-radius: 8px;
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+            margin-top: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📊 飞书助手</h1>
+        <p>素材库管理工具</p>
+    </div>
+    
+    <!-- 素材库列表 -->
+    <div id="materialList" class="card">
+        <div class="card-title">📚 素材库 <span id="materialCount" style="font-weight:normal;color:#999;font-size:12px;"></span></div>
+        <div id="materialContent" class="loading">加载中</div>
+    </div>
+    
+    <!-- 快捷操作 -->
+    <div class="card">
+        <div class="card-title">⚡ 快捷操作</div>
+        <button class="btn btn-success" onclick="showAddModal()">➕ 添加素材</button>
+        <button class="btn btn-secondary" onclick="openGuide()">📖 查看使用指南</button>
+        <button class="btn btn-secondary" onclick="openBitable()">📋 打开飞书表格</button>
+    </div>
+    
+    <!-- Tab Bar -->
+    <div class="tab-bar">
+        <div class="tab-item active" onclick="showTab('material')">
+            <span>📚</span>
+            素材库
+        </div>
+        <div class="tab-item" onclick="showTab('idea')">
+            <span>💡</span>
+            创意方向
+        </div>
+        <div class="tab-item" onclick="showTab('guide')">
+            <span>📖</span>
+            指南
+        </div>
+    </div>
+    
+    <!-- 添加素材弹窗 -->
+    <div id="addModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">➕ 添加新素材</div>
+            <div class="modal-close" onclick="closeModal('addModal')">×</div>
+            
+            <div class="input-group">
+                <label>标题 *</label>
+                <input type="text" id="addTitle" placeholder="输入文章标题">
+            </div>
+            <div class="input-group">
+                <label>来源链接</label>
+                <input type="text" id="addLink" placeholder="微信公众号链接">
+            </div>
+            <div class="input-group">
+                <label>拆解结构</label>
+                <textarea id="addStructure" placeholder="文章结构拆解..."></textarea>
+            </div>
+            <div class="input-group">
+                <label>金句</label>
+                <input type="text" id="addHighlight" placeholder="触动读者的金句">
+            </div>
+            <div class="input-group">
+                <label>创意方向</label>
+                <textarea id="addDirection" placeholder="可延伸的写作方向..."></textarea>
+            </div>
+            
+            <button class="btn btn-primary" onclick="addMaterial()">✅ 确认添加</button>
+        </div>
+    </div>
+    
+    <!-- 素材详情弹窗 -->
+    <div id="detailModal" class="modal">
+        <div class="modal-content" id="detailContent">
+            <div class="modal-close" onclick="closeModal('detailModal')">×</div>
+            <div id="detailInner"></div>
+        </div>
+    </div>
+    
+    <!-- Toast -->
+    <div id="toast" class="toast"></div>
+    
+    <script>
+        // 飞书 API 配置
+        const APP_ID = 'cli_a9492e187b789bdd';
+        const APP_SECRET = 'EPZT2dEYrNBCzrHKVacmJxEkhzZzRdYs';
+        const BASE_TOKEN = 'NKblbp9RzavdLYsMaHucFM1fnYm';
+        const TABLE_ID = 'tblbia5WvpLjxjMA';
+        
+        let materials = [];
+        let token = null;
+        let tokenExpire = 0;
+        
+        // Toast 提示
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+        
+        // 获取 token
+        async function getToken() {
+            if (token && Date.now() < tokenExpire) return token;
+            
+            try {
+                const resp = await fetch('https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ app_id: APP_ID, app_secret: APP_SECRET })
+                });
+                const data = await resp.json();
+                token = data.tenant_access_token;
+                tokenExpire = Date.now() + 7000 * 1000;
+                return token;
+            } catch (e) {
+                showToast('获取token失败');
+                return null;
+            }
+        }
+        
+        // 获取素材列表
+        async function loadMaterials() {
+            const content = document.getElementById('materialContent');
+            content.innerHTML = '<div class="loading">加载中</div>';
+            
+            const t = await getToken();
+            if (!t) return;
+            
+            try {
+                const resp = await fetch(
+                    `https://open.feishu.cn/open-apis/bitable/v1/apps/${BASE_TOKEN}/tables/${TABLE_ID}/records?page_size=100`,
+                    { headers: { 'Authorization': 'Bearer ' + t } }
+                );
+                const data = await resp.json();
+                
+                if (data.code === 0) {
+                    materials = data.data.items;
+                    renderMaterials();
+                } else {
+                    content.innerHTML = '<div class="empty"><span>⚠️</span>加载失败</div>';
+                }
+            } catch (e) {
+                content.innerHTML = '<div class="empty"><span>⚠️</span>网络错误</div>';
+            }
+        }
+        
+        // 渲染素材列表
+        function renderMaterials() {
+            const content = document.getElementById('materialContent');
+            const count = document.getElementById('materialCount');
+            count.textContent = `(${materials.length}条)`;
+            
+            if (materials.length === 0) {
+                content.innerHTML = '<div class="empty"><span>📭</span>暂无素材</div>';
+                return;
+            }
+            
+            let html = '<div class="record-list">';
+            materials.forEach((r, i) => {
+                const fields = r.fields;
+                const num = fields['编号'] || '-';
+                const title = fields['标题'] || '-';
+                const link = fields['来源链接'];
+                const linkText = link ? (link.text || link.link || '-') : '-';
+                
+                html += `
+                    <div class="record-item" onclick="showDetail(${i})">
+                        <div class="record-num">${num}</div>
+                        <div class="record-title">${title}</div>
+                        ${linkText && linkText !== '-' ? `<div class="record-link">🔗 ${linkText}</div>` : ''}
+                    </div>
+                `;
+            });
+            html += '</div>';
+            content.innerHTML = html;
+        }
+        
+        // 显示素材详情
+        function showDetail(index) {
+            const r = materials[index];
+            const fields = r.fields;
+            const num = fields['编号'] || '-';
+            const title = fields['标题'] || '-';
+            const structure = fields['拆解结构'] || '暂无';
+            const highlight = fields['金句'] || '暂无';
+            const direction = fields['创意方向'] || '暂无';
+            
+            document.getElementById('detailInner').innerHTML = `
+                <div class="modal-title">${num}</div>
+                <h3 style="margin-bottom:12px;">${title}</h3>
+                
+                <div style="margin-bottom:16px;">
+                    <div style="font-size:13px;color:#666;margin-bottom:4px;">拆解结构</div>
+                    <div style="font-size:14px;line-height:1.6;white-space:pre-wrap;">${structure}</div>
+                </div>
+                
+                <div style="margin-bottom:16px;">
+                    <div style="font-size:13px;color:#666;margin-bottom:4px;">金句</div>
+                    <div style="font-size:14px;color:#667eea;font-style:italic;">"${highlight}"</div>
+                </div>
+                
+                <div style="margin-bottom:16px;">
+                    <div style="font-size:13px;color:#666;margin-bottom:4px;">创意方向</div>
+                    <div style="font-size:14px;line-height:1.6;">${direction}</div>
+                </div>
+                
+                <button class="btn btn-danger" onclick="deleteRecord('${r.record_id}', ${index})">🗑️ 删除此素材</button>
+            `;
+            
+            document.getElementById('detailModal').classList.add('show');
+        }
+        
+        // 删除记录（需要后端支持，这里仅提示）
+        async function deleteRecord(recordId, index) {
+            if (!confirm('确定删除这条素材吗？')) return;
+            
+            showToast('删除需要授权，请联系管理员');
+            closeModal('detailModal');
+            
+            // 实际删除需要后端 API，暂时只能看
+            /*
+            const t = await getToken();
+            const resp = await fetch(
+                `https://open.feishu.cn/open-apis/bitable/v1/apps/${BASE_TOKEN}/tables/${TABLE_ID}/records/batch_delete`,
+                {
+                    method: 'POST',
+                    headers: { 
+                        'Authorization': 'Bearer ' + t,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ records: [recordId] })
+                }
+            );
+            const data = await resp.json();
+            if (data.code === 0) {
+                showToast('删除成功');
+                loadMaterials();
+            } else {
+                showToast('删除失败');
+            }
+            */
+        }
+        
+        // 显示添加弹窗
+        function showAddModal() {
+            document.getElementById('addTitle').value = '';
+            document.getElementById('addLink').value = '';
+            document.getElementById('addStructure').value = '';
+            document.getElementById('addHighlight').value = '';
+            document.getElementById('addDirection').value = '';
+            document.getElementById('addModal').classList.add('show');
+        }
+        
+        // 添加素材（需要后端支持）
+        async function addMaterial() {
+            const title = document.getElementById('addTitle').value.trim();
+            if (!title) {
+                showToast('请输入标题');
+                return;
+            }
+            
+            showToast('添加功能正在开发中...');
+            // 实际添加需要后端 API
+        }
+        
+        // 关闭弹窗
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('show');
+        }
+        
+        // Tab 切换
+        function showTab(tab) {
+            document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+            event.target.closest('.tab-item').classList.add('active');
+            
+            if (tab === 'guide') {
+                openGuide();
+            }
+        }
+        
+        // 打开指南
+        function openGuide() {
+            window.open('https://zjs6667788.github.io/writing-flywheel-v1/guide.html', '_blank');
+        }
+        
+        // 打开飞书表格
+        function openBitable() {
+            window.open('https://fcn21p9cn411.feishu.cn/base/NKblbp9RzavdLYsMaHucFM1fnYm', '_blank');
+        }
+        
+        // 初始化
+        loadMaterials();
+    </script>
+</body>
+</html>
