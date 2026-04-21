@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>写作飞轮 - 飞书表格使用指南</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+        }
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+        .content {
+            padding: 40px;
+        }
+        h2 {
+            color: #667eea;
+            font-size: 1.6em;
+            margin: 30px 0 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+        h3 {
+            color: #764ba2;
+            font-size: 1.3em;
+            margin: 25px 0 15px;
+        }
+        h4 {
+            color: #555;
+            font-size: 1.1em;
+            margin: 20px 0 10px;
+        }
+        p {
+            margin: 15px 0;
+        }
+        .diagram {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: "SF Mono", "Monaco", "Consolas", monospace;
+            font-size: 0.95em;
+            line-height: 1.6;
+            overflow-x: auto;
+        }
+        .diagram .folder {
+            color: #667eea;
+        }
+        .diagram .sub {
+            color: #764ba2;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        th {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+        tr:hover {
+            background: #f8f9fa;
+        }
+        .step {
+            background: linear-gradient(135deg, #667eea20, #764ba220);
+            border-left: 4px solid #667eea;
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .step-num {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            font-size: 0.85em;
+            margin-right: 10px;
+        }
+        .workflow {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .workflow-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+        }
+        .workflow-item .num {
+            background: #667eea;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        .workflow-item .arrow {
+            color: #667eea;
+            font-size: 1.5em;
+            margin: 0 15px;
+        }
+        .highlight {
+            background: #fff3cd;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #ffc107;
+        }
+        .highlight strong {
+            color: #856404;
+        }
+        .tag {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            margin-right: 5px;
+        }
+        .view-box {
+            background: #e8f5e9;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .view-box strong {
+            color: #2e7d32;
+        }
+        ul, ol {
+            margin: 15px 0;
+            padding-left: 25px;
+        }
+        li {
+            margin: 8px 0;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: "SF Mono", "Monaco", "Consolas", monospace;
+            color: #667eea;
+        }
+        .link-box {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            margin: 30px 0;
+        }
+        .link-box a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.2em;
+        }
+        .footer {
+            text-align: center;
+            padding: 30px;
+            background: #f8f9fa;
+            color: #666;
+            font-size: 0.9em;
+        }
+        @media (max-width: 768px) {
+            .content {
+                padding: 20px;
+            }
+            .header {
+                padding: 30px 20px;
+            }
+            .header h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 写作飞轮</h1>
+            <p>飞书表格使用指南 - 让爆款拆解与创意生成形成闭环</p>
+        </div>
+        
+        <div class="content">
+            <h2>📊 表格结构总览</h2>
+            
+            <div class="diagram">
+<span class="folder">📂 飞书多维表格</span>
+├── <span class="folder">📚 素材库（ENTRY）</span>
+│   └── 爆款文章拆解 + 原始素材沉淀
+│
+├── <span class="folder">💡 创意方向库（IDEA）</span>
+│   └── 独立管理的写作方向卡片
+│
+├── <span class="folder">📝 场景1完稿（爆款延伸）</span>
+│   └── 基于爆款拆解后的延伸写作
+│
+└── <span class="folder">✍️ 场景2完稿（原创首发）</span>
+    └── 原创灵感 + 创意方向 → 新文章
+            </div>
+
+            <!-- 素材库 -->
+            <h2>一、素材库（ENTRY）</h2>
+            <p>用于收集和拆解爆款文章，沉淀可复用的创意。</p>
+            
+            <h3>字段说明</h3>
+            <table>
+                <tr><th>字段</th><th>说明</th></tr>
+                <tr><td>编号</td><td>ENTRY-XXX 格式，如 ENTRY-001</td></tr>
+                <tr><td>标题</td><td>爆款文章标题</td></tr>
+                <tr><td>来源链接</td><td>原文链接（转载）或灵感来源</td></tr>
+                <tr><td>拆解结构</td><td>文章的行文框架（开头→推进→结尾）</td></tr>
+                <tr><td>金句</td><td>触动你的句子</td></tr>
+                <tr><td>创意积木</td><td>可复用的写作模块</td></tr>
+                <tr><td>创意方向</td><td>从本文提取的可迁移场景方向</td></tr>
+                <tr><td>完稿内容</td><td>对应的完稿正文</td></tr>
+                <tr><td>单选</td><td>转载 / 原创</td></tr>
+                <tr><td>日期</td><td>入库时间</td></tr>
+            </table>
+
+            <h3>使用流程</h3>
+            <div class="step">
+                <strong><span class="step-num">1</span>发现爆款 → 入库</strong>
+                <p>复制微信公众号链接，在「素材库」新增记录，填入编号、标题、来源链接</p>
+            </div>
+            <div class="step">
+                <strong><span class="step-num">2</span>拆解爆款</strong>
+                <p>完善「拆解结构」「金句」「创意积木」</p>
+            </div>
+            <div class="step">
+                <strong><span class="step-num">3</span>提取创意方向</strong>
+                <p>在「创意方向」字段，写出可迁移的场景</p>
+            </div>
+
+            <!-- 创意方向库 -->
+            <h2>二、创意方向库（IDEA）</h2>
+            
+            <div class="highlight">
+                <strong>💡 这是写作飞轮的核心！</strong><br>
+                每个 IDEA 是一张独立的写作卡片，关联参考素材，设置优先级，追踪写作状态。
+            </div>
+            
+            <h3>字段说明</h3>
+            <table>
+                <tr><th>字段</th><th>说明</th></tr>
+                <tr><td>编号</td><td>IDEA-XXX 格式，如 IDEA-001</td></tr>
+                <tr><td>推荐标题</td><td>这个方向用什么标题</td></tr>
+                <tr><td>核心角度</td><td>独特切入视角</td></tr>
+                <tr><td>目标读者</td><td>读者画像</td></tr>
+                <tr><td>核心论点</td><td>一句话主张</td></tr>
+                <tr><td>创意积木</td><td>本次要用的技巧组合</td></tr>
+                <tr><td>参考素材</td><td>关联的 ENTRY 编号/链接</td></tr>
+                <tr><td>优先级</td><td><span class="tag">★★★ 高</span><span class="tag">★★☆ 中</span><span class="tag">★☆☆ 低</span></td></tr>
+                <tr><td>状态</td><td>待写作 / 写作中 / 已完成</td></tr>
+            </table>
+
+            <h3>使用流程</h3>
+            <div class="step">
+                <strong><span class="step-num">1</span>生成创意方向</strong>
+                <p>从「素材库」选中 1-3 条相关素材，基于「创意方向」字段生成新的 IDEA 卡片</p>
+            </div>
+            <div class="step">
+                <strong><span class="step-num">2</span>关联参考素材</strong>
+                <p>在「参考素材」填入关联的 ENTRY 编号</p>
+            </div>
+            <div class="step">
+                <strong><span class="step-num">3</span>设置优先级</strong>
+                <p><span class="tag">★★★ 高</span>立刻要写 &nbsp; <span class="tag">★★☆ 中</span>本周要写 &nbsp; <span class="tag">★☆☆ 低</span>以后再说</p>
+            </div>
+            <div class="step">
+                <strong><span class="step-num">4</span>追踪状态</strong>
+                <p>待写作 → 写作中 → 已完成</p>
+            </div>
+
+            <h3>视图建议</h3>
+            <div class="view-box"><strong>按优先级分组</strong>：快速看到哪些要优先写</div>
+            <div class="view-box"><strong>按状态分组</strong>：看到当前写作进度</div>
+            <div class="view-box"><strong>全部卡片</strong>：总览所有创意方向</div>
+
+            <!-- 场景1完稿 -->
+            <h2>三、场景1完稿（爆款延伸）</h2>
+            <p>基于已有爆款的「创意方向」延伸写作。</p>
+            
+            <table>
+                <tr><th>字段</th><th>说明</th></tr>
+                <tr><td>编号</td><td>DRAFT-S1-XXX，如 DRAFT-S1-001</td></tr>
+                <tr><td>标题</td><td>新文章标题</td></tr>
+                <tr><td>关联素材</td><td>对应的 ENTRY 编号/链接</td></tr>
+                <tr><td>参考创意</td><td>引用的 IDEA 编号</td></tr>
+                <tr><td>完稿正文</td><td>完整文章</td></tr>
+                <tr><td>发布日期</td><td>发布后填</td></tr>
+                <tr><td>发布平台</td><td>公众号 / 小红书 / 微博 / 知乎 / 其他</td></tr>
+            </table>
+
+            <!-- 场景2完稿 -->
+            <h2>四、场景2完稿（原创首发）</h2>
+            <p>新的灵感/素材 + 借鉴创意方向 → 原创文章。</p>
+            
+            <table>
+                <tr><th>字段</th><th>说明</th></tr>
+                <tr><td>编号</td><td>DRAFT-O-XXX，如 DRAFT-O-001</td></tr>
+                <tr><td>标题</td><td>新文章标题</td></tr>
+                <tr><td>素材来源</td><td>灵感来源</td></tr>
+                <tr><td>使用的创意</td><td>借鉴的爆款创意编号</td></tr>
+                <tr><td>完稿正文</td><td>完整文章</td></tr>
+                <tr><td>发布日期</td><td>发布后填</td></tr>
+                <tr><td>发布平台</td><td>公众号 / 小红书 / 微博 / 知乎 / 其他</td></tr>
+            </table>
+
+            <!-- 工作流示例 -->
+            <h2>五、完整工作流示例</h2>
+            
+            <h3>场景1：爆款拆解 → 完稿</h3>
+            <div class="workflow">
+                <div class="workflow-item"><span class="num">1</span>发现爆款文章</div>
+                <div class="workflow-item"><span class="num">2</span>「素材库」新增 ENTRY-009</div>
+                <div class="workflow-item"><span class="num">3</span>拆解爆款：填拆解结构、金句、创意积木</div>
+                <div class="workflow-item"><span class="num">4</span>提取创意方向</div>
+                <div class="workflow-item"><span class="num">5</span>「创意方向库」新建 IDEA-005</div>
+                <div class="workflow-item"><span class="num">6</span>执行写作</div>
+                <div class="workflow-item"><span class="num">7</span>「场景1完稿」新建记录</div>
+                <div class="workflow-item"><span class="num">8</span>发布后填日期和平台</div>
+            </div>
+
+            <h3>场景2：灵感 → 原创文章</h3>
+            <div class="workflow">
+                <div class="workflow-item"><span class="num">1</span>有了灵感/发现新素材</div>
+                <div class="workflow-item"><span class="num">2</span>「素材库」新增 ENTRY-010（单选=原创）</div>
+                <div class="workflow-item"><span class="num">3</span>查看「创意方向库」，找可借鉴的 IDEA</div>
+                <div class="workflow-item"><span class="num">4</span>「创意方向库」新建 IDEA-006</div>
+                <div class="workflow-item"><span class="num">5</span>执行写作</div>
+                <div class="workflow-item"><span class="num">6</span>「场景2完稿」新建记录</div>
+                <div class="workflow-item"><span class="num">7</span>发布</div>
+            </div>
+
+            <!-- 待手动添加 -->
+            <h2>六、待手动添加的选项</h2>
+            <p>创建表格后，请在 UI 中手动添加以下选项：</p>
+
+            <h3>创意方向库 - 优先级字段</h3>
+            <p><span class="tag">★★★ 高</span> <span class="tag">★★☆ 中</span> <span class="tag">★☆☆ 低</span></p>
+
+            <h3>创意方向库 - 状态字段</h3>
+            <p><span class="tag">待写作</span> <span class="tag">写作中</span> <span class="tag">已完成</span></p>
+
+            <h3>场景1/2完稿 - 发布平台字段</h3>
+            <p><span class="tag">公众号</span> <span class="tag">小红书</span> <span class="tag">微博</span> <span class="tag">知乎</span> <span class="tag">其他</span></p>
+
+            <!-- 表格链接 -->
+            <div class="link-box">
+                <p>📎 点击打开飞书表格</p>
+                <a href="https://fcn21p9cn411.feishu.cn/base/NKblbp9RzavdLYsMaHucFM1fnYm" target="_blank">
+                    打开写作飞轮表格 →
+                </a>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>📚 写作飞轮 - 让爆款拆解与创意生成形成闭环</p>
+            <p>移动端入口：<a href="https://zjs6667788.github.io/writing-flywheel-v1/mobile-launcher.html">writing-flywheel-v1</a></p>
+        </div>
+    </div>
+</body>
+</html>
