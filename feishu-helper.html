@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>飞书助手 - 写作飞轮</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            font-size: 1.8em;
+            margin-bottom: 5px;
+        }
+        .header p {
+            opacity: 0.9;
+        }
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .card-title {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .card-title .icon {
+            font-size: 1.3em;
+        }
+        input[type="text"], input[type="url"] {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #eee;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+            margin-bottom: 12px;
+        }
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #eee;
+            border-radius: 12px;
+            font-size: 15px;
+            min-height: 120px;
+            resize: vertical;
+            font-family: inherit;
+            margin-bottom: 12px;
+        }
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .btn {
+            width: 100%;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .btn-danger {
+            background: #ff4757;
+            color: white;
+        }
+        .btn-danger:hover {
+            background: #ff3344;
+        }
+        .btn-secondary {
+            background: #f1f3f5;
+            color: #666;
+        }
+        .btn-secondary:hover {
+            background: #e9ecef;
+        }
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        .tab {
+            padding: 10px 20px;
+            border: 2px solid #eee;
+            border-radius: 25px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+        }
+        .tab.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        .tab:hover:not(.active) {
+            border-color: #667eea;
+            color: #667eea;
+        }
+        .result-box {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 16px;
+            display: none;
+        }
+        .result-box.show {
+            display: block;
+        }
+        .result-item {
+            margin-bottom: 12px;
+        }
+        .result-label {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 4px;
+        }
+        .result-value {
+            font-size: 14px;
+            color: #333;
+            word-break: break-all;
+        }
+        .status {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+        .status.loading {
+            color: #667eea;
+        }
+        .status.success {
+            color: #2ed573;
+        }
+        .status.error {
+            color: #ff4757;
+        }
+        .spinner {
+            width: 30px;
+            height: 30px;
+            border: 3px solid #eee;
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .material-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .material-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            gap: 12px;
+        }
+        .material-item:last-child {
+            border-bottom: none;
+        }
+        .material-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .material-title {
+            font-size: 14px;
+            color: #333;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .material-meta {
+            font-size: 12px;
+            color: #999;
+            margin-top: 2px;
+        }
+        .idea-item {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+        .idea-item:last-child {
+            border-bottom: none;
+        }
+        .idea-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .idea-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+        }
+        .idea-priority {
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            background: #fff3cd;
+            color: #856404;
+        }
+        .idea-meta {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 8px;
+        }
+        .idea-btn {
+            width: 100%;
+            padding: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .idea-btn:hover {
+            opacity: 0.9;
+        }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+        .back-link:hover {
+            opacity: 1;
+        }
+        .quick-links {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 16px;
+        }
+        .quick-link {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s;
+        }
+        .quick-link:hover {
+            background: #667eea;
+            color: white;
+        }
+        .quick-link .icon {
+            font-size: 1.8em;
+            margin-bottom: 8px;
+        }
+        .quick-link .label {
+            font-size: 13px;
+            text-align: center;
+        }
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 14px;
+            z-index: 1000;
+            animation: toastIn 0.3s ease;
+        }
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-20px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="mobile-launcher.html" class="back-link">← 返回飞轮首页</a>
+        
+        <div class="header">
+            <h1>📊 飞书助手</h1>
+            <p>智能拆解 · 一键同步 · 高效写作</p>
+        </div>
+
+        <!-- Tab 切换 -->
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('extract')">🔍 链接拆解</div>
+            <div class="tab" onclick="switchTab('materials')">📚 素材管理</div>
+            <div class="tab" onclick="switchTab('ideas')">💡 创意方向</div>
+        </div>
+
+        <!-- 链接拆解 Tab -->
+        <div id="tab-extract" class="card">
+            <div class="card-title">
+                <span class="icon">🔍</span>
+                <span>粘贴链接，自动拆解</span>
+            </div>
+            
+            <input type="url" id="articleUrl" placeholder="粘贴微信公众号文章链接..." />
+            
+            <button class="btn btn-primary" id="extractBtn" onclick="extractArticle()">
+                <span>🚀</span>
+                <span>开始拆解</span>
+            </button>
+
+            <div class="result-box" id="extractResult">
+                <div id="extractStatus"></div>
+                <div id="extractPreview"></div>
+            </div>
+
+            <div id="editSection" style="display: none; margin-top: 20px;">
+                <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
+                <h4 style="margin-bottom: 12px; color: #333;">📝 确认并同步</h4>
+                
+                <input type="text" id="editTitle" placeholder="标题" />
+                
+                <textarea id="editStructure" placeholder="拆解结构"></textarea>
+                <textarea id="editGold" placeholder="金句"></textarea>
+                <textarea id="editIdea" placeholder="创意方向"></textarea>
+                <textarea id="editBlocks" placeholder="创意积木"></textarea>
+                
+                <select id="editType" style="width: 100%; padding: 14px 16px; border: 2px solid #eee; border-radius: 12px; font-size: 16px; margin-bottom: 12px;">
+                    <option value="转载">转载</option>
+                    <option value="原创">原创</option>
+                </select>
+                
+                <button class="btn btn-primary" id="syncBtn" onclick="syncToFeishu()">
+                    <span>📤</span>
+                    <span>同步到飞书素材库</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 素材管理 Tab -->
+        <div id="tab-materials" class="card" style="display: none;">
+            <div class="card-title">
+                <span class="icon">📚</span>
+                <span>素材库管理</span>
+            </div>
+            
+            <div id="materialList" class="material-list">
+                <div class="status">加载中...</div>
+            </div>
+            
+            <button class="btn btn-secondary" style="margin-top: 16px;" onclick="loadMaterials()">
+                🔄 刷新列表
+            </button>
+        </div>
+
+        <!-- 创意方向 Tab -->
+        <div id="tab-ideas" class="card" style="display: none;">
+            <div class="card-title">
+                <span class="icon">💡</span>
+                <span>创意方向库</span>
+            </div>
+            
+            <div id="ideaList">
+                <div class="status">加载中...</div>
+            </div>
+            
+            <button class="btn btn-secondary" style="margin-top: 16px;" onclick="loadIdeas()">
+                🔄 刷新列表
+            </button>
+        </div>
+
+        <!-- 快捷入口 -->
+        <div class="quick-links">
+            <a href="guide.html" class="quick-link">
+                <span class="icon">📖</span>
+                <span class="label">使用指南</span>
+            </a>
+            <a href="https://fcn21p9cn411.feishu.cn/base/NKblbp9RzavdLYsMaHucFM1fnYm" target="_blank" class="quick-link">
+                <span class="icon">📋</span>
+                <span class="label">打开飞书表格</span>
+            </a>
+        </div>
+    </div>
+
+    <div id="toast" class="toast" style="display: none;"></div>
+
+    <script>
+        // 飞书 API 配置
+        const FEISHU_CONFIG = {
+            baseToken: 'NKblbp9RzavdLYsMaHucFM1fnYm',
+            materialTableId: 'tblbia5WvpLjxjMA',
+            ideaTableId: 'tblHNBaMJcLULg9G',
+            userToken: localStorage.getItem('feishu_user_token') || ''
+        };
+
+        // Tab 切换
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.card').forEach(c => c.style.display = 'none');
+            
+            document.querySelector(`.tab:nth-child(${tab === 'extract' ? 1 : tab === 'materials' ? 2 : 3})`).classList.add('active');
+            document.getElementById('tab-' + tab).style.display = 'block';
+            
+            if (tab === 'materials') loadMaterials();
+            if (tab === 'ideas') loadIdeas();
+        }
+
+        // Toast 提示
+        function showToast(msg, duration = 2000) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.style.display = 'block';
+            setTimeout(() => toast.style.display = 'none', duration);
+        }
+
+        // 提取文章（模拟，实际需要后端或浏览器插件）
+        async function extractArticle() {
+            const url = document.getElementById('articleUrl').value.trim();
+            if (!url) {
+                showToast('请输入文章链接');
+                return;
+            }
+
+            const btn = document.getElementById('extractBtn');
+            const result = document.getElementById('extractResult');
+            const status = document.getElementById('extractStatus');
+            const preview = document.getElementById('extractPreview');
+
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner" style="width:20px;height:20px;border-width:2px;margin:0;"></span><span>分析中...</span>';
+            result.classList.add('show');
+            status.innerHTML = '<div class="status loading"><div class="spinner"></div>正在抓取并分析文章...</div>';
+
+            // 模拟 AI 拆解（实际需要调用后端 API）
+            setTimeout(() => {
+                // 模拟数据
+                const mockData = {
+                    title: extractTitle(url),
+                    structure: '1. 开头：冲突场景引入\n2. 发展：人物故事展开\n3. 高潮：核心观点揭示\n4. 结尾：情感共鸣收束',
+                    gold: '真正的成长，是学会在不确定中保持前进的勇气。',
+                    idea: '职场新人如何快速获得认可：从小事做起，用成果证明价值',
+                    blocks: '故事+金句结构\n反常识开头\n情感共鸣结尾'
+                };
+
+                // 填充表单
+                document.getElementById('editTitle').value = mockData.title;
+                document.getElementById('editStructure').value = mockData.structure;
+                document.getElementById('editGold').value = mockData.gold;
+                document.getElementById('editIdea').value = mockData.idea;
+                document.getElementById('editBlocks').value = mockData.blocks;
+
+                // 显示预览
+                preview.innerHTML = `
+                    <div class="result-item">
+                        <div class="result-label">标题</div>
+                        <div class="result-value">${mockData.title}</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">拆解结构</div>
+                        <div class="result-value">${mockData.structure}</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">金句</div>
+                        <div class="result-value">${mockData.gold}</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">创意方向</div>
+                        <div class="result-value">${mockData.idea}</div>
+                    </div>
+                `;
+
+                status.innerHTML = '<div class="status success">✅ 拆解完成，请确认内容后同步</div>';
+                document.getElementById('editSection').style.display = 'block';
+                
+                btn.disabled = false;
+                btn.innerHTML = '<span>🚀</span><span>开始拆解</span>';
+            }, 2000);
+        }
+
+        // 从 URL 提取标题（模拟）
+        function extractTitle(url) {
+            try {
+                const match = url.match(/[\/&](\d+)[&\/]/);
+                return '文章标题 #' + (match ? match[1] : Math.floor(Math.random() * 1000));
+            } catch {
+                return '待定标题';
+            }
+        }
+
+        // 同步到飞书
+        async function syncToFeishu() {
+            const data = {
+                title: document.getElementById('editTitle').value,
+                url: document.getElementById('articleUrl').value,
+                structure: document.getElementById('editStructure').value,
+                gold: document.getElementById('editGold').value,
+                idea: document.getElementById('editIdea').value,
+                blocks: document.getElementById('editBlocks').value,
+                type: document.getElementById('editType').value
+            };
+
+            if (!data.title) {
+                showToast('标题不能为空');
+                return;
+            }
+
+            const btn = document.getElementById('syncBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner" style="width:20px;height:20px;border-width:2px;margin:0;"></span><span>同步中...</span>';
+
+            // TODO: 调用飞书 API
+            // 实际需要后端中转或用户授权
+            setTimeout(() => {
+                btn.disabled = false;
+                btn.innerHTML = '<span>📤</span><span>同步到飞书素材库</span>';
+                showToast('✅ 同步成功！');
+                
+                // 清空表单
+                document.getElementById('articleUrl').value = '';
+                document.getElementById('editSection').style.display = 'none';
+                document.getElementById('extractResult').classList.remove('show');
+            }, 1500);
+        }
+
+        // 加载素材列表
+        async function loadMaterials() {
+            const list = document.getElementById('materialList');
+            list.innerHTML = '<div class="status loading"><div class="spinner"></div>加载中...</div>';
+
+            // TODO: 调用飞书 API
+            setTimeout(() => {
+                list.innerHTML = `
+                    <div class="material-item">
+                        <div class="material-info">
+                            <div class="material-title">ENTRY-001: 捡垃圾，是不是一种自我感动的善行</div>
+                            <div class="material-meta">转载 · 2026-04-21</div>
+                        </div>
+                        <button class="btn btn-danger" style="width:auto;padding:8px 12px;font-size:12px;" onclick="deleteMaterial('rec001')">删除</button>
+                    </div>
+                    <div class="material-item">
+                        <div class="material-info">
+                            <div class="material-title">ENTRY-002: 一位中科院院士的成绩单</div>
+                            <div class="material-meta">转载 · 2026-04-21</div>
+                        </div>
+                        <button class="btn btn-danger" style="width:auto;padding:8px 12px;font-size:12px;" onclick="deleteMaterial('rec002')">删除</button>
+                    </div>
+                    <div class="material-item">
+                        <div class="material-info">
+                            <div class="material-title">ENTRY-003: 自从知道了"熵"的概念...</div>
+                            <div class="material-meta">转载 · 2026-04-21</div>
+                        </div>
+                        <button class="btn btn-danger" style="width:auto;padding:8px 12px;font-size:12px;" onclick="deleteMaterial('rec003')">删除</button>
+                    </div>
+                `;
+            }, 500);
+        }
+
+        // 删除素材
+        async function deleteMaterial(id) {
+            if (!confirm('确定要删除这条素材吗？')) return;
+            showToast('删除成功');
+            loadMaterials();
+        }
+
+        // 加载创意方向列表
+        async function loadIdeas() {
+            const list = document.getElementById('ideaList');
+            list.innerHTML = '<div class="status loading"><div class="spinner"></div>加载中...</div>';
+
+            // TODO: 调用飞书 API
+            setTimeout(() => {
+                list.innerHTML = `
+                    <div class="idea-item">
+                        <div class="idea-header">
+                            <span class="idea-title">IDEA-001: 职场新人如何快速成长</span>
+                            <span class="idea-priority">★★★ 高</span>
+                        </div>
+                        <div class="idea-meta">参考素材: ENTRY-001, ENTRY-003</div>
+                        <button class="idea-btn" onclick="writeWithIdea('IDEA-001')">
+                            ✍️ 开始写作
+                        </button>
+                    </div>
+                    <div class="idea-item">
+                        <div class="idea-header">
+                            <span class="idea-title">IDEA-002: 公积金使用技巧</span>
+                            <span class="idea-priority">★★☆ 中</span>
+                        </div>
+                        <div class="idea-meta">参考素材: ENTRY-004</div>
+                        <button class="idea-btn" onclick="writeWithIdea('IDEA-002')">
+                            ✍️ 开始写作
+                        </button>
+                    </div>
+                `;
+            }, 500);
+        }
+
+        // 使用创意方向写作
+        function writeWithIdea(ideaId) {
+            showToast(`已加载 ${ideaId}，跳转写作页面...`);
+            // 跳转到写作页面，传递 ideaId 参数
+            setTimeout(() => {
+                window.location.href = 'mobile-launcher.html?idea=' + ideaId;
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
