@@ -677,22 +677,44 @@ async function submit() {
 }
 
 function generateOfflineResult(input) {
+  const isUrl = input.startsWith('http');
+  
   if (currentScenario === 'idea') {
+    // 记灵感模式：根据输入类型生成内容
     return {
-      title: '灵感记录',
-      source_url: '',
-      structure: '【灵感要点】\n• 核心想法：\n• 触发点：\n• 可延伸方向：',
-      highlight: input,
-      idea_direction: '【下一步行动】\n• 可以写什么：\n• 对应素材：\n• 写作方向：'
+      title: isUrl ? extractUrlTitle(input) : (input.length > 25 ? input.substring(0, 25) + '...' : input),
+      source_url: isUrl ? input : '',
+      structure: '【灵感捕捉】\n• 触发点：\n• 核心洞察：\n• 可延伸方向：',
+      highlight: isUrl ? '链接灵感' : input,
+      idea_direction: '【写作计划】\n• 适合写成什么形式：\n• 目标读者是谁：\n• 核心观点是什么：\n• 需要补充什么素材：'
     };
   }
+  
+  // 拆解模式
   return {
     title: input.length > 30 ? input.substring(0, 30) + '...' : input,
-    source_url: input.startsWith('http') ? input : '',
+    source_url: isUrl ? input : '',
     structure: '【内容结构分析】\n1. 开头钩子：\n2. 核心观点：\n3. 论证方式：\n4. 结尾升华：',
-    highlight: input.startsWith('http') ? '待提取' : (input.length > 100 ? input.substring(0, 100) + '...' : input),
+    highlight: isUrl ? '待提取' : (input.length > 100 ? input.substring(0, 100) + '...' : input),
     idea_direction: '【可延伸的角度】\n• 适用话题：\n• 目标读者：\n• 差异化角度：'
   };
+}
+
+// 从 URL 提取简单标题
+function extractUrlTitle(url) {
+  try {
+    const urlObj = new URL(url);
+    // 尝试从路径提取有意义的词
+    const path = urlObj.pathname;
+    const parts = path.split('/').filter(p => p.length > 2 && p.length < 20);
+    if (parts.length > 0) {
+      return parts[parts.length - 1].replace(/[-_]/g, ' ');
+    }
+    // 用域名作为 fallback
+    return urlObj.hostname.replace('www.', '');
+  } catch (e) {
+    return '链接灵感';
+  }
 }
 
 function showResult(result) {
