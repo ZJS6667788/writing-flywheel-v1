@@ -850,6 +850,33 @@
     color: var(--muted);
     margin-bottom: 12px;
   }
+  .draft-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+  }
+  .draft-btn {
+    flex: 1;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    border: none;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .draft-btn-feishu {
+    background: linear-gradient(135deg, #3370ff 0%, #005ce6 100%);
+    color: white;
+  }
+  .draft-btn-feishu:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(51,112,255,0.3);
+  }
 
   /* ── 空状态 ── */
   .empty-state {
@@ -1592,6 +1619,9 @@ function renderDraftsScene3() {
 
   list.innerHTML = drafts.map(function(d) {
     var expanded = window['_draft_' + d.id] ? ' expanded' : '';
+    var feishuBtn = d.feishu_url 
+      ? '<a class="draft-btn draft-btn-feishu" href="' + d.feishu_url + '" target="_blank">📄 飞书文档</a>'
+      : '<button class="draft-btn draft-btn-feishu" onclick="syncToFeishu(\'' + d.id + '\')">📤 同步到飞书</button>';
     return '<div class="draft-card' + expanded + '" id="draft-scene3-' + d.id + '">' +
       '<div class="draft-head" onclick="toggleDraftScene3(\'' + d.id + '\')">' +
         '<div class="draft-num">' + d.id + '</div>' +
@@ -1605,6 +1635,7 @@ function renderDraftsScene3() {
       '<div class="draft-detail">' +
         '<div class="draft-preview">' + d.preview + '</div>' +
         '<div class="draft-meta-detail">' + d.tags.map(function(t) { return '🏷 ' + t; }).join(' ') + '</div>' +
+        '<div class="draft-actions">' + feishuBtn + '</div>' +
       '</div>' +
     '</div>';
   }).join('');
@@ -1675,6 +1706,13 @@ function copyIdeaDetails(id) {
   var text = '【创意方向：IDEA-' + id + '】\n标题：' + idea.title + '\n角度：' + idea.angle + '\n论点：' + idea.points + '\n积木：' + idea.tags.join(' + ') + '\n参考：' + idea.source;
   copyText(text);
   showToast('✓ 详情已复制');
+}
+
+function syncToFeishu(draftId) {
+  showToast('正在同步到飞书...', false);
+  // 复制同步命令到剪贴板
+  copyText('/FEISHU-SYNC ' + draftId);
+  showToast('✓ 命令已复制，请在 WorkBuddy 中执行');
 }
 
 // ══ 初始化 ══
