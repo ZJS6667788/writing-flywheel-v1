@@ -439,7 +439,7 @@
 <!-- Status Bar — 点击可展开对应区块 -->
 <div class="status-bar">
   <div class="status-chip" onclick="scrollToSection('entry-section')">
-    <div class="num accent" id="count-entries">4</div>
+    <div class="num accent" id="count-entries">9</div>
     <div class="label">素材条目</div>
     <div class="hint">点击查看</div>
   </div>
@@ -1483,6 +1483,50 @@
           <div class="delete-confirm-btns">
             <button class="btn-confirm-delete" onclick="doDelete('008')">确认隐藏</button>
             <button class="btn-cancel-delete" onclick="cancelDelete('008')">取消</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry-card" id="card-009">
+      <div class="entry-head" onclick="toggleEntry('009')">
+        <div class="entry-id">009</div>
+        <div class="entry-title-wrap">
+          <div class="entry-title">广州六运小区餐饮店6月起全面清退？</div>
+          <div class="entry-meta">羊城晚报（微信公众号） · 2026-04-22</div>
+        </div>
+        <div class="entry-expand-icon">▼</div>
+      </div>
+      <div class="entry-detail">
+        <div class="entry-summary">
+          <div class="entry-summary-title">核心结构</div>
+          <div class="entry-structure">政策风声 → 记者走访反差 → 多方声音 → 历史溯源 → 政策背景 → 未来展望</div>
+          <div class="entry-summary-title" style="margin-top:10px">精选金句</div>
+          <div class="entry-quotes">
+            <div class="entry-quote">"六运小区95%都是'住改商'，而新的热食证去年就不再允许办理。"</div>
+            <div class="entry-quote">"天塌了，一口热乎的都吃不上了。"</div>
+            <div class="entry-quote">"50平方米的商铺月租约22000元，妥妥的广州小区商铺租金天花板。"</div>
+          </div>
+        </div>
+        <div class="entry-bricks">
+          <div class="entry-bricks-title">创意积木</div>
+          <div class="brick-tags">
+            <span class="brick-tag">反差开头法</span>
+            <span class="brick-tag">数据锚定法</span>
+            <span class="brick-tag">历史溯源法</span>
+            <span class="brick-tag">多方声音法</span>
+            <span class="brick-tag">未来预测收束</span>
+          </div>
+        </div>
+        <div class="entry-actions">
+          <button class="entry-btn btn-copy-cg" onclick="copyEntryCmd('009')">📋 复制拆解命令</button>
+          <button class="entry-btn btn-delete" onclick="askDelete('009')">🗑</button>
+        </div>
+        <div class="delete-confirm" id="dc-009">
+          <div class="delete-confirm-text"><strong>⚠️ 删除说明</strong>页面删除仅为隐藏，实际文件仍在 WorkBuddy 素材库中。</div>
+          <div class="delete-confirm-btns">
+            <button class="btn-confirm-delete" onclick="doDelete('009')">确认隐藏</button>
+            <button class="btn-cancel-delete" onclick="cancelDelete('009')">取消</button>
           </div>
         </div>
       </div>
