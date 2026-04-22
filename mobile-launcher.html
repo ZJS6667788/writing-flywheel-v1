@@ -3,1554 +3,1030 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>写作飞轮 · 手机端</title>
+<title>写作飞轮</title>
 <style>
   :root {
-    --bg: #0f1117;
-    --card: #1a1d27;
-    --card2: #1e2130;
-    --border: #2a2d3a;
-    --border2: #353848;
+    --bg: #0a0c10;
+    --surface: #12151e;
+    --card: #181c28;
+    --card-hover: #1e2234;
+    --border: #252a3a;
+    --border-light: #2e3348;
     --accent: #7c6af7;
-    --accent2: #5ecbf7;
-    --accent3: #f77c6a;
+    --accent-light: #9580ff;
+    --accent-glow: rgba(124, 106, 247, 0.2);
+    --blue: #4da6ff;
+    --blue-light: #70bbff;
     --gold: #f7c76a;
     --green: #6af7a5;
     --text: #e8eaf0;
-    --muted: #8890a4;
-    --success: #6af7a5;
+    --text-secondary: #a0a8c0;
+    --muted: #5c6280;
     --danger: #f76a6a;
-    --warn: #f7a86a;
-    --idea-bg: #1a2230;
-    --draft-bg: #1a2028;
+    --success: #6af7a5;
+    --shadow: 0 4px 24px rgba(0,0,0,0.4);
+    --radius: 14px;
+    --radius-sm: 10px;
   }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  
   body {
     background: var(--bg);
     color: var(--text);
     font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
     min-height: 100vh;
-    padding: 0 16px 60px;
+    padding-bottom: 100px;
+    overflow-x: hidden;
   }
 
-  /* ── Header ── */
-  .header { text-align: center; padding: 24px 0 16px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
-  .header h1 { font-size: 22px; font-weight: 700; letter-spacing: 1px; }
-  .header .sub { font-size: 13px; color: var(--muted); margin-top: 4px; }
-
-  /* ── Search Bar ── */
-  .search-bar { display: none; margin-bottom: 18px; }
-  .search-bar.active { display: block; }
-  .search-input-wrap { display: flex; gap: 8px; margin-bottom: 8px; }
-  .search-input { flex: 1; background: var(--card); border: 1px solid var(--accent); border-radius: 10px; padding: 10px 12px; font-size: 14px; color: var(--text); outline: none; font-family: inherit; }
-  .search-close { background: var(--card); border: 1px solid var(--border); color: var(--muted); border-radius: 8px; padding: 8px 12px; font-size: 12px; cursor: pointer; }
-  .search-results { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 10px; max-height: 200px; overflow-y: auto; }
-  .search-result-item { padding: 8px 10px; border-radius: 8px; cursor: pointer; transition: background 0.15s; }
-  .search-result-item:hover { background: rgba(124,106,247,0.1); }
-  .search-result-type { font-size: 10px; color: var(--accent); font-weight: 600; }
-  .search-result-title { font-size: 13px; color: var(--text); margin-top: 2px; }
-  .search-no-result { text-align: center; color: var(--muted); font-size: 13px; padding: 20px; }
-
-  /* ── Refresh Bar ── */
-  .refresh-bar { display: flex; align-items: center; justify-content: space-between; background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 10px 14px; margin-bottom: 18px; gap: 8px; }
-  .refresh-info { flex: 1; }
-  .search-btn { background: rgba(124,106,247,0.15); border: 1px solid rgba(124,106,247,0.3); color: var(--accent); padding: 8px 12px; border-radius: 8px; font-size: 13px; cursor: pointer; flex-shrink: 0; transition: all 0.2s; }
-  .search-btn:active { transform: scale(0.96); }
-  .search-btn.active { background: var(--accent); color: #fff; }
-  .refresh-title { font-size: 13px; font-weight: 600; }
-  .refresh-note { font-size: 11px; color: var(--muted); margin-top: 2px; }
-  .refresh-note strong { color: var(--accent2); }
-  .refresh-btn { background: rgba(124,106,247,0.15); border: 1px solid rgba(124,106,247,0.3); color: var(--accent); padding: 8px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; flex-shrink: 0; transition: all 0.2s; }
-  .refresh-btn:active { transform: scale(0.96); }
-  .feishu-btn { background: rgba(94,203,247,0.15); border: 1px solid rgba(94,203,247,0.3); color: var(--accent2); padding: 8px 12px; border-radius: 8px; font-size: 13px; cursor: pointer; flex-shrink: 0; text-decoration: none; transition: all 0.2s; }
-  .feishu-btn:active { transform: scale(0.96); }
-
-  /* ── Status Bar ── */
-  .status-bar { display: flex; gap: 10px; margin-bottom: 22px; }
-  .status-chip { flex: 1; background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 12px 6px; text-align: center; cursor: pointer; transition: border-color 0.2s; }
-  .status-chip:hover, .status-chip:active { border-color: var(--border2); }
-  .status-chip .num { font-size: 26px; font-weight: 800; line-height: 1; }
-  .status-chip .num.accent  { color: var(--accent); }
-  .status-chip .num.accent2 { color: var(--accent2); }
-  .status-chip .num.accent3 { color: var(--gold); }
-  .status-chip .label { font-size: 11px; color: var(--muted); margin-top: 4px; letter-spacing: 0.5px; }
-  .status-chip .hint { font-size: 9px; color: var(--muted); margin-top: 2px; }
-
-  /* ── Section Title ── */
-  .section-title { font-size: 12px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; padding-left: 2px; }
-
-  /* ── Flywheel Flow ── */
-  .flow { display: flex; align-items: center; justify-content: center; margin: 12px 0 22px; overflow-x: auto; }
-  .flow-step { display: flex; flex-direction: column; align-items: center; min-width: 60px; }
-  .flow-icon { width: 40px; height: 40px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 5px; }
-  .flow-step:nth-child(1) .flow-icon { background: rgba(124,106,247,0.15); }
-  .flow-step:nth-child(3) .flow-icon { background: rgba(94,203,247,0.15); }
-  .flow-step:nth-child(5) .flow-icon { background: rgba(247,199,106,0.15); }
-  .flow-step:nth-child(7) .flow-icon { background: rgba(106,247,165,0.15); }
-  .flow-label { font-size: 11px; color: var(--muted); text-align: center; }
-  .flow-arrow { color: var(--border); font-size: 16px; margin: 0 2px; padding-top: 10px; }
-
-  /* ── Command Generator ── */
-  .cmd-gen { background: linear-gradient(135deg, rgba(124,106,247,0.1) 0%, rgba(94,203,247,0.08) 100%); border: 1.5px solid rgba(124,106,247,0.35); border-radius: 16px; padding: 16px 14px 14px; margin-bottom: 22px; position: relative; overflow: hidden; }
-  .cmd-gen::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 16px 16px 0 0; }
-  .cmd-gen-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
-  .cmd-gen-title { font-size: 15px; font-weight: 700; }
-  
-  /* 命令选项卡 */
-  .cmd-tabs { display: flex; gap: 6px; margin-bottom: 12px; }
-  .tab-num { font-size: 11px; font-weight: 700; color: var(--accent); }
-  .cmd-tab.active[data-cmd="IDEA-GEN"] .tab-num { color: var(--accent2); }
-  .cmd-tab.active[data-cmd="WRITING-CLONE"] .tab-num { color: var(--gold); }
-  .tab-name { font-size: 11px; color: var(--muted); }
-  .cmd-tab.active .tab-name { color: var(--text); }
-  
-  /* 输入区域 */
-  .cmd-input-wrap { position: relative; margin-bottom: 10px; }
-  .cmd-input { width: 100%; background: rgba(15,17,23,0.8); border: 1px solid var(--border2); border-radius: 10px; padding: 11px 80px 11px 12px; font-size: 13px; color: var(--text); outline: none; font-family: inherit; transition: border-color 0.2s; -webkit-appearance: none; }
-  .cmd-input:focus { border-color: var(--accent); }
-  .cmd-input::placeholder { color: rgba(136,144,164,0.55); font-size: 12px; }
-  .cmd-paste-btn { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: rgba(124,106,247,0.15); color: var(--accent); border: none; border-radius: 7px; padding: 5px 10px; font-size: 11px; font-weight: 600; cursor: pointer; }
-  .cmd-paste-btn:active { opacity: 0.7; }
-  
-  /* 提示 */
-  .cmd-hint { display: flex; align-items: center; gap: 6px; background: rgba(15,17,23,0.5); border-radius: 8px; padding: 8px 10px; margin-bottom: 12px; }
-  .hint-icon { font-size: 12px; }
-  .hint-text { font-size: 11px; color: var(--muted); line-height: 1.4; }
-  
-  /* 结果 */
-  .cmd-result { display: none; background: rgba(15,17,23,0.9); border: 1px solid rgba(94,203,247,0.3); border-radius: 10px; padding: 10px 12px; margin-bottom: 10px; }
-  .cmd-result.show { display: block; }
-  .cmd-result-label { font-size: 10px; color: var(--muted); letter-spacing: 0.5px; margin-bottom: 5px; text-transform: uppercase; }
-  .cmd-result-cmd { font-size: 12px; color: var(--accent2); font-family: "SF Mono","Menlo","Consolas",monospace; word-break: break-all; line-height: 1.6; }
-  
-  /* 按钮 */
-  .cmd-btns { display: flex; gap: 8px; }
-  .cmd-btn { flex: 1; padding: 11px 0; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; border: none; transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 6px; -webkit-tap-highlight-color: transparent; }
-  .cmd-btn:active { transform: scale(0.96); }
-  .cmd-btn-go { background: linear-gradient(135deg, var(--accent), #5e6af7); color: #fff; }
-  .cmd-btn-go:disabled { background: rgba(124,106,247,0.2); color: rgba(124,106,247,0.5); cursor: not-allowed; transform: none; }
-  .cmd-btn-copy { background: linear-gradient(135deg, var(--accent2), #3ab5e7); color: #fff; }
-  .cmd-btn-clear { background: rgba(136,144,164,0.1); color: var(--muted); border: 1px solid var(--border); flex: 0 0 auto; padding: 11px 16px; }
-  .cmd-tip { font-size: 11px; color: var(--success); text-align: center; margin-top: 8px; opacity: 0; transition: opacity 0.3s; }
-  .cmd-tip.show { opacity: 1; }
-  .copy-hint { font-size: 11px; color: var(--success); margin-top: 6px; opacity: 0; transition: opacity 0.3s; }
-  .copy-hint.show { opacity: 1; }
-  
-  /* Tab 激活态增强 */
-  .cmd-tab { flex: 1; background: rgba(15,17,23,0.6); border: 1px solid var(--border2); border-radius: 10px; padding: 8px 4px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 2px; transition: all 0.15s; }
-  .cmd-tab:active { transform: scale(0.96); }
-  .cmd-tab.active { background: rgba(124,106,247,0.2); border: 1.5px solid var(--accent); box-shadow: 0 0 0 2px rgba(124,106,247,0.15); }
-  .cmd-tab.active[data-cmd="IDEA-GEN"] { background: rgba(94,203,247,0.2); border-color: var(--accent2); box-shadow: 0 0 0 2px rgba(94,203,247,0.15); }
-  .cmd-tab.active[data-cmd="WRITING-CLONE"] { background: rgba(247,199,106,0.2); border-color: var(--gold); box-shadow: 0 0 0 2px rgba(247,199,106,0.15); }
-
-  /* ── Command Cards ── */
-  .cmd-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 16px 14px 12px; margin-bottom: 12px; cursor: pointer; transition: border-color 0.15s, transform 0.1s; position: relative; overflow: hidden; }
-  .cmd-card:active { transform: scale(0.98); border-color: var(--accent); }
-  .cmd-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; border-radius: 16px 16px 0 0; }
-  .cmd-card:nth-child(1)::before { background: var(--accent); }
-  .cmd-card:nth-child(2)::before { background: var(--accent2); }
-  .cmd-card:nth-child(3)::before { background: var(--gold); }
-  .cmd-card .tag { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; padding: 2px 8px; border-radius: 20px; margin-bottom: 6px; }
-  .cmd-card:nth-child(1) .tag { background: rgba(124,106,247,0.15); color: var(--accent); }
-  .cmd-card:nth-child(2) .tag { background: rgba(94,203,247,0.15); color: var(--accent2); }
-  .cmd-card:nth-child(3) .tag { background: rgba(247,199,106,0.15); color: var(--gold); }
-  .cmd-card .cmd-text { font-size: 15px; font-weight: 600; margin-bottom: 4px; font-family: "SF Mono","Menlo","Consolas",monospace; }
-  .cmd-card .cmd-desc { font-size: 13px; color: var(--muted); line-height: 1.5; }
-  .cmd-card .copy-hint { font-size: 11px; color: var(--success); margin-top: 6px; opacity: 0; transition: opacity 0.3s; }
-  .cmd-card .copy-hint.show { opacity: 1; }
-  
-  /* 统一复制提示样式 */
-  .统一复制提示 { font-size: 11px; color: var(--success); margin-top: 6px; opacity: 0; transition: opacity 0.3s; }
-
-  /* ── Divider ── */
-  .divider { height: 1px; background: var(--border); margin: 22px 0; }
-
-  /* ════════════════════════════════════════
-     通用可展开区块（创意方向 & 完稿）
-  ════════════════════════════════════════ */
-
-  /* 区块头部（点击展开/收起） */
-  .block-head {
-    display: flex; align-items: center; gap: 10px;
-    padding: 13px 14px;
+  /* ── 顶部状态栏 ── */
+  .top-bar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: linear-gradient(180deg, var(--bg) 0%, var(--bg) 80%, transparent 100%);
+    padding: 16px 16px 24px;
+  }
+  .top-bar-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .logo-icon {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, var(--accent), #5e6af7);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 4px 12px rgba(124,106,247,0.3);
+  }
+  .logo-text {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+  .logo-sub {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 1px;
+  }
+  .sync-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
     background: var(--card);
     border: 1px solid var(--border);
-    border-radius: 14px;
-    margin-bottom: 10px;
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .sync-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--muted);
+  }
+  .sync-badge.ok .sync-dot { background: var(--success); }
+  .sync-badge.ok .sync-time { color: var(--success); }
+  .sync-badge.fail .sync-dot { background: var(--danger); }
+  .sync-badge.fail .sync-time { color: var(--danger); }
+
+  /* ── 核心操作区 ── */
+  .action-zone {
+    padding: 0 16px 20px;
+  }
+  .action-tabs {
+    display: flex;
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 4px;
+    margin-bottom: 16px;
+    gap: 4px;
+  }
+  .action-tab {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 12px 8px;
+    border-radius: var(--radius-sm);
     cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-    user-select: none;
+    transition: all 0.2s;
+    border: none;
+    background: none;
+    color: var(--muted);
+    font-family: inherit;
+  }
+  .action-tab.active {
+    background: var(--card-hover);
+    color: var(--text);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+  .action-tab-icon { font-size: 22px; line-height: 1; }
+  .action-tab-name { font-size: 13px; font-weight: 600; }
+  .action-tab-desc { font-size: 10px; opacity: 0.7; }
+
+  /* 命令输入框 */
+  .input-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 12px;
+    position: relative;
     transition: border-color 0.2s;
   }
-  .block-head:active { opacity: 0.85; }
-  .block-head.open { border-color: var(--border2); }
+  .input-card:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+  .input-label {
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .input-label-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+  .input-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  .cmd-input {
+    flex: 1;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    font-size: 14px;
+    color: var(--text);
+    outline: none;
+    font-family: inherit;
+    min-height: 48px;
+  }
+  .cmd-input::placeholder { color: var(--muted); }
+  .paste-btn {
+    background: var(--accent);
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+  .paste-btn:active { transform: scale(0.95); opacity: 0.9; }
 
-  .block-icon { font-size: 18px; flex-shrink: 0; }
-  .block-title { flex: 1; font-size: 14px; font-weight: 600; }
-  .block-count { font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 20px; flex-shrink: 0; }
-  .block-count.idea { background: rgba(94,203,247,0.12); color: var(--accent2); }
-  .block-count.draft { background: rgba(247,199,106,0.12); color: var(--gold); }
-  .block-expand { font-size: 12px; color: var(--muted); flex-shrink: 0; transition: transform 0.25s; }
-  .block-head.open .block-expand { transform: rotate(180deg); }
+  /* 生成预览 */
+  .cmd-preview {
+    display: none;
+    background: rgba(0,0,0,0.4);
+    border: 1px solid var(--accent);
+    border-radius: var(--radius-sm);
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+  .cmd-preview.show { display: block; }
+  .cmd-preview-label {
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+  .cmd-preview-text {
+    font-size: 13px;
+    color: var(--blue-light);
+    font-family: "SF Mono","Menlo",monospace;
+    word-break: break-all;
+    line-height: 1.6;
+  }
 
-  /* 展开内容区 */
-  .block-body { display: none; margin-bottom: 20px; }
-  .block-body.open { display: block; }
+  /* 主按钮 */
+  .main-btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--accent), #5e6af7);
+    border: none;
+    border-radius: var(--radius);
+    color: white;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 4px 16px rgba(124,106,247,0.3);
+  }
+  .main-btn:active { transform: scale(0.98); }
+  .main-btn:disabled {
+    background: var(--card-hover);
+    color: var(--muted);
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+  }
 
-  /* ── 创意方向卡片 ── */
-  .idea-card {
-    background: var(--idea-bg);
-    border: 1px solid rgba(94,203,247,0.2);
-    border-radius: 14px;
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--card);
+    border: 1px solid var(--success);
+    color: var(--success);
+    padding: 10px 24px;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: 500;
+    opacity: 0;
+    transition: all 0.3s;
+    pointer-events: none;
+    z-index: 999;
+    white-space: nowrap;
+    box-shadow: var(--shadow);
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast.fail { border-color: var(--danger); color: var(--danger); }
+
+  /* ── 统计数据 ── */
+  .stats-row {
+    display: flex;
+    gap: 10px;
+    padding: 0 16px 20px;
+  }
+  .stat-card {
+    flex: 1;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .stat-card:active { transform: scale(0.97); border-color: var(--border-light); }
+  .stat-num {
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 1;
+  }
+  .stat-num.v1 { color: var(--accent); }
+  .stat-num.v2 { color: var(--blue); }
+  .stat-num.v3 { color: var(--gold); }
+  .stat-label {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 5px;
+    letter-spacing: 0.3px;
+  }
+
+  /* ── 内容区块 ── */
+  .section {
+    padding: 0 16px 24px;
+  }
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .section-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-badge {
+    font-size: 11px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2px 10px;
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .section-more {
+    font-size: 12px;
+    color: var(--muted);
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: all 0.15s;
+  }
+  .section-more:active { background: var(--card); color: var(--text); }
+
+  /* ── 素材卡片 ── */
+  .entry-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
     margin-bottom: 10px;
     overflow: hidden;
-    transition: border-color 0.2s;
+    transition: all 0.2s;
   }
-  .idea-card:hover { border-color: rgba(94,203,247,0.35); }
-
-  .idea-head {
-    display: flex; align-items: center; gap: 10px;
-    padding: 13px 14px;
+  .entry-card:active { transform: scale(0.99); }
+  .entry-card.expanded { border-color: var(--border-light); }
+  .entry-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px;
     cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-    user-select: none;
   }
-  .idea-head:active { opacity: 0.8; }
+  .entry-num {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--accent);
+    background: var(--accent-glow);
+    padding: 4px 8px;
+    border-radius: 6px;
+    flex-shrink: 0;
+    font-family: monospace;
+  }
+  .entry-info { flex: 1; min-width: 0; }
+  .entry-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .entry-meta {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 3px;
+  }
+  .entry-arrow {
+    font-size: 12px;
+    color: var(--muted);
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+  .entry-card.expanded .entry-arrow { transform: rotate(180deg); }
 
-  .idea-id { font-size: 10px; font-weight: 700; color: var(--accent2); background: rgba(94,203,247,0.1); padding: 3px 7px; border-radius: 5px; font-family: monospace; flex-shrink: 0; }
-  .idea-title-wrap { flex: 1; min-width: 0; }
-  .idea-title { font-size: 13px; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .idea-meta { font-size: 10px; color: var(--muted); margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .idea-expand { font-size: 12px; color: var(--muted); flex-shrink: 0; transition: transform 0.25s; }
-  .idea-card.open .idea-expand { transform: rotate(180deg); }
+  /* 展开详情 */
+  .entry-detail {
+    display: none;
+    border-top: 1px solid var(--border);
+    padding: 0 14px;
+    background: rgba(0,0,0,0.2);
+  }
+  .entry-card.expanded .entry-detail { display: block; }
 
-  /* 创意方向详情 */
-  .idea-detail { display: none; border-top: 1px solid rgba(94,203,247,0.15); background: rgba(0,0,0,0.2); padding: 12px 14px; }
-  .idea-card.open .idea-detail { display: block; }
+  .entry-section { padding: 12px 0; border-bottom: 1px solid var(--border); }
+  .entry-section:last-child { border-bottom: none; }
+  .entry-section-title {
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+  }
+  .entry-structure {
+    background: rgba(77, 166, 255, 0.08);
+    border: 1px solid rgba(77, 166, 255, 0.2);
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-size: 12px;
+    color: var(--blue-light);
+    font-family: monospace;
+    line-height: 1.5;
+  }
+  .entry-quotes { display: flex; flex-direction: column; gap: 6px; }
+  .entry-quote {
+    font-size: 12px;
+    color: var(--gold);
+    background: rgba(247, 199, 106, 0.06);
+    border-left: 2px solid rgba(247, 199, 106, 0.4);
+    padding: 6px 10px;
+    border-radius: 0 6px 6px 0;
+    line-height: 1.5;
+  }
+  .entry-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .entry-tag {
+    font-size: 11px;
+    background: var(--accent-glow);
+    color: var(--accent-light);
+    border: 1px solid rgba(124,106,247,0.2);
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
 
-  .idea-field { margin-bottom: 10px; }
-  .idea-field:last-child { margin-bottom: 0; }
-  .idea-field-label { font-size: 10px; color: var(--muted); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 4px; }
-  .idea-field-value { font-size: 12px; color: var(--text); line-height: 1.5; }
-  .idea-angle { color: var(--accent2); background: rgba(94,203,247,0.07); border: 1px solid rgba(94,203,247,0.18); border-radius: 8px; padding: 8px 10px; line-height: 1.6; }
-  .idea-tags { display: flex; flex-wrap: wrap; gap: 6px; }
-  .idea-tag { font-size: 11px; background: rgba(94,203,247,0.08); color: var(--accent2); border: 1px solid rgba(94,203,247,0.2); padding: 3px 9px; border-radius: 20px; }
-  .idea-source-link { font-size: 11px; color: var(--accent2); text-decoration: none; }
-  .idea-source-link:active { opacity: 0.7; }
+  /* 操作按钮 */
+  .entry-actions {
+    display: flex;
+    gap: 8px;
+    padding: 12px 0;
+  }
+  .entry-btn {
+    flex: 1;
+    padding: 10px;
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-family: inherit;
+    background: none;
+  }
+  .entry-btn:active { transform: scale(0.96); }
+  .entry-btn-copy {
+    background: var(--accent-glow);
+    border-color: rgba(124,106,247,0.3);
+    color: var(--accent-light);
+  }
+  .entry-btn-link {
+    background: rgba(77,166,255,0.1);
+    border-color: rgba(77,166,255,0.3);
+    color: var(--blue-light);
+  }
+  .entry-btn-link:active { background: rgba(77,166,255,0.2); }
 
-  /* 创意方向底部按钮 */
-  .idea-actions { display: flex; gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(94,203,247,0.1); }
-  .idea-btn { flex: 1; padding: 9px 0; border-radius: 9px; font-size: 12px; font-weight: 600; cursor: pointer; border: none; transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 5px; -webkit-tap-highlight-color: transparent; }
+  /* ── 创意方向 ── */
+  .idea-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+  .idea-card.priority-high { border-color: rgba(247,106,106,0.3); }
+  .idea-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px;
+    cursor: pointer;
+  }
+  .idea-num {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--blue);
+    background: rgba(77,166,255,0.1);
+    padding: 4px 8px;
+    border-radius: 6px;
+    flex-shrink: 0;
+    font-family: monospace;
+  }
+  .idea-priority {
+    font-size: 10px;
+    color: var(--gold);
+    flex-shrink: 0;
+  }
+  .idea-info { flex: 1; min-width: 0; }
+  .idea-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .idea-source {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 3px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .idea-arrow {
+    font-size: 12px;
+    color: var(--muted);
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+  .idea-card.expanded .idea-arrow { transform: rotate(180deg); }
+
+  .idea-detail {
+    display: none;
+    border-top: 1px solid var(--border);
+    padding: 0 14px;
+    background: rgba(0,0,0,0.15);
+  }
+  .idea-card.expanded .idea-detail { display: block; }
+  .idea-angle {
+    background: rgba(77,166,255,0.07);
+    border: 1px solid rgba(77,166,255,0.15);
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 12px;
+    color: var(--blue-light);
+    line-height: 1.6;
+    margin: 12px 0;
+  }
+  .idea-row { padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .idea-row:last-child { border-bottom: none; }
+  .idea-row-label {
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+  }
+  .idea-row-value {
+    font-size: 12px;
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .idea-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+  .idea-tag {
+    font-size: 11px;
+    background: rgba(124,106,247,0.08);
+    color: var(--accent-light);
+    border: 1px solid rgba(124,106,247,0.2);
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+
+  .idea-actions {
+    display: flex;
+    gap: 8px;
+    padding: 12px 0;
+  }
+  .idea-btn {
+    flex: 1;
+    padding: 10px;
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-family: inherit;
+    background: none;
+  }
   .idea-btn:active { transform: scale(0.96); }
-  .idea-btn-write { background: rgba(94,203,247,0.15); color: var(--accent2); border: 1px solid rgba(94,203,247,0.3); }
-  .idea-btn-copy { background: rgba(124,106,247,0.12); color: var(--accent); border: 1px solid rgba(124,106,247,0.25); }
+  .idea-btn-write {
+    background: rgba(106,247,165,0.1);
+    border-color: rgba(106,247,165,0.3);
+    color: var(--success);
+  }
+  .idea-btn-copy {
+    background: rgba(124,106,247,0.08);
+    border-color: rgba(124,106,247,0.25);
+    color: var(--accent-light);
+  }
 
   /* ── 完稿卡片 ── */
   .draft-card {
-    background: var(--draft-bg);
-    border: 1px solid rgba(247,199,106,0.2);
-    border-radius: 14px;
+    background: var(--card);
+    border: 1px solid rgba(247,199,106,0.25);
+    border-radius: var(--radius);
     margin-bottom: 10px;
     overflow: hidden;
-    transition: border-color 0.2s;
   }
-  .draft-card:hover { border-color: rgba(247,199,106,0.35); }
-
   .draft-head {
-    display: flex; align-items: center; gap: 10px;
-    padding: 13px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px;
     cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-    user-select: none;
   }
-  .draft-head:active { opacity: 0.8; }
-  .draft-id { font-size: 10px; font-weight: 700; color: var(--gold); background: rgba(247,199,106,0.1); padding: 3px 7px; border-radius: 5px; font-family: monospace; flex-shrink: 0; }
-  .draft-title-wrap { flex: 1; min-width: 0; }
-  .draft-title { font-size: 13px; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .draft-meta { font-size: 10px; color: var(--muted); margin-top: 2px; }
-  .draft-expand { font-size: 12px; color: var(--muted); flex-shrink: 0; transition: transform 0.25s; }
-  .draft-card.open .draft-expand { transform: rotate(180deg); }
+  .draft-num {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--gold);
+    background: rgba(247,199,106,0.1);
+    padding: 4px 8px;
+    border-radius: 6px;
+    flex-shrink: 0;
+    font-family: monospace;
+  }
+  .draft-info { flex: 1; min-width: 0; }
+  .draft-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .draft-meta {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 3px;
+  }
+  .draft-arrow {
+    font-size: 12px;
+    color: var(--muted);
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+  .draft-card.expanded .draft-arrow { transform: rotate(180deg); }
+  .draft-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 20px;
+    background: rgba(106,247,165,0.1);
+    color: var(--success);
+    border: 1px solid rgba(106,247,165,0.2);
+    flex-shrink: 0;
+  }
+  .draft-detail {
+    display: none;
+    border-top: 1px solid rgba(247,199,106,0.15);
+    padding: 14px;
+    background: rgba(0,0,0,0.2);
+  }
+  .draft-card.expanded .draft-detail { display: block; }
+  .draft-preview {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 12px;
+  }
+  .draft-preview strong { color: var(--text); }
+  .draft-meta-detail {
+    display: flex;
+    gap: 8px;
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
 
-  /* 完稿详情 */
-  .draft-detail { display: none; border-top: 1px solid rgba(247,199,106,0.15); background: rgba(0,0,0,0.2); }
-  .draft-card.open .draft-detail { display: block; }
-
-  .draft-versions { padding: 10px 14px 0; }
-  .draft-versions-label { font-size: 10px; color: var(--muted); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 8px; }
-  .version-item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; background: rgba(255,255,255,0.03); border: 1px solid rgba(247,199,106,0.1); border-radius: 9px; margin-bottom: 8px; }
-  .version-badge { font-size: 10px; font-weight: 700; background: rgba(247,199,106,0.12); color: var(--gold); padding: 2px 7px; border-radius: 5px; flex-shrink: 0; }
-  .version-info { flex: 1; min-width: 0; }
-  .version-name { font-size: 12px; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .version-note { font-size: 10px; color: var(--muted); margin-top: 2px; }
-  .version-btn { font-size: 11px; color: var(--accent2); background: none; border: 1px solid rgba(94,203,247,0.3); padding: 4px 10px; border-radius: 6px; cursor: pointer; flex-shrink: 0; font-family: inherit; }
-
-  .draft-status { padding: 8px 14px 12px; }
-  .draft-status-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; padding: 4px 10px; border-radius: 20px; }
-  .draft-status-badge.pending { background: rgba(247,168,106,0.1); color: var(--warn); border: 1px solid rgba(247,168,106,0.25); }
-  .draft-status-badge.done { background: rgba(106,247,165,0.1); color: var(--success); border: 1px solid rgba(106,247,165,0.25); }
-
-  /* 完稿正文预览 */
-  .draft-preview { padding: 12px 14px; border-top: 1px solid rgba(106,247,165,0.1); margin-top: 8px; }
-  .draft-preview-label { font-size: 10px; color: var(--muted); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 8px; }
-  .draft-preview-content { background: rgba(255,255,255,0.02); border: 1px solid rgba(106,247,165,0.1); border-radius: 9px; padding: 12px; font-size: 12px; color: var(--text); line-height: 1.7; }
-  .draft-preview-content p { margin: 0 0 8px; }
-  .draft-preview-content p:last-child { margin-bottom: 0; }
-  .draft-preview-more { color: var(--muted); font-size: 11px; text-align: center; margin-top: 8px; }
-  .draft-preview-footer { font-size: 10px; color: var(--muted); text-align: center; margin-top: 8px; }
-  .draft-full-section { padding: 12px 14px; border-top: 1px solid rgba(106,247,165,0.1); }
-  .draft-full-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 10px 16px; background: rgba(106,247,165,0.08); border: 1px solid rgba(106,247,165,0.2); border-radius: 8px; color: #6af7a5; font-size: 13px; cursor: pointer; transition: all 0.2s; }
-  .draft-full-btn:hover { background: rgba(106,247,165,0.15); }
-  .draft-full-icon { font-size: 10px; }
-  .draft-full-content { margin-top: 12px; background: rgba(255,255,255,0.03); border: 1px solid rgba(106,247,165,0.15); border-radius: 10px; padding: 14px; font-size: 13px; line-height: 1.8; color: var(--text); }
-  .draft-full-content p { margin: 0 0 10px; }
-  .draft-full-content p:last-child { margin-bottom: 0; }
-  .draft-full-content h3 { font-size: 15px; color: #6af7a5; margin: 0 0 12px; border-bottom: 1px solid rgba(106,247,165,0.1); padding-bottom: 8px; }
-  .draft-full-content hr { border: none; border-top: 1px solid rgba(106,247,165,0.1); margin: 16px 0; }
-  .draft-full-loading { text-align: center; color: var(--muted); font-size: 13px; padding: 20px; }
+  /* ── 快捷操作 ── */
+  .quick-actions {
+    display: flex;
+    gap: 8px;
+    padding: 0 16px 24px;
+  }
+  .quick-btn {
+    flex: 1;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .quick-btn:active { transform: scale(0.96); background: var(--card-hover); }
+  .quick-icon { font-size: 20px; }
+  .quick-label { font-size: 11px; color: var(--text-secondary); font-weight: 500; }
 
   /* ── 空状态 ── */
-  .empty-block { text-align: center; padding: 24px 20px; color: var(--muted); font-size: 13px; }
-  .empty-block .emoji { font-size: 28px; margin-bottom: 8px; }
-
-  /* ════════════════════════════════════════
-     素材库
-  ════════════════════════════════════════ */
-  .entry-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
-
-  .entry-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; transition: border-color 0.2s; }
-  .entry-card.expanded { border-color: var(--border2); }
-
-  .entry-head { display: flex; align-items: center; gap: 10px; padding: 13px 14px; cursor: pointer; -webkit-tap-highlight-color: transparent; user-select: none; }
-  .entry-head:active { opacity: 0.8; }
-  .entry-id { font-size: 10px; font-weight: 700; color: var(--accent); background: rgba(124,106,247,0.12); padding: 3px 7px; border-radius: 5px; flex-shrink: 0; font-family: monospace; letter-spacing: 0.3px; }
-  .entry-title-wrap { flex: 1; min-width: 0; }
-  .entry-title { font-size: 13px; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; line-height: 1.4; }
-  .entry-meta { font-size: 10px; color: var(--muted); margin-top: 2px; }
-  .entry-expand-icon { font-size: 12px; color: var(--muted); flex-shrink: 0; transition: transform 0.25s; }
-  .entry-card.expanded .entry-expand-icon { transform: rotate(180deg); }
-
-  .entry-detail { display: none; border-top: 1px solid var(--border); background: var(--card2); }
-  .entry-card.expanded .entry-detail { display: block; }
-
-  .entry-source { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-bottom: 1px solid var(--border); }
-  .entry-source-label { font-size: 11px; color: var(--muted); flex-shrink: 0; }
-  .entry-source-link { font-size: 12px; color: var(--accent2); text-decoration: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
-  .entry-source-link:active { opacity: 0.7; }
-
-  .entry-summary { padding: 12px 14px; border-bottom: 1px solid var(--border); }
-  .entry-summary-title { font-size: 11px; color: var(--muted); letter-spacing: 0.5px; margin-bottom: 8px; text-transform: uppercase; }
-  .entry-structure { font-size: 12px; color: var(--accent2); background: rgba(94,203,247,0.06); border: 1px solid rgba(94,203,247,0.15); border-radius: 8px; padding: 8px 10px; line-height: 1.6; margin-bottom: 10px; font-family: "SF Mono","Menlo",monospace; }
-  .entry-quotes { display: flex; flex-direction: column; gap: 6px; }
-  .entry-quote { font-size: 12px; color: var(--gold); background: rgba(247,199,106,0.06); border-left: 2px solid rgba(247,199,106,0.4); padding: 6px 10px; border-radius: 0 6px 6px 0; line-height: 1.5; }
-
-  .entry-bricks { padding: 10px 14px; border-bottom: 1px solid var(--border); }
-  .entry-bricks-title { font-size: 11px; color: var(--muted); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 8px; }
-  .brick-tags { display: flex; flex-wrap: wrap; gap: 6px; }
-  .brick-tag { font-size: 11px; background: rgba(124,106,247,0.1); color: var(--accent); border: 1px solid rgba(124,106,247,0.2); padding: 3px 9px; border-radius: 20px; }
-
-  .entry-actions { display: flex; gap: 8px; padding: 10px 14px 14px; }
-  .entry-btn { flex: 1; padding: 9px 0; border-radius: 9px; font-size: 12px; font-weight: 600; cursor: pointer; border: none; transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 5px; -webkit-tap-highlight-color: transparent; }
-  .entry-btn:active { transform: scale(0.96); }
-  .btn-copy-cg { background: rgba(124,106,247,0.15); color: var(--accent); border: 1px solid rgba(124,106,247,0.3); }
-  .btn-open-link { background: rgba(94,203,247,0.12); color: var(--accent2); border: 1px solid rgba(94,203,247,0.25); }
-  .btn-delete { background: rgba(247,106,106,0.1); color: var(--danger); border: 1px solid rgba(247,106,106,0.25); flex: 0 0 auto; padding: 9px 14px; }
-
-  .delete-confirm { display: none; padding: 12px 14px 14px; border-top: 1px solid var(--border); background: rgba(247,106,106,0.05); }
-  .delete-confirm.show { display: block; }
-  .delete-confirm-text { font-size: 13px; color: var(--danger); margin-bottom: 10px; line-height: 1.5; }
-  .delete-confirm-text strong { display: block; margin-bottom: 3px; }
-  .delete-confirm-btns { display: flex; gap: 8px; }
-  .btn-confirm-delete { flex: 1; padding: 9px 0; background: var(--danger); color: var(--bg); border: none; border-radius: 9px; font-size: 13px; font-weight: 700; cursor: pointer; }
-  .btn-cancel-delete { flex: 1; padding: 9px 0; background: var(--card); color: var(--muted); border: 1px solid var(--border); border-radius: 9px; font-size: 13px; cursor: pointer; }
-
-  /* 删除动画 */
-  .entry-card.deleting { animation: fadeOut 0.3s ease forwards; }
-  @keyframes fadeOut { to { opacity: 0; transform: translateX(30px); max-height: 0; padding: 0; margin: 0; } }
-
-  /* Toast */
-  .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--card); border: 1px solid var(--success); color: var(--success); padding: 10px 20px; border-radius: 30px; font-size: 14px; font-weight: 500; opacity: 0; transition: opacity 0.3s, transform 0.3s; pointer-events: none; z-index: 999; white-space: nowrap; }
-  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-  .toast.danger { border-color: var(--danger); color: var(--danger); }
-
-  /* Template */
-  .template-box { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 14px; margin-bottom: 12px; }
-  .template-box .t-label { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
-  .template-text { background: #0d0f18; border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; font-size: 13px; font-family: "SF Mono","Menlo","Consolas",monospace; color: var(--accent2); line-height: 1.7; word-break: break-all; }
-</style>
-<script>
-// ══════════════════════════════════════
-//  草稿接收（从 mobile-flywheel.html 跳转）
-// ══════════════════════════════════════
-(function checkDraftMaterial() {
-  var draft = localStorage.getItem('draftMaterial');
-  var draftTime = parseInt(localStorage.getItem('draftMaterialTime') || '0');
-  if (draft && Date.now() - draftTime < 3600000) { // 1小时内
-    try {
-      var data = JSON.parse(draft);
-      // 存储供后续使用
-      window.pendingDraft = data;
-      // 标记页面加载后显示提示
-      window.showDraftBanner = true;
-    } catch(e) {}
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--muted);
   }
-})();
-</script>
+  .empty-icon { font-size: 40px; margin-bottom: 12px; opacity: 0.5; }
+  .empty-text { font-size: 14px; }
+  .empty-sub { font-size: 12px; margin-top: 6px; opacity: 0.7; }
+
+  /* ── 删除确认 ── */
+  .delete-confirm {
+    display: none;
+    background: rgba(247,106,106,0.05);
+    border-top: 1px solid rgba(247,106,106,0.2);
+    padding: 12px 14px;
+  }
+  .delete-confirm.show { display: block; }
+  .delete-confirm-text {
+    font-size: 12px;
+    color: var(--danger);
+    margin-bottom: 10px;
+    line-height: 1.5;
+  }
+  .delete-btns { display: flex; gap: 8px; }
+  .delete-confirm-btn {
+    flex: 1;
+    padding: 9px;
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .delete-confirm-btn:active { transform: scale(0.96); }
+  .delete-confirm-btn.ok { background: var(--danger); color: white; }
+  .delete-confirm-btn.cancel { background: var(--card); color: var(--muted); border: 1px solid var(--border); }
+
+  /* 动画 */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .fade-up { animation: fadeUp 0.3s ease; }
+
+  /* 流程图 */
+  .flow-strip {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    gap: 0;
+    margin-bottom: 8px;
+  }
+  .flow-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .flow-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+  .flow-step:nth-child(1) .flow-icon { background: var(--accent-glow); }
+  .flow-step:nth-child(3) .flow-icon { background: rgba(77,166,255,0.15); }
+  .flow-step:nth-child(5) .flow-icon { background: rgba(247,199,106,0.15); }
+  .flow-step:nth-child(7) .flow-icon { background: rgba(106,247,165,0.15); }
+  .flow-label { font-size: 10px; color: var(--muted); text-align: center; }
+  .flow-arrow { color: var(--border); font-size: 14px; padding: 0 4px; }
+</style>
 </head>
 <body>
 
-<!-- 刚拆解素材悬浮提示 -->
-<div id="draft-banner" style="display:none; position:fixed; top:0; left:0; right:0; background:linear-gradient(135deg,#1976D2,#2196F3); color:white; padding:12px 16px; z-index:1000; box-shadow:0 4px 12px rgba(25,118,210,0.4);">
-  <div style="display:flex; align-items:center; gap:10px;">
-    <span style="font-size:20px;">✨</span>
-    <div style="flex:1;">
-      <div style="font-size:12px; opacity:0.9;">刚刚拆解</div>
-      <div style="font-size:14px; font-weight:600;" id="draft-banner-title">-</div>
+<!-- 顶部 -->
+<div class="top-bar">
+  <div class="top-bar-inner">
+    <div class="logo">
+      <div class="logo-icon">✦</div>
+      <div>
+        <div class="logo-text">写作飞轮</div>
+        <div class="logo-sub">移动端操作台</div>
+      </div>
     </div>
-    <button onclick="useDraft()" style="background:rgba(255,255,255,0.2); border:1px solid rgba(255,255,255,0.4); color:white; padding:8px 14px; border-radius:8px; font-size:13px; cursor:pointer;">✍️ 写稿</button>
-    <button onclick="closeDraftBanner()" style="background:none; border:none; color:white; font-size:18px; cursor:pointer; padding:4px 8px;">✕</button>
+    <div class="sync-badge" id="sync-badge">
+      <div class="sync-dot"></div>
+      <span class="sync-time" id="sync-time">--:--</span>
+    </div>
   </div>
 </div>
 
-<div class="header">
-  <h1>✦ 写作飞轮</h1>
-  <div class="sub">手机端快捷操作台</div>
-</div>
-
-<!-- Search Bar -->
-<div class="search-bar" id="search-bar">
-  <div class="search-input-wrap">
-    <input class="search-input" id="search-input" type="text" placeholder="搜索素材/创意方向" oninput="doSearch(this.value)"/>
-    <button class="search-close" onclick="closeSearch()">✕</button>
-  </div>
-  <div class="search-results" id="search-results"></div>
-</div>
-
-<!-- Refresh Bar -->
-<div class="refresh-bar">
-  <div class="refresh-info">
-    <div class="refresh-title">📡 同步状态：<span id="sync-status">🔄</span></div>
-    <div class="refresh-note">自动同步看板数据 · <span id="update-time">--:--</span></div>
-  </div>
-  <a href="feishu-helper.html" class="feishu-btn">📊 飞书助手</a>
-  <button class="search-btn" onclick="toggleSearch()">🔍</button>
-  <button class="refresh-btn" onclick="location.reload()">🔄 刷新</button>
-</div>
-
-<!-- Status Bar — 点击可展开对应区块 -->
-<div class="status-bar">
-  <div class="status-chip" onclick="scrollToSection('entry-section')">
-    <div class="num accent" id="count-entries">9</div>
-    <div class="label">素材条目</div>
-    <div class="hint">点击查看</div>
-  </div>
-  <div class="status-chip" onclick="toggleBlock('idea')">
-    <div class="num accent2" id="count-ideas">10</div>
-    <div class="label">创意方向</div>
-    <div class="hint">点击展开</div>
-  </div>
-  <div class="status-chip" onclick="toggleBlock('draft')">
-    <div class="num accent3" id="count-drafts">1</div>
-    <div class="label">完稿</div>
-    <div class="hint">点击展开</div>
-  </div>
-</div>
-
-<!-- Flywheel Flow -->
-<div class="section-title">飞轮架构</div>
-<div class="flow">
-  <div class="flow-step"><div class="flow-icon">🔍</div><div class="flow-label">1.0 拆解入库</div></div>
+<!-- 流程指示 -->
+<div class="flow-strip">
+  <div class="flow-step"><div class="flow-icon">🔍</div><div class="flow-label">拆解</div></div>
   <div class="flow-arrow">→</div>
-  <div class="flow-step"><div class="flow-icon">💡</div><div class="flow-label">2.0 创意生成</div></div>
+  <div class="flow-step"><div class="flow-icon">💡</div><div class="flow-label">创意</div></div>
   <div class="flow-arrow">→</div>
-  <div class="flow-step"><div class="flow-icon">✍️</div><div class="flow-label">3.0 执行写作</div></div>
+  <div class="flow-step"><div class="flow-icon">✍️</div><div class="flow-label">写作</div></div>
   <div class="flow-arrow">→</div>
-  <div class="flow-step"><div class="flow-icon">♻️</div><div class="flow-label">循环迭代</div></div>
+  <div class="flow-step"><div class="flow-icon">♻️</div><div class="flow-label">迭代</div></div>
 </div>
 
-<!-- Command Generator -->
-<div class="section-title">⚡ 命令生成器</div>
-<div class="cmd-gen">
-  <div class="cmd-gen-header">
-    <span class="cmd-gen-title">选择命令 + 输入内容 → 生成完整命令</span>
-  </div>
-  
-  <!-- 命令类型选择 -->
-  <div class="cmd-tabs">
-    <button class="cmd-tab active" data-cmd="CONTENT-GOLDMINE" onclick="selectCmdTab(this)">
-      <span class="tab-num">1.0</span>
-      <span class="tab-name">拆解入库</span>
+<!-- 核心操作 -->
+<div class="action-zone">
+  <div class="action-tabs">
+    <button class="action-tab active" data-tab="analyze" onclick="switchTab(this)">
+      <div class="action-tab-icon">🔍</div>
+      <div class="action-tab-name">拆解入库</div>
+      <div class="action-tab-desc">CONTENT-GOLDMINE</div>
     </button>
-    <button class="cmd-tab" data-cmd="IDEA-GEN" onclick="selectCmdTab(this)">
-      <span class="tab-num">2.0</span>
-      <span class="tab-name">创意生成</span>
+    <button class="action-tab" data-tab="idea" onclick="switchTab(this)">
+      <div class="action-tab-icon">💡</div>
+      <div class="action-tab-name">创意生成</div>
+      <div class="action-tab-desc">IDEA-GEN</div>
     </button>
-    <button class="cmd-tab" data-cmd="WRITING-CLONE" onclick="selectCmdTab(this)">
-      <span class="tab-num">3.0</span>
-      <span class="tab-name">执行写作</span>
+    <button class="action-tab" data-tab="write" onclick="switchTab(this)">
+      <div class="action-tab-icon">✍️</div>
+      <div class="action-tab-name">执行写作</div>
+      <div class="action-tab-desc">WRITING-CLONE</div>
     </button>
   </div>
-  
-  <!-- 输入区域 -->
-  <div class="cmd-input-wrap">
-    <input class="cmd-input" id="cmd-input" type="text"
-      placeholder="粘贴微信公众号链接"
-      oninput="cmdOnInput()" autocomplete="off"/>
-    <button class="cmd-paste-btn" onclick="cmdPaste()">📋 粘贴</button>
+
+  <div class="input-card">
+    <div class="input-label">
+      <div class="input-label-dot"></div>
+      <span id="input-hint">粘贴微信公众号链接</span>
+    </div>
+    <div class="input-row">
+      <input class="cmd-input" id="cmd-input" type="text" placeholder="粘贴链接或输入内容" oninput="onInput()" autocomplete="off"/>
+      <button class="paste-btn" onclick="doPaste()">📋</button>
+    </div>
   </div>
-  
-  <!-- 提示文字 -->
-  <div class="cmd-hint" id="cmd-hint">
-    <span class="hint-icon">💡</span>
-    <span class="hint-text">微信公众号链接 → 拆解结构 + 金句 + 创意积木 → 存入素材库</span>
+
+  <div class="cmd-preview" id="cmd-preview">
+    <div class="cmd-preview-label">生成的命令</div>
+    <div class="cmd-preview-text" id="cmd-preview-text"></div>
   </div>
-  
-  <!-- 结果 -->
-  <div class="cmd-result" id="cmd-result">
-    <div class="cmd-result-label">生成的命令</div>
-    <div class="cmd-result-cmd" id="cmd-result-cmd"></div>
-  </div>
-  
-  <!-- 按钮 -->
-  <div class="cmd-btns">
-    <button class="cmd-btn cmd-btn-go" id="cmd-go-btn" onclick="cmdGo()" disabled>🚀 生成命令</button>
-    <button class="cmd-btn cmd-btn-copy" id="cmd-copy-btn" onclick="cmdCopy()" style="display:none">📋 复制命令</button>
-    <button class="cmd-btn cmd-btn-clear" onclick="cmdClear()">✕ 清空</button>
-  </div>
-  
-  <div class="cmd-tip" id="cmd-tip">✓ 命令已复制！去 WorkBuddy 粘贴发送</div>
+
+  <button class="main-btn" id="main-btn" disabled onclick="doExecute()">
+    <span id="btn-icon">🚀</span>
+    <span id="btn-text">复制命令</span>
+  </button>
 </div>
 
-<!-- Command Cards -->
-<div class="section-title">快捷命令</div>
-
-<div class="cmd-card" onclick="copyCmd(this, '/CONTENT-GOLDMINE\n[粘贴文章链接]')">
-  <div class="tag">1.0 基础</div>
-  <div class="cmd-text">/CONTENT-GOLDMINE</div>
-  <div class="cmd-desc">微信公众号链接 → 拆解入库（结构+金句+积木）</div>
-  <div class="copy-hint">✓ 已复制！去 WorkBuddy 粘贴发送</div>
-</div>
-
-<div class="cmd-card" onclick="copyCmd(this, '/IDEA-GEN\n[网站链接/文字/文件]')">
-  <div class="tag">2.0 叠加</div>
-  <div class="cmd-text">/IDEA-GEN</div>
-  <div class="cmd-desc">已有素材库 + 新信息源 → 生成创意方向或直接出稿</div>
-  <div class="copy-hint">✓ 已复制！去 WorkBuddy 粘贴发送</div>
-</div>
-
-<div class="cmd-card" onclick="copyCmd(this, '/WRITING-CLONE [标题]')">
-  <div class="tag">3.0 执行</div>
-  <div class="cmd-text">/WRITING-CLONE [标题]</div>
-  <div class="cmd-desc">采集素材 → 执行写作 → 存入完稿库</div>
-  <div class="copy-hint">✓ 已复制！去 WorkBuddy 粘贴发送</div>
-</div>
-
-<!-- ═══════════════════════════════════════
-     创意方向
-═══════════════════════════════════════ -->
-<div id="idea-block">
-  <div class="section-title">💡 创意方向</div>
-
-  <div class="block-head open" onclick="toggleBlock('idea')">
-    <span class="block-icon">💡</span>
-    <span class="block-title">创意方向</span>
-    <span class="block-count idea" id="idea-count-badge">10</span>
-    <span class="block-expand">▼</span>
+<!-- 统计 -->
+<div class="stats-row">
+  <div class="stat-card" onclick="scrollTo('entry-section')">
+    <div class="stat-num v1" id="stat-entries">9</div>
+    <div class="stat-label">素材</div>
   </div>
-
-  <div class="block-body open" id="idea-body">
-
-    <!-- IDEA-001 -->
-    <div class="idea-card" id="idea-card-001">
-      <div class="idea-head" onclick="toggleIdea('001')">
-        <span class="idea-id">IDEA-001</span>
-        <div class="idea-title-wrap">
-          <div class="idea-title">广州楼市新28条：汕尾可以抄哪些？</div>
-          <div class="idea-meta">来自：ENTRY-001+004 · 政策解读方向</div>
-        </div>
-        <span class="idea-expand">▼</span>
-      </div>
-      <div class="idea-detail">
-        <div class="idea-field">
-          <div class="idea-field-label">核心角度</div>
-          <div class="idea-field-value idea-angle">广州新28条落地，对汕尾购房者/业主/开发商的直接影响。汕尾虽小，但购房逻辑和广州类似——配套、停车、改造，这三条同样适用。</div>
-        </div>
-        <div class="idea-field">
-          <div class="idea-field-label">目标读者</div>
-          <div class="idea-field-value">汕尾本地购房者、打算在汕尾买房的人</div>
-        </div>
-        <div class="idea-field">
-          <div class="idea-field-label">推荐标题</div>
-          <div class="idea-field-value" style="color:var(--gold)">「广州出了28条，汕尾人买房要注意什么？」</div>
-        </div>
-        <div class="idea-field">
-          <div class="idea-field-label">核心论点</div>
-          <div class="idea-field-value">配套、停车、改造——汕尾买房看这三条就够了</div>
-        </div>
-        <div class="idea-field">
-          <div class="idea-field-label">创意积木</div>
-          <div class="idea-tags">
-            <span class="idea-tag">替用户出气</span>
-            <span class="idea-tag">生活场景具象化</span>
-            <span class="idea-tag">三点并列</span>
-          </div>
-        </div>
-        <div class="idea-field">
-          <div class="idea-field-label">参考素材</div>
-          <div class="idea-field-value">
-            <a class="idea-source-link" href="https://mp.weixin.qq.com/s/35LxCdlJnDwhZr-dxswytQ" target="_blank">ENTRY-001</a>
-            <a class="idea-source-link" href="https://mp.weixin.qq.com/s/qhoQju3lLQeCRHEzOzonww" target="_blank">ENTRY-004 · 广州官宣新28条</a>
-          </div>
-        </div>
-        <div class="idea-actions">
-          <button class="idea-btn idea-btn-write" onclick="copyIdeaCmd('001')">✍️ 直接写稿</button>
-          <button class="idea-btn idea-btn-copy" onclick="copyIdeaDetails('001')">📋 复制详情</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- IDEA-002 -->
-    <div class="idea-card" id="idea-card-002">
-      <div class="idea-head" onclick="toggleIdea('002')">
-        <span class="idea-id">IDEA-002</span>
-        <div class="idea-title-wrap">
-          <div class="idea-title">从院士成绩单到汕尾骄傲：人物故事的新写法</div>
-          <div class="idea-meta">来自：ENTRY-002 · 人物故事方向</div>
-        </div>
-        <span class="idea-expand">▼</span>
-      </div>
-      <div class="idea-detail">
-        <div class="idea-field">
-          <div class="idea-field-label">核心角度</div>
-          <div class="idea-field-value idea-angle">借用院士成绩单的结构，写汕尾本地"递上成绩单"的人物故事。用细节切入、行动代替形容、他人之口定格。</div>
-        </div>
-        <div class="idea-field">
-          <div class="idea-field-label">目标读者</div>
-          <div class="idea-field-value">汕尾本地读者、对家乡有感情的用户</div>
-        </div>
-        <div class="idea-field">
-          <div class="idea-field-label">推荐标题</div>
-          <div class="idea-field-value" style="color:var(--gold)">「汕尾人，递上了一份怎样的成绩单？」</div>
-        </div>
-        <div class="idea-field">
-          <div class="idea-field-label">核心论点</div>
-          <div class="idea-field-value">每个人都有自己的"成绩单"——不是分数，是那些被时间沉淀下来的选择</div>
-        </div>
-        <div class="idea-field">
-          <div class="idea-field-label">创意积木</div>
-          <div class="idea-tags">
-            <span class="idea-tag">人物速写</span>
-            <span class="idea-tag">行动代替形容词</span>
-            <span class="idea-tag">首尾意象呼应</span>
-          </div>
-        </div>
-        <div class="idea-field">
-          <div class="idea-field-label">参考素材</div>
-          <div class="idea-field-value">
-            <a class="idea-source-link" href="https://mp.weixin.qq.com/s/35LxCdlJnDwhZr-dxswytQ" target="_blank">ENTRY-002 · 院士成绩单结构</a>
-          </div>
-        </div>
-        <div class="idea-actions">
-          <button class="idea-btn idea-btn-write" onclick="copyIdeaCmd('002')">✍️ 直接写稿</button>
-          <button class="idea-btn idea-btn-copy" onclick="copyIdeaDetails('002')">📋 复制详情</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- IDEA-003 -->
-    <div class="idea-card" id="idea-card-003">
-      <div class="idea-head" onclick="toggleIdea('003')">
-        <span class="idea-id">IDEA-003</span>
-        <div class="idea-title-wrap">
-          <div class="idea-title">职场版：最说"努力没用"的人悄悄在加班</div>
-          <div class="idea-meta">来自：ENTRY-001 · 悖论式人物方向</div>
-        </div>
-        <span class="idea-expand">▼</span>
-      </div>
-      <div class="idea-detail">
-        <div class="idea-field">
-          <div class="idea-field-label">核心角度</div>
-          <div class="idea-field-value idea-angle">职场中存在一类人：用虚无主义作盔甲，嘴上说"躺平"，身体却最诚实。这类人比谁都努力，只是不好意思承认。</div>
-        </div>
-        <div class="idea-field">
-          <div class="idea-field-label">目标读者</div>
-          <div class="idea-field-value">职场人、Z世代、对"内卷 vs 躺平"话题有共鸣的读者</div>
-        </div>
-        <div class="idea-field">
-          <div class="idea-field-label">推荐标题</div>
-          <div class="idea-field-value" style="color:var(--gold)">「那个每天说'努力没用'的同事，下班后悄悄把方案改了3版」</div>
-        </div>
-        <div class="idea-field">
-          <div class="idea-field-label">核心论点</div>
-          <div class="idea-field-value">最怀疑意义的人，往往是最认真行动的人——这是悖论，也是人性</div>
-        </div>
-        <div class="idea-field">
-          <div class="idea-field-label">创意积木</div>
-          <div class="idea-tags">
-            <span class="idea-tag">悖论句式</span>
-            <span class="idea-tag">人物速写</span>
-            <span class="idea-tag">多米诺收尾</span>
-          </div>
-        </div>
-        <div class="idea-field">
-          <div class="idea-field-label">参考素材</div>
-          <div class="idea-field-value">
-            <a class="idea-source-link" href="https://mp.weixin.qq.com/s/35LxCdlJnDwhZr-dxswytQ" target="_blank">ENTRY-001 · 捡垃圾是不是自我感动</a>
-          </div>
-        </div>
-        <div class="idea-actions">
-          <button class="idea-btn idea-btn-write" onclick="copyIdeaCmd('003')">✍️ 直接写稿</button>
-          <button class="idea-btn idea-btn-copy" onclick="copyIdeaDetails('003')">📋 复制详情</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- IDEA-004 -->
-    <div class="idea-card" id="idea-card-004">
-      <div class="idea-head" onclick="toggleIdea('004')">
-        <span class="idea-id">IDEA-004</span>
-        <div class="idea-title-wrap">
-          <div class="idea-title">亲密关系版：最说"不需要爱情"的人比谁都渴望</div>
-          <div class="idea-meta">来自：ENTRY-001 · 情感悖论方向</div>
-        </div>
-        <span class="idea-expand">▼</span>
-      </div>
-      <div class="idea-detail">
-        <div class="idea-field">
-          <div class="idea-field-label">核心角度</div>
-          <div class="idea-field-value idea-angle">写一种"情感虚无主义者"——说不需要爱情的人，家里却养了三盆植物、取名叫小明小红小刚。不是不需要，是太怕失望。</div>
-        </div>
-        <div class="idea-field">
-          <div class="idea-field-label">目标读者</div>
-          <div class="idea-field-value">单身人士、对"恐恋/恐婚"现象有共鸣的读者</div>
-        </div>
-        <div class="idea-field">
-          <div class="idea-field-label">推荐标题</div>
-          <div class="idea-field-value" style="color:var(--gold)">「那个说不需要爱情的人，家里植物取名叫小明、小红、小刚」</div>
-        </div>
-        <div class="idea-field">
-          <div class="idea-field-label">核心论点</div>
-          <div class="idea-field-value">用虚无主义保护自己的人，往往比谁都渴望连接——只是不敢伸手</div>
-        </div>
-        <div class="idea-field">
-          <div class="idea-field-label">创意积木</div>
-          <div class="idea-tags">
-            <span class="idea-tag">犀利开头</span>
-            <span class="idea-tag">微小转折法</span>
-            <span class="idea-tag">西西弗斯劳作</span>
-          </div>
-        </div>
-        <div class="idea-field">
-          <div class="idea-field-label">参考素材</div>
-          <div class="idea-field-value">
-            <a class="idea-source-link" href="https://mp.weixin.qq.com/s/35LxCdlJnDwhZr-dxswytQ" target="_blank">ENTRY-001 · 捡垃圾是不是自我感动</a>
-          </div>
-        </div>
-        <div class="idea-actions">
-          <button class="idea-btn idea-btn-write" onclick="copyIdeaCmd('004')">✍️ 直接写稿</button>
-          <button class="idea-btn idea-btn-copy" onclick="copyIdeaDetails('004')">📋 复制详情</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- IDEA-005 -->
-    <div class="idea-card" id="idea-card-005">
-      <div class="idea-head" onclick="toggleIdea('005')">
-        <span class="idea-id">IDEA-005</span>
-        <div class="idea-title-wrap">
-          <div class="idea-title">汕尾版：逃离北上广的人，最后发现答案在海边</div>
-          <div class="idea-meta">来自：ENTRY-001 · 返乡叙事方向</div>
-        </div>
-        <span class="idea-expand">▼</span>
-      </div>
-      <div class="idea-detail">
-        <div class="idea-field">
-          <div class="idea-field-label">核心角度</div>
-          <div class="idea-field-value idea-angle">汕尾人年轻时拼了命去广深，觉得小城市装不下野心。十年后发现：汕尾的海滩比深圳湾安静，房价差距让体面生活触手可及。</div>
-        </div>
-        <div class="idea-field">
-          <div class="idea-field-label">目标读者</div>
-          <div class="idea-field-value">在外奋斗的汕尾人、考虑返乡的用户、对"回去 vs 留下"有困惑的人</div>
-        </div>
-        <div class="idea-field">
-          <div class="idea-field-label">推荐标题</div>
-          <div class="idea-field-value" style="color:var(--gold)">「深圳CBD里飞得最用力的燕子，最后成了汕尾海边最慢的那道波浪」</div>
-        </div>
-        <div class="idea-field">
-          <div class="idea-field-label">核心论点</div>
-          <div class="idea-field-value">逃离北上广不是失败，是发现自己真正需要什么的开始</div>
-        </div>
-        <div class="idea-field">
-          <div class="idea-field-label">创意积木</div>
-          <div class="idea-tags">
-            <span class="idea-tag">人物速写</span>
-            <span class="idea-tag">替用户出气</span>
-            <span class="idea-tag">具象化对比</span>
-            <span class="idea-tag">四有句式收束</span>
-          </div>
-        </div>
-        <div class="idea-field">
-          <div class="idea-field-label">参考素材</div>
-          <div class="idea-field-value">
-            <a class="idea-source-link" href="https://mp.weixin.qq.com/s/35LxCdlJnDwhZr-dxswytQ" target="_blank">ENTRY-001 · 捡垃圾是不是自我感动</a>
-          </div>
-        </div>
-        <div class="idea-actions">
-          <button class="idea-btn idea-btn-write" onclick="copyIdeaCmd('005')">✍️ 直接写稿</button>
-          <button class="idea-btn idea-btn-copy" onclick="copyIdeaDetails('005')">📋 复制详情</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- IDEA-006 -->
-    <div class="idea-card" id="idea-card-006">
-      <div class="idea-head" onclick="toggleIdea('006')">
-        <span class="idea-id">IDEA-006</span>
-        <div class="idea-title-wrap">
-          <div class="idea-title">政策解密：公积金贷款3大"潜规则"</div>
-          <div class="idea-meta">来自：ENTRY-003+004 · 避坑指南 ★★★</div>
-        </div>
-        <span class="idea-expand">▼</span>
-      </div>
-      <div class="idea-detail">
-        <div class="idea-field">
-          <div class="idea-field-label">核心角度</div>
-          <div class="idea-field-value idea-angle">公积金贷款3大"潜规则"，银行永远不会主动告诉你！银行和开发商都有各自的利益算盘，普通人不懂规则就等于白送钱。</div>
-        </div>
-        <div class="idea-field">
-          <div class="idea-field-label">目标读者</div>
-          <div class="idea-field-value">首次购房刚需客户、置换改善型买家、对公积金政策一知半解的普通职工</div>
-        </div>
-        <div class="idea-field">
-          <div class="idea-field-label">推荐标题</div>
-          <div class="idea-field-value" style="color:var(--gold)">「公积金贷款3大'潜规则'，银行永远不会主动告诉你！」</div>
-        </div>
-        <div class="idea-field">
-          <div class="idea-field-label">核心论点</div>
-          <div class="idea-field-value">银行和开发商都有各自的利益算盘，普通人不懂规则就等于白送钱</div>
-        </div>
-        <div class="idea-field">
-          <div class="idea-field-label">创意积木</div>
-          <div class="idea-tags">
-            <span class="idea-tag">否定反转开头</span>
-            <span class="idea-tag">二元对照表格</span>
-            <span class="idea-tag">替用户出气</span>
-            <span class="idea-tag">四有句式收尾</span>
-          </div>
-        </div>
-        <div class="idea-field">
-          <div class="idea-field-label">参考素材</div>
-          <div class="idea-field-value">
-            <a class="idea-source-link" href="https://mp.weixin.qq.com/s/qhoQju3lLQeCRHEzOzonww" target="_blank">ENTRY-003+004</a>
-          </div>
-        </div>
-        <div class="idea-actions">
-          <button class="idea-btn idea-btn-write" onclick="copyIdeaCmd('006')">✍️ 直接写稿</button>
-          <button class="idea-btn idea-btn-copy" onclick="copyIdeaDetails('006')">📋 复制详情</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- IDEA-007 -->
-    <div class="idea-card" id="idea-card-007">
-      <div class="idea-head" onclick="toggleIdea('007')">
-        <span class="idea-id">IDEA-007</span>
-        <div class="idea-title-wrap">
-          <div class="idea-title">科学框架：买房是一场"机会成本"计算</div>
-          <div class="idea-meta">来自：ENTRY-003 · 方法论 ★★☆</div>
-        </div>
-        <span class="idea-expand">▼</span>
-      </div>
-      <div class="idea-detail">
-        <div class="idea-field">
-          <div class="idea-field-label">核心角度</div>
-          <div class="idea-field-value idea-angle">买房的本质是一场"机会成本"计算：你放弃的那笔钱，值多少？买房不是买房子，而是买你对未来现金流的判断力。</div>
-        </div>
-        <div class="idea-field">
-          <div class="idea-field-label">目标读者</div>
-          <div class="idea-field-value">30-45岁有投资意识的读者、有一定储蓄基础的城市白领、关注家庭资产配置的中产群体</div>
-        </div>
-        <div class="idea-field">
-          <div class="idea-field-label">推荐标题</div>
-          <div class="idea-field-value" style="color:var(--gold)">「买房的本质是一场'机会成本'计算：你放弃的那笔钱，值多少？」</div>
-        </div>
-        <div class="idea-field">
-          <div class="idea-field-label">核心论点</div>
-          <div class="idea-field-value">买房不是买房子，而是买你对未来现金流的判断力</div>
-        </div>
-        <div class="idea-field">
-          <div class="idea-field-label">创意积木</div>
-          <div class="idea-tags">
-            <span class="idea-tag">科学概念包装法</span>
-            <span class="idea-tag">层层递进排比</span>
-            <span class="idea-tag">对仗升华结尾</span>
-          </div>
-        </div>
-        <div class="idea-field">
-          <div class="idea-field-label">参考素材</div>
-          <div class="idea-field-value">
-            <a class="idea-source-link" href="https://mp.weixin.qq.com/s/qhoQju3lLQeCRHEzOzonww" target="_blank">ENTRY-003</a>
-          </div>
-        </div>
-        <div class="idea-actions">
-          <button class="idea-btn idea-btn-write" onclick="copyIdeaCmd('007')">✍️ 直接写稿</button>
-          <button class="idea-btn idea-btn-copy" onclick="copyIdeaDetails('007')">📋 复制详情</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- IDEA-008 -->
-    <div class="idea-card" id="idea-card-008">
-      <div class="idea-head" onclick="toggleIdea('008')">
-        <span class="idea-id">IDEA-008</span>
-        <div class="idea-title-wrap">
-          <div class="idea-title">本地人物：有人在老城区守了30年</div>
-          <div class="idea-meta">来自：ENTRY-002 · 人文故事 ★☆☆</div>
-        </div>
-        <span class="idea-expand">▼</span>
-      </div>
-      <div class="idea-detail">
-        <div class="idea-field">
-          <div class="idea-field-label">核心角度</div>
-          <div class="idea-field-value idea-angle">汕尾人的房子：有人在老城区守了30年，有人把家安在了海边。房子是家的容器，但家的意义是汕尾人自己定义的。</div>
-        </div>
-        <div class="idea-field">
-          <div class="idea-field-label">目标读者</div>
-          <div class="idea-field-value">汕尾本地读者、有乡愁情结的外出务工群体、关注地方人文故事的读者</div>
-        </div>
-        <div class="idea-field">
-          <div class="idea-field-label">推荐标题</div>
-          <div class="idea-field-value" style="color:var(--gold)">「汕尾人的房子：有人在老城区守了30年，有人把家安在了海边」</div>
-        </div>
-        <div class="idea-field">
-          <div class="idea-field-label">核心论点</div>
-          <div class="idea-field-value">房子是家的容器，但家的意义是汕尾人自己定义的</div>
-        </div>
-        <div class="idea-field">
-          <div class="idea-field-label">创意积木</div>
-          <div class="idea-tags">
-            <span class="idea-tag">实物锚定法</span>
-            <span class="idea-tag">方言破冰法</span>
-            <span class="idea-tag">行动代替形容</span>
-            <span class="idea-tag">首尾意象呼应</span>
-          </div>
-        </div>
-        <div class="idea-field">
-          <div class="idea-field-label">参考素材</div>
-          <div class="idea-field-value">
-            <a class="idea-source-link" href="https://mp.weixin.qq.com/s/qhoQju3lLQeCRHEzOzonww" target="_blank">ENTRY-002</a>
-          </div>
-        </div>
-        <div class="idea-actions">
-          <button class="idea-btn idea-btn-write" onclick="copyIdeaCmd('008')">✍️ 直接写稿</button>
-          <button class="idea-btn idea-btn-copy" onclick="copyIdeaDetails('008')">📋 复制详情</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- IDEA-009 -->
-    <div class="idea-card" id="idea-card-009">
-      <div class="idea-head" onclick="toggleIdea('009')">
-        <span class="idea-id">IDEA-009</span>
-        <div class="idea-title-wrap">
-          <div class="idea-title">热点解读：广州救市，汕尾跟不跟？</div>
-          <div class="idea-meta">来自：ENTRY-001+004 · 趋势分析 ★★☆</div>
-        </div>
-        <span class="idea-expand">▼</span>
-      </div>
-      <div class="idea-detail">
-        <div class="idea-field">
-          <div class="idea-field-label">核心角度</div>
-          <div class="idea-field-value idea-angle">广州救市，汕尾跟不跟？看完这3个信号你就懂了。政策传导有滞后性，看懂一线城市的风向标比追政策本身更重要。</div>
-        </div>
-        <div class="idea-field">
-          <div class="idea-field-label">目标读者</div>
-          <div class="idea-field-value">投资型买家、关注宏观趋势的改善置换型买家、想要踩准入市节点的购房者</div>
-        </div>
-        <div class="idea-field">
-          <div class="idea-field-label">推荐标题</div>
-          <div class="idea-field-value" style="color:var(--gold)">「广州救市，汕尾跟不跟？看完这3个信号你就懂了」</div>
-        </div>
-        <div class="idea-field">
-          <div class="idea-field-label">核心论点</div>
-          <div class="idea-field-value">政策传导有滞后性，看懂一线城市的风向标比追政策本身更重要</div>
-        </div>
-        <div class="idea-field">
-          <div class="idea-field-label">创意积木</div>
-          <div class="idea-tags">
-            <span class="idea-tag">多米诺骨牌收尾</span>
-            <span class="idea-tag">悬念开头</span>
-            <span class="idea-tag">三亮点并列</span>
-            <span class="idea-tag">具象化技巧</span>
-          </div>
-        </div>
-        <div class="idea-field">
-          <div class="idea-field-label">参考素材</div>
-          <div class="idea-field-value">
-            <a class="idea-source-link" href="https://mp.weixin.qq.com/s/qhoQju3lLQeCRHEzOzonww" target="_blank">ENTRY-001+004</a>
-          </div>
-        </div>
-        <div class="idea-actions">
-          <button class="idea-btn idea-btn-write" onclick="copyIdeaCmd('009')">✍️ 直接写稿</button>
-          <button class="idea-btn idea-btn-copy" onclick="copyIdeaDetails('009')">📋 复制详情</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- IDEA-010 -->
-    <div class="idea-card" id="idea-card-010">
-      <div class="idea-head" onclick="toggleIdea('010')">
-        <span class="idea-id">IDEA-010</span>
-        <div class="idea-title-wrap">
-          <div class="idea-title">行动指南：汕尾买房避坑清单</div>
-          <div class="idea-meta">来自：ENTRY-001+003 · 步骤清单 ★★★</div>
-        </div>
-        <span class="idea-expand">▼</span>
-      </div>
-      <div class="idea-detail">
-        <div class="idea-field">
-          <div class="idea-field-label">核心角度</div>
-          <div class="idea-field-value idea-angle">2024汕尾买房避坑指南：看房前、签约时、交钱后分别要注意什么？买房最怕的不是买贵，而是买完才发现踩了坑。</div>
-        </div>
-        <div class="idea-field">
-          <div class="idea-field-label">目标读者</div>
-          <div class="idea-field-value">预算有限的刚需买家、第一次买房的年轻人、怕被坑的普通购房者</div>
-        </div>
-        <div class="idea-field">
-          <div class="idea-field-label">推荐标题</div>
-          <div class="idea-field-value" style="color:var(--gold)">「2024汕尾买房避坑指南：看房前、签约时、交钱后分别要注意什么？」</div>
-        </div>
-        <div class="idea-field">
-          <div class="idea-field-label">核心论点</div>
-          <div class="idea-field-value">买房最怕的不是买贵，而是买完才发现踩了坑，一步一步教你避开</div>
-        </div>
-        <div class="idea-field">
-          <div class="idea-field-label">创意积木</div>
-          <div class="idea-tags">
-            <span class="idea-tag">三步递进结构</span>
-            <span class="idea-tag">悖论句式</span>
-            <span class="idea-tag">最小行动入口</span>
-            <span class="idea-tag">二元对照表格</span>
-          </div>
-        </div>
-        <div class="idea-field">
-          <div class="idea-field-label">参考素材</div>
-          <div class="idea-field-value">
-            <a class="idea-source-link" href="https://mp.weixin.qq.com/s/qhoQju3lLQeCRHEzOzonww" target="_blank">ENTRY-001+003</a>
-          </div>
-        </div>
-        <div class="idea-actions">
-          <button class="idea-btn idea-btn-write" onclick="copyIdeaCmd('010')">✍️ 直接写稿</button>
-          <button class="idea-btn idea-btn-copy" onclick="copyIdeaDetails('010')">📋 复制详情</button>
-        </div>
-      </div>
-    </div>
-
+  <div class="stat-card" onclick="scrollTo('idea-section')">
+    <div class="stat-num v2" id="stat-ideas">10</div>
+    <div class="stat-label">创意</div>
+  </div>
+  <div class="stat-card" onclick="scrollTo('draft-section')">
+    <div class="stat-num v3" id="stat-drafts">1</div>
+    <div class="stat-label">完稿</div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════
-     完稿
-═══════════════════════════════════════ -->
-<div id="draft-block">
-  <div class="section-title">📄 完稿</div>
-
-  <div class="block-head open" onclick="toggleBlock('draft')">
-    <span class="block-icon">📄</span>
-    <span class="block-title">完稿作品</span>
-    <span class="block-count draft" id="draft-count-badge">1</span>
-    <span class="block-expand">▼</span>
+<!-- 快捷操作 -->
+<div class="quick-actions">
+  <div class="quick-btn" onclick="copyCmd('/去AI味\n[粘贴文章]')">
+    <div class="quick-icon">✨</div>
+    <div class="quick-label">去AI味</div>
   </div>
-
-  <div class="block-body open" id="draft-body">
-
-    <!-- DRAFT-001 -->
-    <div class="draft-card" id="draft-card-001">
-      <div class="draft-head" onclick="toggleDraft('001')">
-        <span class="draft-id">DRAFT-001</span>
-        <div class="draft-title-wrap">
-          <div class="draft-title">逃离北上广的人，最后发现答案在海边</div>
-          <div class="draft-meta">方向 IDEA-005 · 2026-04-15 · v1</div>
-        </div>
-        <span class="draft-expand">▼</span>
-      </div>
-      <div class="draft-detail">
-        <div class="draft-versions">
-          <div class="draft-versions-label">版本列表</div>
-          <div class="version-item">
-            <span class="version-badge">v1</span>
-            <div class="version-info">
-              <div class="version-name">draft-001-v1.md</div>
-              <div class="version-note">草稿初稿 · 2026-04-15</div>
-            </div>
-            <button class="version-btn" onclick="event.stopPropagation(); showToast('文件路径：material-library/drafts/draft-001-v1.md')">📂 查看</button>
-          </div>
-        </div>
-        <div class="draft-preview">
-          <div class="draft-preview-label">📝 正文预览</div>
-          <div class="draft-preview-content">
-            <p><strong>你有没有想过：一个人可以在深圳什么都有，却在最繁华的地方，感到彻底的失落？</strong></p>
-            <p>林小满就经历了这一切。她来自汕尾甲子镇，从小是"别人家的孩子"。成绩好、会读书、会考试，一路从镇里考到省城，再从省城考进深圳。</p>
-            <p>2019年，林小满四十岁，在深圳有房、有车、有户口，是所有人眼里的"成功样本"。然而某天晚上，她站在华强北的天桥上，突然不知道自己到底在干什么。</p>
-            <p>身边的人都在匆匆赶路，每个人都低着头、盯着手机。她站在人流里，突然意识到：<strong>自己已经很久没有见过日落了。</strong></p>
-            <p>那是她第一次认真地问自己：这一切，到底是为了什么？</p>
-            <p class="draft-preview-more">...</p>
-          </div>
-          <div class="draft-preview-footer">全文约 1850 字，适合微信公众号发布</div>
-        </div>
-        <div class="draft-full-section">
-          <button class="draft-full-btn" onclick="loadDraftFull('001')">
-            <span class="draft-full-icon" id="draft-001-full-icon">▶</span>
-            <span class="draft-full-text" id="draft-001-full-text">展开全文</span>
-          </button>
-          <div class="draft-full-content" id="draft-001-full-content"></div>
-        </div>
-        <div class="draft-status">
-          <span class="draft-status-badge done">
-            <span>✅</span> 草稿完成
-          </span>
-        </div>
-      </div>
-    </div>
-
+  <div class="quick-btn" onclick="copyCmd('/飞书同步')">
+    <div class="quick-icon">📊</div>
+    <div class="quick-label">同步飞书</div>
+  </div>
+  <div class="quick-btn" onclick="location.reload()">
+    <div class="quick-icon">🔄</div>
+    <div class="quick-label">刷新数据</div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════
-     素材库
-═══════════════════════════════════════ -->
+<!-- ══ 素材库 ══ -->
 <div id="entry-section">
-  <div class="section-title">📚 素材库 · 点击查看详情</div>
-  <div class="entry-list" id="entry-list">
-
-    <!-- ENTRY-001 -->
-    <div class="entry-card" id="card-001">
-      <div class="entry-head" onclick="toggleEntry('001')">
-        <div class="entry-id">001</div>
-        <div class="entry-title-wrap">
-          <div class="entry-title">捡垃圾，是不是一种自我感动的善行</div>
-          <div class="entry-meta">真实故事计划 · 2026-04-14</div>
-        </div>
-        <div class="entry-expand-icon">▼</div>
-      </div>
-      <div class="entry-detail">
-        <div class="entry-source">
-          <span class="entry-source-label">原文</span>
-          <a class="entry-source-link" href="https://mp.weixin.qq.com/s/35LxCdlJnDwhZr-dxswytQ" target="_blank">mp.weixin.qq.com/s/35LxCdlJn…</a>
-        </div>
-        <div class="entry-summary">
-          <div class="entry-summary-title">核心结构</div>
-          <div class="entry-structure">冲突引爆 → 人物速写 → 虚无者意外行动 → 多米诺收束</div>
-          <div class="entry-summary-title" style="margin-top:10px">精选金句</div>
-          <div class="entry-quotes">
-            <div class="entry-quote">垃圾是人类的，大海是宇宙的。</div>
-            <div class="entry-quote">无法推倒高墙，但可以推第一张骨牌。</div>
-          </div>
-        </div>
-        <div class="entry-bricks">
-          <div class="entry-bricks-title">创意积木</div>
-          <div class="brick-tags">
-            <span class="brick-tag">人物速写法</span>
-            <span class="brick-tag">悖论转折</span>
-            <span class="brick-tag">微小行动代替说教</span>
-            <span class="brick-tag">多米诺收尾</span>
-          </div>
-        </div>
-        <div class="entry-actions">
-          <button class="entry-btn btn-copy-cg" onclick="copyEntryCmd('001')">📋 复制拆解命令</button>
-          <a class="entry-btn btn-open-link" href="https://mp.weixin.qq.com/s/35LxCdlJnDwhZr-dxswytQ" target="_blank">🔗 原文</a>
-          <button class="entry-btn btn-delete" onclick="askDelete('001')">🗑</button>
-        </div>
-        <div class="delete-confirm" id="dc-001">
-          <div class="delete-confirm-text"><strong>⚠️ 删除说明</strong>页面删除仅为隐藏，实际文件仍在 WorkBuddy 素材库中。如需彻底删除，请在 WorkBuddy 中操作。</div>
-          <div class="delete-confirm-btns">
-            <button class="btn-confirm-delete" onclick="doDelete('001')">确认隐藏</button>
-            <button class="btn-cancel-delete" onclick="cancelDelete('001')">取消</button>
-          </div>
-        </div>
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">
+        <span>📚</span>
+        <span>素材库</span>
+        <span class="section-badge" id="entry-count">9 条</span>
       </div>
     </div>
-
-    <!-- ENTRY-002 -->
-    <div class="entry-card" id="card-002">
-      <div class="entry-head" onclick="toggleEntry('002')">
-        <div class="entry-id">002</div>
-        <div class="entry-title-wrap">
-          <div class="entry-title">一位中科院院士的成绩单</div>
-          <div class="entry-meta">宋诗之河 · 2026-04-14</div>
-        </div>
-        <div class="entry-expand-icon">▼</div>
-      </div>
-      <div class="entry-detail">
-        <div class="entry-source">
-          <span class="entry-source-label">原文</span>
-          <a class="entry-source-link" href="https://mp.weixin.qq.com/s/PEs3wGfnM9Ct-9kkd8DYpQ" target="_blank">mp.weixin.qq.com/s/PEs3wGfn…</a>
-        </div>
-        <div class="entry-summary">
-          <div class="entry-summary-title">核心结构</div>
-          <div class="entry-structure">细节切入 → 行动代替形容词 → 实物锚定 → 他人之口收束人格</div>
-          <div class="entry-summary-title" style="margin-top:10px">精选金句</div>
-          <div class="entry-quotes">
-            <div class="entry-quote">给家乡递上了一份份满分答卷。</div>
-            <div class="entry-quote">"亲爱的常山乡亲们"——五个字，让记者既亲切又震撼。</div>
-          </div>
-        </div>
-        <div class="entry-bricks">
-          <div class="entry-bricks-title">创意积木</div>
-          <div class="brick-tags">
-            <span class="brick-tag">方言破冰法</span>
-            <span class="brick-tag">行动代替形容</span>
-            <span class="brick-tag">实物锚定法</span>
-            <span class="brick-tag">首尾意象呼应</span>
-          </div>
-        </div>
-        <div class="entry-actions">
-          <button class="entry-btn btn-copy-cg" onclick="copyEntryCmd('002')">📋 复制拆解命令</button>
-          <a class="entry-btn btn-open-link" href="https://mp.weixin.qq.com/s/PEs3wGfnM9Ct-9kkd8DYpQ" target="_blank">🔗 原文</a>
-          <button class="entry-btn btn-delete" onclick="askDelete('002')">🗑</button>
-        </div>
-        <div class="delete-confirm" id="dc-002">
-          <div class="delete-confirm-text"><strong>⚠️ 删除说明</strong>页面删除仅为隐藏，实际文件仍在 WorkBuddy 素材库中。如需彻底删除，请在 WorkBuddy 中操作。</div>
-          <div class="delete-confirm-btns">
-            <button class="btn-confirm-delete" onclick="doDelete('002')">确认隐藏</button>
-            <button class="btn-cancel-delete" onclick="cancelDelete('002')">取消</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ENTRY-003 -->
-    <div class="entry-card" id="card-003">
-      <div class="entry-head" onclick="toggleEntry('003')">
-        <div class="entry-id">003</div>
-        <div class="entry-title-wrap">
-          <div class="entry-title">自从知道了"熵"的概念，我再也不玩手机了</div>
-          <div class="entry-meta">青野成长 · 2026-04-14</div>
-        </div>
-        <div class="entry-expand-icon">▼</div>
-      </div>
-      <div class="entry-detail">
-        <div class="entry-source">
-          <span class="entry-source-label">原文</span>
-          <a class="entry-source-link" href="https://mp.weixin.qq.com/s/mAVUpEUu_OdHxX8KmqJ7vw" target="_blank">mp.weixin.qq.com/s/mAVUpEUu…</a>
-        </div>
-        <div class="entry-summary">
-          <div class="entry-summary-title">核心结构</div>
-          <div class="entry-structure">科学概念锚定 → 二元对照表格 → 三步递进实践 → 哲学升华收束</div>
-          <div class="entry-summary-title" style="margin-top:10px">精选金句</div>
-          <div class="entry-quotes">
-            <div class="entry-quote">越舒适熵增长越大。</div>
-            <div class="entry-quote">熵减的终极目标——自由，而非束缚。</div>
-          </div>
-        </div>
-        <div class="entry-bricks">
-          <div class="entry-bricks-title">创意积木</div>
-          <div class="brick-tags">
-            <span class="brick-tag">科学概念包装法</span>
-            <span class="brick-tag">二元对照表格</span>
-            <span class="brick-tag">层层递进排比</span>
-            <span class="brick-tag">最小行动入口</span>
-          </div>
-        </div>
-        <div class="entry-actions">
-          <button class="entry-btn btn-copy-cg" onclick="copyEntryCmd('003')">📋 复制拆解命令</button>
-          <a class="entry-btn btn-open-link" href="https://mp.weixin.qq.com/s/mAVUpEUu_OdHxX8KmqJ7vw" target="_blank">🔗 原文</a>
-          <button class="entry-btn btn-delete" onclick="askDelete('003')">🗑</button>
-        </div>
-        <div class="delete-confirm" id="dc-003">
-          <div class="delete-confirm-text"><strong>⚠️ 删除说明</strong>页面删除仅为隐藏，实际文件仍在 WorkBuddy 素材库中。如需彻底删除，请在 WorkBuddy 中操作。</div>
-          <div class="delete-confirm-btns">
-            <button class="btn-confirm-delete" onclick="doDelete('003')">确认隐藏</button>
-            <button class="btn-cancel-delete" onclick="cancelDelete('003')">取消</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ENTRY-004 -->
-    <div class="entry-card" id="card-004">
-      <div class="entry-head" onclick="toggleEntry('004')">
-        <div class="entry-id">004</div>
-        <div class="entry-title-wrap">
-          <div class="entry-title">广州官宣：新房提标准，老房能改造，"停车难"有解！</div>
-          <div class="entry-meta">南方网 · 粤学习客户端 · 2026-04-15</div>
-        </div>
-        <div class="entry-expand-icon">▼</div>
-      </div>
-      <div class="entry-detail">
-        <div class="entry-source">
-          <span class="entry-source-label">原文</span>
-          <a class="entry-source-link" href="https://mp.weixin.qq.com/s/qhoQju3lLQeCRHEzOzonww" target="_blank">mp.weixin.qq.com/s/qhoQju3l…</a>
-        </div>
-        <div class="entry-summary">
-          <div class="entry-summary-title">核心结构</div>
-          <div class="entry-structure">政策悬念 → 核心承诺 → 三亮点并列 → 生活图景收束</div>
-          <div class="entry-summary-title" style="margin-top:10px">精选金句</div>
-          <div class="entry-quotes">
-            <div class="entry-quote">"这不是楼盘广告，是广州市新出炉的红头文件。"</div>
-            <div class="entry-quote">让房子回归住的本质：老人方便、小孩有地儿玩、车子有地儿停。</div>
-            <div class="entry-quote">不买车位别想买房的套路，行不通了。</div>
-          </div>
-        </div>
-        <div class="entry-bricks">
-          <div class="entry-bricks-title">创意积木</div>
-          <div class="brick-tags">
-            <span class="brick-tag">否定反转开头</span>
-            <span class="brick-tag">具象化代替抽象</span>
-            <span class="brick-tag">三亮点并列</span>
-            <span class="brick-tag">替用户出气</span>
-            <span class="brick-tag">四有句式收束</span>
-          </div>
-        </div>
-        <div class="entry-actions">
-          <button class="entry-btn btn-copy-cg" onclick="copyEntryCmd('004')">📋 复制拆解命令</button>
-          <a class="entry-btn btn-open-link" href="https://mp.weixin.qq.com/s/qhoQju3lLQeCRHEzOzonww" target="_blank">🔗 原文</a>
-          <button class="entry-btn btn-delete" onclick="askDelete('004')">🗑</button>
-        </div>
-        <div class="delete-confirm" id="dc-004">
-          <div class="delete-confirm-text"><strong>⚠️ 删除说明</strong>页面删除仅为隐藏，实际文件仍在 WorkBuddy 素材库中。如需彻底删除，请在 WorkBuddy 中操作。</div>
-          <div class="delete-confirm-btns">
-            <button class="btn-confirm-delete" onclick="doDelete('004')">确认隐藏</button>
-            <button class="btn-cancel-delete" onclick="cancelDelete('004')">取消</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="entry-card" id="card-005">
-      <div class="entry-head" onclick="toggleEntry('005')">
-        <div class="entry-id">005</div>
-        <div class="entry-title-wrap">
-          <div class="entry-title">汕尾买房避坑清单</div>
-          <div class="entry-meta">原创（写作飞轮） · 2026-04-15</div>
-        </div>
-        <div class="entry-expand-icon">▼</div>
-      </div>
-      <div class="entry-detail">
-        <div class="entry-summary">
-          <div class="entry-summary-title">核心结构</div>
-          <div class="entry-structure">反常识痛点切入 → 五坑横排展开 → 已在坑里怎么办 → 行动号召收束</div>
-          <div class="entry-summary-title" style="margin-top:10px">精选金句</div>
-          <div class="entry-quotes">
-            <div class="entry-quote">"上周，朋友老张兴冲冲地跟我说，他在汕尾看中了一套海景房。两个月后，房子烂尾了，首付打了水漂。"</div>
-            <div class="entry-quote">"能贷≠好贷、能用≠靠谱、特价≠捡漏"</div>
-            <div class="entry-quote">"房子是用来住的，不是用来赌的。"</div>
-          </div>
-        </div>
-        <div class="entry-bricks">
-          <div class="entry-bricks-title">创意积木</div>
-          <div class="brick-tags">
-            <span class="brick-tag">人物踩坑开头</span>
-            <span class="brick-tag">悖论句式</span>
-            <span class="brick-tag">三问清单法</span>
-            <span class="brick-tag">已在坑里收尾</span>
-          </div>
-        </div>
-        <div class="entry-actions">
-          <button class="entry-btn btn-copy-cg" onclick="copyEntryCmd('005')">📋 复制拆解命令</button>
-          <button class="entry-btn btn-delete" onclick="askDelete('005')">🗑</button>
-        </div>
-        <div class="delete-confirm" id="dc-005">
-          <div class="delete-confirm-text"><strong>⚠️ 删除说明</strong>页面删除仅为隐藏，实际文件仍在 WorkBuddy 素材库中。</div>
-          <div class="delete-confirm-btns">
-            <button class="btn-confirm-delete" onclick="doDelete('005')">确认隐藏</button>
-            <button class="btn-cancel-delete" onclick="cancelDelete('005')">取消</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="entry-card" id="card-006">
-      <div class="entry-head" onclick="toggleEntry('006')">
-        <div class="entry-id">006</div>
-        <div class="entry-title-wrap">
-          <div class="entry-title">公积金贷款三大"潜规则"</div>
-          <div class="entry-meta">原创（写作飞轮） · 2026-04-15</div>
-        </div>
-        <div class="entry-expand-icon">▼</div>
-      </div>
-      <div class="entry-detail">
-        <div class="entry-summary">
-          <div class="entry-summary-title">核心结构</div>
-          <div class="entry-structure">蹲点采访切入 → 三条潜规则横排 → 关键动作清单 → 写给被拒的人</div>
-          <div class="entry-summary-title" style="margin-top:10px">精选金句</div>
-          <div class="entry-quotes">
-            <div class="entry-quote">"我在汕尾公积金管理中心蹲了三天，采访完第17个购房者之后，发现一个规律：10个人里有8个以为自己懂了，其实连门都没摸到。"</div>
-            <div class="entry-quote">"断缴=清零，连续缴纳年限从0开始计算。"</div>
-            <div class="entry-quote">"公积金是你自己的钱，别让它在关键时刻成为那个'差一点点'的遗憾。"</div>
-          </div>
-        </div>
-        <div class="entry-bricks">
-          <div class="entry-bricks-title">创意积木</div>
-          <div class="brick-tags">
-            <span class="brick-tag">蹲点采访开头</span>
-            <span class="brick-tag">反常识开场</span>
-            <span class="brick-tag">潜规则框架</span>
-            <span class="brick-tag">可投诉赋权</span>
-          </div>
-        </div>
-        <div class="entry-actions">
-          <button class="entry-btn btn-copy-cg" onclick="copyEntryCmd('006')">📋 复制拆解命令</button>
-          <button class="entry-btn btn-delete" onclick="askDelete('006')">🗑</button>
-        </div>
-        <div class="delete-confirm" id="dc-006">
-          <div class="delete-confirm-text"><strong>⚠️ 删除说明</strong>页面删除仅为隐藏，实际文件仍在 WorkBuddy 素材库中。</div>
-          <div class="delete-confirm-btns">
-            <button class="btn-confirm-delete" onclick="doDelete('006')">确认隐藏</button>
-            <button class="btn-cancel-delete" onclick="cancelDelete('006')">取消</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="entry-card" id="card-007">
-      <div class="entry-head" onclick="toggleEntry('007')">
-        <div class="entry-id">007</div>
-        <div class="entry-title-wrap">
-          <div class="entry-title">又抢地！金茂大战保利，2.6万/平吞下老西关江景靓地</div>
-          <div class="entry-meta">广州房产（微信公众号） · 2026-04-15</div>
-        </div>
-        <div class="entry-expand-icon">▼</div>
-      </div>
-      <div class="entry-detail">
-        <div class="entry-summary">
-          <div class="entry-summary-title">核心结构</div>
-          <div class="entry-structure">竞拍悬念 → 结局揭晓 → 反差强化 → 优势纵深 → 前景预测</div>
-          <div class="entry-summary-title" style="margin-top:10px">精选金句</div>
-          <div class="entry-quotes">
-            <div class="entry-quote">"马场之后，广州土拍再现抢地大戏！"</div>
-            <div class="entry-quote">"有点意外，该地块由金茂拿下了，而且还是在保利手上抢下的！"</div>
-            <div class="entry-quote">"时隔一年多再出手，足以证明中山八地块的超强素质。"</div>
-          </div>
-        </div>
-        <div class="entry-bricks">
-          <div class="entry-bricks-title">创意积木</div>
-          <div class="brick-tags">
-            <span class="brick-tag">双雄对决开头</span>
-            <span class="brick-tag">意外强化句</span>
-            <span class="brick-tag">数据对比矩阵</span>
-            <span class="brick-tag">低密稀缺三合一</span>
-          </div>
-        </div>
-        <div class="entry-actions">
-          <button class="entry-btn btn-copy-cg" onclick="copyEntryCmd('007')">📋 复制拆解命令</button>
-          <button class="entry-btn btn-delete" onclick="askDelete('007')">🗑</button>
-        </div>
-        <div class="delete-confirm" id="dc-007">
-          <div class="delete-confirm-text"><strong>⚠️ 删除说明</strong>页面删除仅为隐藏，实际文件仍在 WorkBuddy 素材库中。</div>
-          <div class="delete-confirm-btns">
-            <button class="btn-confirm-delete" onclick="doDelete('007')">确认隐藏</button>
-            <button class="btn-cancel-delete" onclick="cancelDelete('007')">取消</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="entry-card" id="card-008">
-      <div class="entry-head" onclick="toggleEntry('008')">
-        <div class="entry-id">008</div>
-        <div class="entry-title-wrap">
-          <div class="entry-title">地铁吐血女孩的二三事</div>
-          <div class="entry-meta">真实故事计划（微信公众号） · 2026-04-15</div>
-        </div>
-        <div class="entry-expand-icon">▼</div>
-      </div>
-      <div class="entry-detail">
-        <div class="entry-summary">
-          <div class="entry-summary-title">核心结构</div>
-          <div class="entry-structure">戏剧性瞬间切入 → 8年病史回溯 → 核心矛盾揭示 → 情感转折 → 心态蜕变 → 行动升华</div>
-          <div class="entry-summary-title" style="margin-top:10px">精选金句</div>
-          <div class="entry-quotes">
-            <div class="entry-quote">"在地铁里吐血的那一刻，她最担心的不是自己的身体，而是弄脏了别人的衣服。"</div>
-            <div class="entry-quote">"8年来，她一个人去医院，一个人签字，一个人签病危通知书。"</div>
-            <div class="entry-quote">"她终于明白：允许别人爱你，比独自坚强更难，也更重要。"</div>
-          </div>
-        </div>
-        <div class="entry-bricks">
-          <div class="entry-bricks-title">创意积木</div>
-          <div class="brick-tags">
-            <span class="brick-tag">戏剧性瞬间切入</span>
-            <span class="brick-tag">时间线回溯</span>
-            <span class="brick-tag">核心矛盾揭示</span>
-            <span class="brick-tag">情感转折</span>
-          </div>
-        </div>
-        <div class="entry-actions">
-          <button class="entry-btn btn-copy-cg" onclick="copyEntryCmd('008')">📋 复制拆解命令</button>
-          <button class="entry-btn btn-delete" onclick="askDelete('008')">🗑</button>
-        </div>
-        <div class="delete-confirm" id="dc-008">
-          <div class="delete-confirm-text"><strong>⚠️ 删除说明</strong>页面删除仅为隐藏，实际文件仍在 WorkBuddy 素材库中。</div>
-          <div class="delete-confirm-btns">
-            <button class="btn-confirm-delete" onclick="doDelete('008')">确认隐藏</button>
-            <button class="btn-cancel-delete" onclick="cancelDelete('008')">取消</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="entry-card" id="card-009">
-      <div class="entry-head" onclick="toggleEntry('009')">
-        <div class="entry-id">009</div>
-        <div class="entry-title-wrap">
-          <div class="entry-title">广州六运小区餐饮店6月起全面清退？</div>
-          <div class="entry-meta">羊城晚报（微信公众号） · 2026-04-22</div>
-        </div>
-        <div class="entry-expand-icon">▼</div>
-      </div>
-      <div class="entry-detail">
-        <div class="entry-summary">
-          <div class="entry-summary-title">核心结构</div>
-          <div class="entry-structure">政策风声 → 记者走访反差 → 多方声音 → 历史溯源 → 政策背景 → 未来展望</div>
-          <div class="entry-summary-title" style="margin-top:10px">精选金句</div>
-          <div class="entry-quotes">
-            <div class="entry-quote">"六运小区95%都是'住改商'，而新的热食证去年就不再允许办理。"</div>
-            <div class="entry-quote">"天塌了，一口热乎的都吃不上了。"</div>
-            <div class="entry-quote">"50平方米的商铺月租约22000元，妥妥的广州小区商铺租金天花板。"</div>
-          </div>
-        </div>
-        <div class="entry-bricks">
-          <div class="entry-bricks-title">创意积木</div>
-          <div class="brick-tags">
-            <span class="brick-tag">反差开头法</span>
-            <span class="brick-tag">数据锚定法</span>
-            <span class="brick-tag">历史溯源法</span>
-            <span class="brick-tag">多方声音法</span>
-            <span class="brick-tag">未来预测收束</span>
-          </div>
-        </div>
-        <div class="entry-actions">
-          <button class="entry-btn btn-copy-cg" onclick="copyEntryCmd('009')">📋 复制拆解命令</button>
-          <button class="entry-btn btn-delete" onclick="askDelete('009')">🗑</button>
-        </div>
-        <div class="delete-confirm" id="dc-009">
-          <div class="delete-confirm-text"><strong>⚠️ 删除说明</strong>页面删除仅为隐藏，实际文件仍在 WorkBuddy 素材库中。</div>
-          <div class="delete-confirm-btns">
-            <button class="btn-confirm-delete" onclick="doDelete('009')">确认隐藏</button>
-            <button class="btn-cancel-delete" onclick="cancelDelete('009')">取消</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
+    <div id="entry-list"></div>
   </div>
 </div>
 
-<!-- Paste Template -->
-<div class="divider"></div>
-<div class="section-title">粘贴模板</div>
-<div class="template-box">
-  <div class="t-label">复制下方格式，粘贴到 WorkBuddy 使用</div>
-  <div class="template-text">/CONTENT-GOLDMINE
-https://mp.weixin.qq.com/s/xxxxxxxx</div>
+<!-- ══ 创意方向 ══ -->
+<div id="idea-section">
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">
+        <span>💡</span>
+        <span>创意方向</span>
+        <span class="section-badge" id="idea-count-badge">10 条</span>
+      </div>
+    </div>
+    <div id="idea-list"></div>
+  </div>
+</div>
+
+<!-- ══ 完稿 ══ -->
+<div id="draft-section">
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">
+        <span>📄</span>
+        <span>完稿作品</span>
+        <span class="section-badge" id="draft-count-badge">1 篇</span>
+      </div>
+    </div>
+    <div id="draft-list"></div>
+  </div>
 </div>
 
 <!-- Toast -->
 <div class="toast" id="toast"></div>
 
 <script>
-// ══════════════════════════════════════
-//  通用工具
-// ══════════════════════════════════════
+// ══ 配置 ══
+var currentTab = 'analyze';
+var cmdConfig = {
+  analyze: {
+    cmd: 'CONTENT-GOLDMINE',
+    prefix: '/CONTENT-GOLDMINE\n',
+    hint: '粘贴微信公众号链接',
+    btnIcon: '🚀',
+    btnText: '复制命令',
+    toast: '✓ 已复制！去 WorkBuddy 粘贴发送'
+  },
+  idea: {
+    cmd: 'IDEA-GEN',
+    prefix: '/IDEA-GEN\n',
+    hint: '粘贴网站链接 / 输入内容',
+    btnIcon: '💡',
+    btnText: '复制命令',
+    toast: '✓ 已复制！去 WorkBuddy 粘贴发送'
+  },
+  write: {
+    cmd: 'WRITING-CLONE',
+    prefix: '/WRITING-CLONE ',
+    hint: '输入文章标题',
+    btnIcon: '✍️',
+    btnText: '复制命令',
+    toast: '✓ 已复制！去 WorkBuddy 粘贴发送'
+  }
+};
+
+// ══ Tab 切换 ══
+function switchTab(btn) {
+  document.querySelectorAll('.action-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  currentTab = btn.dataset.tab;
+  var config = cmdConfig[currentTab];
+  document.getElementById('input-hint').textContent = config.hint;
+  document.getElementById('cmd-input').placeholder = config.hint;
+  document.getElementById('btn-icon').textContent = config.btnIcon;
+  document.getElementById('btn-text').textContent = config.btnText;
+  document.getElementById('cmd-input').value = '';
+  document.getElementById('cmd-preview').classList.remove('show');
+  document.getElementById('main-btn').disabled = true;
+}
+
+// ══ 输入处理 ══
+function onInput() {
+  var val = document.getElementById('cmd-input').value.trim();
+  var preview = document.getElementById('cmd-preview');
+  var previewText = document.getElementById('cmd-preview-text');
+  var btn = document.getElementById('main-btn');
+
+  if (val) {
+    var config = cmdConfig[currentTab];
+    previewText.textContent = config.prefix + val;
+    preview.classList.add('show');
+    btn.disabled = false;
+  } else {
+    preview.classList.remove('show');
+    btn.disabled = true;
+  }
+}
+
+// ══ 粘贴 ══
+function doPaste() {
+  if (navigator.clipboard && navigator.clipboard.readText) {
+    navigator.clipboard.readText().then(function(text) {
+      document.getElementById('cmd-input').value = text;
+      onInput();
+    }).catch(function() {
+      showToast('请长按输入框选择「粘贴」', true);
+    });
+  } else {
+    showToast('请长按输入框选择「粘贴」', true);
+  }
+}
+
+// ══ 执行 ══
+function doExecute() {
+  var val = document.getElementById('cmd-input').value.trim();
+  if (!val) return;
+  var config = cmdConfig[currentTab];
+  var fullCmd = config.prefix + val;
+  copyText(fullCmd);
+  showToast(config.toast);
+}
+
+// ══ 复制任意命令 ══
+function copyCmd(text) {
+  copyText(text);
+  showToast('✓ 已复制！');
+}
+
+// ══ 通用工具 ══
 function copyText(text) {
   if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(text).catch(function() { fallbackCopy(text); });
@@ -1567,499 +1043,296 @@ function fallbackCopy(text) {
   try { document.execCommand('copy'); } catch(e) {}
   document.body.removeChild(ta);
 }
-function showToast(msg, isDanger) {
+
+function showToast(msg, isFail) {
   var t = document.getElementById('toast');
   t.textContent = msg;
-  t.classList.toggle('danger', !!isDanger);
+  t.classList.toggle('fail', !!isFail);
   t.classList.add('show');
   clearTimeout(t._timer);
   t._timer = setTimeout(function() { t.classList.remove('show'); }, 2500);
 }
 
-// ══════════════════════════════════════
-//  搜索功能
-// ══════════════════════════════════════
-function toggleSearch() {
-  var bar = document.getElementById('search-bar');
-  var btn = document.querySelector('.search-btn');
-  if (bar.classList.contains('active')) {
-    bar.classList.remove('active');
-    btn.classList.remove('active');
-    document.getElementById('search-input').value = '';
-    document.getElementById('search-results').innerHTML = '';
-  } else {
-    bar.classList.add('active');
-    btn.classList.add('active');
-    document.getElementById('search-input').focus();
-  }
-}
-function closeSearch() {
-  var bar = document.getElementById('search-bar');
-  var btn = document.querySelector('.search-btn');
-  bar.classList.remove('active');
-  btn.classList.remove('active');
-  document.getElementById('search-input').value = '';
-  document.getElementById('search-results').innerHTML = '';
-}
-function doSearch(keyword) {
-  var results = document.getElementById('search-results');
-  if (!keyword.trim()) {
-    results.innerHTML = '';
-    return;
-  }
-  keyword = keyword.toLowerCase();
-  var kws = keyword.split(/\s+/);
-  
-  // 素材库搜索
-  var entries = document.querySelectorAll('.entry-card');
-  var ideas = document.querySelectorAll('.idea-card');
-  var found = [];
-  
-  entries.forEach(function(card) {
-    var title = card.querySelector('.entry-title')?.textContent || '';
-    if (kws.every(function(k) { return title.toLowerCase().includes(k); })) {
-      found.push({ type: '📚 素材', title: title, id: card.id.replace('card-', '') });
-    }
-  });
-  
-  ideas.forEach(function(card) {
-    var title = card.querySelector('.idea-title')?.textContent || '';
-    if (kws.every(function(k) { return title.toLowerCase().includes(k); })) {
-      found.push({ type: '💡 创意', title: title, id: card.id.replace('idea-card-', '') });
-    }
-  });
-  
-  if (found.length === 0) {
-    results.innerHTML = '<div class="search-no-result">没有找到匹配的素材或创意方向</div>';
-  } else {
-    results.innerHTML = found.map(function(item) {
-      return '<div class="search-result-item" onclick="searchResultClick(\'' + item.type + '\',' + item.id + ')">' +
-             '<div class="search-result-type">' + item.type + '</div>' +
-             '<div class="search-result-title">' + item.title + '</div></div>';
-    }).join('');
-  }
-}
-function searchResultClick(type, id) {
-  closeSearch();
-  if (type.indexOf('素材') > -1) {
-    toggleEntry(id);
-    setTimeout(function() { document.getElementById('card-' + id)?.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 100);
-  } else {
-    toggleIdea(id);
-    setTimeout(function() { document.getElementById('idea-card-' + id)?.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 100);
-  }
-}
-function scrollToSection(id) {
-  var el = document.getElementById(id);
-  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-
-// ══════════════════════════════════════
-//  命令生成器
-// ══════════════════════════════════════
-var currentCmd = 'CONTENT-GOLDMINE';
-
-var cmdConfig = {
-  'CONTENT-GOLDMINE': {
-    prefix: '/CONTENT-GOLDMINE ',
-    placeholder: '粘贴微信公众号链接',
-    hint: '微信公众号链接 → 拆解结构 + 金句 + 创意积木 → 存入素材库'
-  },
-  'IDEA-GEN': {
-    prefix: '/IDEA-GEN ',
-    placeholder: '粘贴网站链接 / 输入文字内容',
-    hint: '已有素材库 + 新信息源 → 生成创意方向或直接出稿'
-  },
-  'WRITING-CLONE': {
-    prefix: '/WRITING-CLONE ',
-    placeholder: '输入文章标题',
-    hint: '采集素材 → 执行写作 → 存入完稿库'
-  }
-};
-
-function selectCmdTab(btn) {
-  // 更新选中状态
-  document.querySelectorAll('.cmd-tab').forEach(function(t) { t.classList.remove('active'); });
-  btn.classList.add('active');
-  
-  // 更新当前命令
-  currentCmd = btn.dataset.cmd;
-  var config = cmdConfig[currentCmd];
-  
-  // 更新输入框
-  var input = document.getElementById('cmd-input');
-  input.placeholder = config.placeholder;
-  
-  // 更新提示
-  var hintEl = document.getElementById('cmd-hint').querySelector('.hint-text');
-  hintEl.textContent = config.hint;
-  
-  // 清空并重新检查
-  cmdOnInput();
-}
-
-function cmdOnInput() {
-  var val = document.getElementById('cmd-input').value.trim();
-  var btn = document.getElementById('cmd-go-btn');
-  var copyBtn = document.getElementById('cmd-copy-btn');
-  var resultEl = document.getElementById('cmd-result');
-  var cmdEl = document.getElementById('cmd-result-cmd');
-  
-  if (val.length > 0) {
-    var config = cmdConfig[currentCmd];
-    var fullCmd = config.prefix + val;
-    cmdEl.textContent = fullCmd;
-    resultEl.classList.add('show');
-    btn.disabled = false;
-    copyBtn.style.display = 'flex';
-  } else {
-    resultEl.classList.remove('show');
-    btn.disabled = true;
-    copyBtn.style.display = 'none';
-  }
-  document.getElementById('cmd-tip').classList.remove('show');
-}
-
-function cmdPaste() {
-  if (navigator.clipboard && navigator.clipboard.readText) {
-    navigator.clipboard.readText().then(function(text) {
-      document.getElementById('cmd-input').value = text;
-      cmdOnInput();
-    }).catch(function() { showToast('请手动长按输入框粘贴', true); });
-  } else {
-    showToast('请长按输入框选择「粘贴」', true);
-  }
-}
-
-function cmdGo() {
-  var val = document.getElementById('cmd-input').value.trim();
-  if (!val) return;
-  
-  var config = cmdConfig[currentCmd];
-  var fullCmd = config.prefix + val;
-  
-  // 直接复制到剪贴板
-  copyText(fullCmd);
-  
-  var tip = document.getElementById('cmd-tip');
-  tip.classList.add('show');
-  clearTimeout(tip._t);
-  tip._t = setTimeout(function() { tip.classList.remove('show'); }, 3500);
-  
-  showToast('✓ 命令已复制！去 WorkBuddy 粘贴发送');
-}
-
-function cmdCopy() {
-  var val = document.getElementById('cmd-result-cmd').textContent;
-  if (val) {
-    copyText(val);
-    var tip = document.getElementById('cmd-tip');
-    tip.classList.add('show');
-    clearTimeout(tip._t);
-    tip._t = setTimeout(function() { tip.classList.remove('show'); }, 3500);
-    showToast('✓ 命令已复制！');
-  }
-}
-
-function cmdClear() {
-  document.getElementById('cmd-input').value = '';
-  document.getElementById('cmd-result').classList.remove('show');
-  document.getElementById('cmd-go-btn').disabled = true;
-  document.getElementById('cmd-copy-btn').style.display = 'none';
-  document.getElementById('cmd-tip').classList.remove('show');
-}
-
-// ══════════════════════════════════════
-//  快捷命令卡片
-// ══════════════════════════════════════
-function copyCmd(card, text) {
-  copyText(text);
-  var hint = card.querySelector('.copy-hint');
-  if (hint) { hint.classList.add('show'); setTimeout(function() { hint.classList.remove('show'); }, 2500); }
-  showToast('✓ 已复制！去 WorkBuddy 粘贴发送');
-}
-
-// ══════════════════════════════════════
-//  区块展开/收起（创意方向 & 完稿）
-// ══════════════════════════════════════
-function toggleBlock(blockId) {
-  var block = document.getElementById(blockId);
-  var head = block.querySelector('.block-head');
-  var body = block.querySelector('.block-body');
-  var isOpen = head.classList.contains('open');
-
-  // 同步所有 block-head 与 block-body 的 open 状态
-  document.querySelectorAll('.block-head').forEach(function(h) { h.classList.remove('open'); });
-  document.querySelectorAll('.block-body').forEach(function(b) { b.classList.remove('open'); });
-
-  if (!isOpen) {
-    head.classList.add('open');
-    if (body) body.classList.add('open');
-    setTimeout(function() { block.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 50);
-  }
-}
-
-// ══════════════════════════════════════
-//  创意方向展开
-// ══════════════════════════════════════
-function toggleIdea(id) {
-  var card = document.getElementById('idea-card-' + id);
-  var isOpen = card.classList.contains('open');
-  document.querySelectorAll('.idea-card.open').forEach(function(c) { c.classList.remove('open'); });
-  if (!isOpen) {
-    card.classList.add('open');
-    setTimeout(function() { card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 50);
-  }
-}
-
-function copyIdeaCmd(id) {
-  var titles = {
-    '001': '广州楼市新28条：汕尾可以抄哪些？',
-    '002': '从院士成绩单到汕尾骄傲：人物故事的新写法',
-    '003': '职场版：最说"努力没用"的人悄悄在加班',
-    '004': '亲密关系版：最说"不需要爱情"的人比谁都渴望',
-    '005': '汕尾版：逃离北上广的人，最后发现答案在海边',
-    '006': '政策解密：公积金贷款3大"潜规则"',
-    '007': '科学框架：买房是一场"机会成本"计算',
-    '008': '本地人物：有人在老城区守了30年',
-    '009': '热点解读：广州救市，汕尾跟不跟？',
-    '010': '行动指南：汕尾买房避坑清单'
-  };
-  copyText('/WRITING-CLONE ' + titles[id]);
-  showToast('✓ 写作命令已复制！去 WorkBuddy 粘贴发送');
-}
-
-function copyIdeaDetails(id) {
-  var details = {
-    '001': '【创意方向：IDEA-001 · 政策解读版】\n标题：广州出了28条，汕尾人买房要注意什么？\n角度：广州新28条落地，对汕尾购房者/业主/开发商的直接影响\n论点：配套、停车、改造——汕尾买房看这三条就够了\n积木：替用户出气 + 生活场景具象化 + 三点并列\n参考：ENTRY-001+004',
-    '002': '【创意方向：IDEA-002 · 人物故事版】\n标题：汕尾人，递上了一份怎样的成绩单？\n角度：借用院士成绩单的结构，写汕尾本地"递上成绩单"的人物故事\n论点：每个人都有自己的"成绩单"——不是分数，是那些被时间沉淀下来的选择\n积木：人物速写 + 行动代替形容词 + 首尾意象呼应\n参考：ENTRY-002',
-    '003': '【创意方向：IDEA-003 · 职场悖论版】\n标题：那个每天说"努力没用"的同事，下班后悄悄把方案改了3版\n角度：职场虚无主义者用悖论作盔甲，嘴最硬身体最诚实\n论点：最怀疑意义的人，往往是最认真行动的人\n积木：悖论句式 + 人物速写 + 多米诺收尾\n参考：ENTRY-001《捡垃圾是不是自我感动》',
-    '004': '【创意方向：IDEA-004 · 情感悖论版】\n标题：那个说不需要爱情的人，家里植物取名叫小明、小红、小刚\n角度：情感虚无主义者不是不需要，是太怕失望\n论点：用虚无主义保护自己的人，往往比谁都渴望连接\n积木：犀利开头 + 微小转折法 + 西西弗斯劳作\n参考：ENTRY-001《捡垃圾是不是自我感动》',
-    '005': '【创意方向：IDEA-005 · 汕尾返乡版】\n标题：深圳CBD里飞得最用力的燕子，最后成了汕尾海边最慢的那道波浪\n角度：逃离北上广不是失败，是发现自己真正需要什么的开始\n论点：汕尾的海滩比深圳湾安静，房价差距让体面生活触手可及\n积木：人物速写 + 替用户出气 + 具象化对比 + 四有句式收束\n参考：ENTRY-001《捡垃圾是不是自我感动》',
-    '006': '【创意方向：IDEA-006 · 政策解密版】\n标题：公积金贷款3大"潜规则"，银行永远不会主动告诉你！\n角度：银行和开发商都有各自的利益算盘，普通人不懂规则就等于白送钱\n论点：公积金贷款3大"潜规则"，银行永远不会主动告诉你！\n积木：否定反转开头 + 二元对照表格 + 替用户出气 + 四有句式收尾\n参考：ENTRY-003+004 ★★★优先级',
-    '007': '【创意方向：IDEA-007 · 科学框架版】\n标题：买房的本质是一场"机会成本"计算：你放弃的那笔钱，值多少？\n角度：买房不是买房子，而是买你对未来现金流的判断力\n论点：买房的本质是一场"机会成本"计算\n积木：科学概念包装法 + 层层递进排比 + 对仗升华结尾\n参考：ENTRY-003 ★★☆优先级',
-    '008': '【创意方向：IDEA-008 · 本地人物版】\n标题：汕尾人的房子：有人在老城区守了30年，有人把家安在了海边\n角度：房子是家的容器，但家的意义是汕尾人自己定义的\n论点：有人在老城区守了30年，有人把家安在了海边\n积木：实物锚定法 + 方言破冰法 + 行动代替形容 + 首尾意象呼应\n参考：ENTRY-002 ★☆☆优先级',
-    '009': '【创意方向：IDEA-009 · 热点解读版】\n标题：广州救市，汕尾跟不跟？看完这3个信号你就懂了\n角度：政策传导有滞后性，看懂一线城市的风向标比追政策本身更重要\n论点：广州救市，汕尾跟不跟？\n积木：多米诺骨牌收尾 + 悬念开头 + 三亮点并列 + 具象化技巧\n参考：ENTRY-001+004 ★★☆优先级',
-    '010': '【创意方向：IDEA-010 · 行动指南版】\n标题：2024汕尾买房避坑指南：看房前、签约时、交钱后分别要注意什么？\n角度：买房最怕的不是买贵，而是买完才发现踩了坑\n论点：一步一步教你避开购房陷阱\n积木：三步递进结构 + 悖论句式 + 最小行动入口 + 二元对照表格\n参考：ENTRY-001+003 ★★★优先级'
-  };
-  copyText(details[id]);
-  showToast('✓ 详情已复制');
-}
-
-// ══════════════════════════════════════
-//  完稿展开
-// ══════════════════════════════════════
-function toggleDraft(id) {
-  var card = document.getElementById('draft-card-' + id);
-  var isOpen = card.classList.contains('open');
-  document.querySelectorAll('.draft-card.open').forEach(function(c) { c.classList.remove('open'); });
-  if (!isOpen) {
-    card.classList.add('open');
-    setTimeout(function() { card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 50);
-  }
-}
-
-// 加载完稿全文
-var draftFullCache = {};
-function loadDraftFull(id) {
-  var container = document.getElementById('draft-' + id + '-full-content');
-  var icon = document.getElementById('draft-' + id + '-full-icon');
-  var text = document.getElementById('draft-' + id + '-full-text');
-  if (!container || !icon || !text) return;
-
-  if (container.style.display === 'block') {
-    container.style.display = 'none';
-    icon.textContent = '▶';
-    text.textContent = '展开全文';
-    return;
-  }
-
-  if (draftFullCache[id]) {
-    container.innerHTML = draftFullCache[id];
-    container.style.display = 'block';
-    icon.textContent = '▼';
-    text.textContent = '收起全文';
-    return;
-  }
-
-  container.innerHTML = '<div class="draft-full-loading">📖 正在加载全文...</div>';
-  container.style.display = 'block';
-  icon.textContent = '▼';
-  text.textContent = '收起全文';
-
-  var filePath = 'material-library/drafts/draft-' + id + '-v1.md';
-  fetch(filePath + '?t=' + Date.now())
-    .then(function(res) { return res.text(); })
-    .then(function(text) {
-      var html = parseDraftMarkdown(text);
-      draftFullCache[id] = html;
-      container.innerHTML = html;
-    })
-    .catch(function() {
-      container.innerHTML = '<div class="draft-full-loading">❌ 加载失败，请刷新重试</div>';
-    });
-}
-
-function parseDraftMarkdown(text) {
-  var lines = text.split('\n');
-  var html = [];
-  var inCode = false;
-  for (var i = 0; i < lines.length; i++) {
-    var line = lines[i];
-    if (line.match(/^```/)) { inCode = !inCode; continue; }
-    if (inCode) { html.push('<p>' + escapeHtml(line) + '</p>'); continue; }
-    if (line.match(/^#{3}\s/)) continue;
-    if (line.match(/^---$/)) { html.push('<hr>'); continue; }
-    if (line.match(/^##\s/)) { html.push('<h3>' + escapeHtml(line.replace(/^##\s/, '')) + '</h3>'); continue; }
-    if (line.trim() === '') continue;
-    line = line.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-    line = escapeHtml(line);
-    html.push('<p>' + line + '</p>');
-  }
-  return html.join('');
+function scrollTo(id) {
+  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function escapeHtml(text) {
-  return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 
-// ══════════════════════════════════════
-//  素材库展开
-// ══════════════════════════════════════
+// ══ 数据 ══
+var entries = [
+  {
+    id: '001', title: '捡垃圾，是不是一种自我感动的善行', source: '真实故事计划', date: '2026-04-14',
+    url: 'https://mp.weixin.qq.com/s/35LxCdlJnDwhZr-dxswytQ',
+    structure: '冲突引爆 → 人物速写 → 虚无者意外行动 → 多米诺收束',
+    quotes: ['垃圾是人类的，大海是宇宙的。', '无法推倒高墙，但可以推第一张骨牌。'],
+    tags: ['人物速写法', '悖论转折', '微小行动', '多米诺收尾']
+  },
+  {
+    id: '002', title: '一位中科院院士的成绩单', source: '宋诗之河', date: '2026-04-14',
+    url: 'https://mp.weixin.qq.com/s/PEs3wGfnM9Ct-9kkd8DYpQ',
+    structure: '细节切入 → 行动代替形容词 → 实物锚定 → 他人之口收束人格',
+    quotes: ['给家乡递上了一份份满分答卷。', '"亲爱的常山乡亲们"——五个字，让记者既亲切又震撼。'],
+    tags: ['方言破冰法', '行动代替形容', '实物锚定法', '首尾意象呼应']
+  },
+  {
+    id: '003', title: '自从知道了"熵"的概念，我再也不玩手机了', source: '青野成长', date: '2026-04-14',
+    url: 'https://mp.weixin.qq.com/s/mAVUpEUu_OdHxX8KmqJ7vw',
+    structure: '科学概念锚定 → 二元对照表格 → 三步递进实践 → 哲学升华收束',
+    quotes: ['越舒适熵增长越大。', '熵减的终极目标——自由，而非束缚。'],
+    tags: ['科学概念包装法', '二元对照表格', '层层递进排比', '最小行动入口']
+  },
+  {
+    id: '004', title: '广州官宣：新房提标准，老房能改造，"停车难"有解！', source: '南方网', date: '2026-04-15',
+    url: 'https://mp.weixin.qq.com/s/qhoQju3lLQeCRHEzOzonww',
+    structure: '政策悬念 → 核心承诺 → 三亮点并列 → 生活图景收束',
+    quotes: ['"这不是楼盘广告，是广州市新出炉的红头文件。"', '让房子回归住的本质：老人方便、小孩有地儿玩、车子有地儿停。'],
+    tags: ['否定反转开头', '具象化代替抽象', '三亮点并列', '替用户出气']
+  },
+  {
+    id: '005', title: '汕尾买房避坑清单', source: '原创', date: '2026-04-15',
+    structure: '反常识痛点切入 → 五坑横排展开 → 已在坑里怎么办 → 行动号召收束',
+    quotes: ['上周，朋友老张兴冲冲地跟我说，他在汕尾看中了一套海景房。两个月后，房子烂尾了。', '"能贷≠好贷、能用≠靠谱、特价≠捡漏"', '"房子是用来住的，不是用来赌的。"'],
+    tags: ['人物踩坑开头', '悖论句式', '三问清单法', '已在坑里收尾']
+  },
+  {
+    id: '006', title: '公积金贷款三大"潜规则"', source: '原创', date: '2026-04-15',
+    structure: '蹲点采访切入 → 三条潜规则横排 → 关键动作清单 → 写给被拒的人',
+    quotes: ['"我在汕尾公积金管理中心蹲了三天，采访完第17个购房者之后，发现一个规律..."', '"断缴=清零，连续缴纳年限从0开始计算。"'],
+    tags: ['蹲点采访开头', '反常识开场', '潜规则框架', '可投诉赋权']
+  },
+  {
+    id: '007', title: '又抢地！金茂大战保利，2.6万/平吞下老西关江景靓地', source: '广州房产', date: '2026-04-15',
+    url: 'https://mp.weixin.qq.com/s/xxxxx',
+    structure: '竞拍悬念 → 结局揭晓 → 反差强化 → 优势纵深 → 前景预测',
+    quotes: ['"马场之后，广州土拍再现抢地大戏！"', '"有点意外，该地块由金茂拿下了。"'],
+    tags: ['双雄对决开头', '意外强化句', '数据对比矩阵', '低密稀缺三合一']
+  },
+  {
+    id: '008', title: '地铁吐血女孩的二三事', source: '真实故事计划', date: '2026-04-15',
+    url: 'https://mp.weixin.qq.com/s/xxxxx',
+    structure: '戏剧性瞬间切入 → 8年病史回溯 → 核心矛盾揭示 → 情感转折 → 心态蜕变',
+    quotes: ['"在地铁里吐血的那一刻，她最担心的不是自己的身体，而是弄脏了别人的衣服。"', '"8年来，她一个人去医院，一个人签字，一个人签病危通知书。"'],
+    tags: ['戏剧性瞬间切入', '时间线回溯', '核心矛盾揭示', '情感转折']
+  },
+  {
+    id: '009', title: '广州六运小区餐饮店6月起全面清退？', source: '羊城晚报', date: '2026-04-22',
+    url: 'https://mp.weixin.qq.com/s/xxxxx',
+    structure: '政策风声 → 记者走访反差 → 多方声音 → 历史溯源 → 政策背景 → 未来展望',
+    quotes: ['"六运小区95%都是\'住改商\'，而新的热食证去年就不再允许办理。"', '"天塌了，一口热乎的都吃不上了。"'],
+    tags: ['反差开头法', '数据锚定法', '历史溯源法', '多方声音法']
+  }
+];
+
+var ideas = [
+  { id: '001', title: '广州楼市新28条：汕尾可以抄哪些？', source: 'ENTRY-001+004', priority: '★★★', high: true, angle: '广州新28条落地，对汕尾购房者/业主/开发商的直接影响。配套、停车、改造——汕尾虽小，购房逻辑类似。', titles: '「广州出了28条，汕尾人买房要注意什么？」', target: '汕尾本地购房者、打算在汕尾买房的人', points: '配套、停车、改造——汕尾买房看这三条就够了', tags: ['替用户出气', '生活场景具象化', '三点并列'] },
+  { id: '002', title: '从院士成绩单到汕尾骄傲：人物故事的新写法', source: 'ENTRY-002', priority: '★★☆', angle: '借用院士成绩单的结构，写汕尾本地"递上成绩单"的人物故事。用细节切入、行动代替形容、他人之口定格。', titles: '「汕尾人，递上了一份怎样的成绩单？」', target: '汕尾本地读者、对家乡有感情的用户', points: '每个人都有自己的"成绩单"——不是分数，是那些被时间沉淀下来的选择', tags: ['人物速写', '行动代替形容词', '首尾意象呼应'] },
+  { id: '003', title: '职场版：最说"努力没用"的人悄悄在加班', source: 'ENTRY-001', priority: '★★☆', angle: '职场中存在一类人：用虚无主义作盔甲，嘴上说"躺平"，身体却最诚实。这类人比谁都努力，只是不好意思承认。', titles: '「那个每天说\'努力没用\'的同事，下班后悄悄把方案改了3版」', target: '职场人、Z世代', points: '最怀疑意义的人，往往是最认真行动的人——这是悖论，也是人性', tags: ['悖论句式', '人物速写', '多米诺收尾'] },
+  { id: '004', title: '亲密关系版：最说"不需要爱情"的人比谁都渴望', source: 'ENTRY-001', priority: '★★☆', angle: '写一种"情感虚无主义者"——说不需要爱情的人，家里却养了三盆植物、取名叫小明小红小刚。不是不需要，是太怕失望。', titles: '「那个说不需要爱情的人，家里植物取名叫小明、小红、小刚」', target: '单身人士、对"恐恋/恐婚"话题有共鸣的读者', points: '用虚无主义保护自己的人，往往比谁都渴望连接', tags: ['犀利开头', '微小转折法', '西西弗斯劳作'] },
+  { id: '005', title: '汕尾版：逃离北上广的人，最后发现答案在海边', source: 'ENTRY-001', priority: '★★☆', angle: '汕尾人年轻时拼了命去广深，觉得小城市装不下野心。十年后发现：汕尾的海滩比深圳湾安静，房价差距让体面生活触手可及。', titles: '「深圳CBD里飞得最用力的燕子，最后成了汕尾海边最慢的那道波浪」', target: '在外奋斗的汕尾人、考虑返乡的用户', points: '逃离北上广不是失败，是发现自己真正需要什么的开始', tags: ['人物速写', '替用户出气', '具象化对比'] },
+  { id: '006', title: '政策解密：公积金贷款3大"潜规则"', source: 'ENTRY-003+004', priority: '★★★', high: true, angle: '公积金贷款3大"潜规则"，银行永远不会主动告诉你！银行和开发商都有各自的利益算盘，普通人不懂规则就等于白送钱。', titles: '「公积金贷款3大\'潜规则\'，银行永远不会主动告诉你！」', target: '首次购房刚需客户、置换改善型买家', points: '银行和开发商都有各自的利益算盘，普通人不懂规则就等于白送钱', tags: ['否定反转开头', '二元对照表格', '替用户出气', '四有句式收尾'] },
+  { id: '007', title: '科学框架：买房是一场"机会成本"计算', source: 'ENTRY-003', priority: '★★☆', angle: '买房的本质是一场"机会成本"计算：你放弃的那笔钱，值多少？买房不是买房子，而是买你对未来现金流的判断力。', titles: '「买房的本质是一场\'机会成本\'计算：你放弃的那笔钱，值多少？」', target: '30-45岁有投资意识的读者、城市白领', points: '买房不是买房子，而是买你对未来现金流的判断力', tags: ['科学概念包装法', '层层递进排比', '对仗升华结尾'] },
+  { id: '008', title: '本地人物：有人在老城区守了30年', source: 'ENTRY-002', priority: '★☆☆', angle: '汕尾人的房子：有人在老城区守了30年，有人把家安在了海边。房子是家的容器，但家的意义是汕尾人自己定义的。', titles: '「汕尾人的房子：有人在老城区守了30年，有人把家安在了海边」', target: '汕尾本地读者、有乡愁情结的外出务工群体', points: '房子是家的容器，但家的意义是汕尾人自己定义的', tags: ['实物锚定法', '方言破冰法', '行动代替形容'] },
+  { id: '009', title: '热点解读：广州救市，汕尾跟不跟？', source: 'ENTRY-001+004', priority: '★★☆', angle: '广州救市，汕尾跟不跟？看完这3个信号你就懂了。政策传导有滞后性，看懂一线城市的风向标比追政策本身更重要。', titles: '「广州救市，汕尾跟不跟？看完这3个信号你就懂了」', target: '投资型买家、关注宏观趋势的改善置换型买家', points: '政策传导有滞后性，看懂一线城市的风向标比追政策本身更重要', tags: ['多米诺骨牌收尾', '悬念开头', '三亮点并列'] },
+  { id: '010', title: '行动指南：汕尾买房避坑清单', source: 'ENTRY-001+003', priority: '★★★', high: true, angle: '2024汕尾买房避坑指南：看房前、签约时、交钱后分别要注意什么？买房最怕的不是买贵，而是买完才发现踩了坑。', titles: '「2024汕尾买房避坑指南：看房前、签约时、交钱后分别要注意什么？」', target: '预算有限的刚需买家、第一次买房的年轻人', points: '买房最怕的不是买贵，而是买完才发现踩了坑，一步一步教你避开', tags: ['三步递进结构', '悖论句式', '最小行动入口', '二元对照表格'] }
+];
+
+var drafts = [
+  {
+    id: '001', title: '逃离北上广的人，最后发现答案在海边', idea: 'IDEA-005', date: '2026-04-15',
+    status: 'done', preview: '<strong>你有没有想过：一个人可以在深圳什么都有，却在最繁华的地方，感到彻底的失落？</strong> 林小满就经历了这一切。她来自汕尾甲子镇...',
+    tags: ['返乡叙事', '人物故事', '汕尾视角']
+  }
+];
+
+// ══ 渲染素材库 ══
+function renderEntries() {
+  var list = document.getElementById('entry-list');
+  document.getElementById('stat-entries').textContent = entries.length;
+  document.getElementById('entry-count').textContent = entries.length + ' 条';
+
+  if (entries.length === 0) {
+    list.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div><div class="empty-text">素材库为空</div><div class="empty-sub">使用「拆解入库」添加第一个素材</div></div>';
+    return;
+  }
+
+  list.innerHTML = entries.map(function(e) {
+    var expanded = window['_entry_' + e.id] ? ' expanded' : '';
+    return '<div class="entry-card' + expanded + '" id="entry-' + e.id + '">' +
+      '<div class="entry-head" onclick="toggleEntry(\'' + e.id + '\')">' +
+        '<div class="entry-num">' + e.id + '</div>' +
+        '<div class="entry-info">' +
+          '<div class="entry-title">' + escapeHtml(e.title) + '</div>' +
+          '<div class="entry-meta">' + e.source + ' · ' + e.date + '</div>' +
+        '</div>' +
+        '<div class="entry-arrow">▼</div>' +
+      '</div>' +
+      '<div class="entry-detail">' +
+        (e.url ? '<div class="entry-section"><div class="entry-section-title">原文链接</div><a href="' + e.url + '" target="_blank" class="entry-structure" style="display:block;text-decoration:none;">' + escapeHtml(e.url.substring(0,50)) + '...</a></div>' : '') +
+        '<div class="entry-section"><div class="entry-section-title">核心结构</div><div class="entry-structure">' + escapeHtml(e.structure) + '</div></div>' +
+        '<div class="entry-section"><div class="entry-section-title">精选金句</div><div class="entry-quotes">' + e.quotes.map(function(q) { return '<div class="entry-quote">' + escapeHtml(q) + '</div>'; }).join('') + '</div></div>' +
+        '<div class="entry-section"><div class="entry-section-title">创意积木</div><div class="entry-tags">' + e.tags.map(function(t) { return '<span class="entry-tag">' + escapeHtml(t) + '</span>'; }).join('') + '</div></div>' +
+        '<div class="entry-actions">' +
+          '<button class="entry-btn entry-btn-copy" onclick="copyEntryCmd(\'' + e.id + '\')">📋 复制命令</button>' +
+          (e.url ? '<a class="entry-btn entry-btn-link" href="' + e.url + '" target="_blank">🔗 原文</a>' : '') +
+        '</div>' +
+        '<div class="delete-confirm" id="dc-' + e.id + '">' +
+          '<div class="delete-confirm-text">页面删除仅为隐藏，实际文件仍在 WorkBuddy 素材库中。</div>' +
+          '<div class="delete-btns"><button class="delete-confirm-btn ok" onclick="doDelete(\'' + e.id + '\')">确认</button><button class="delete-confirm-btn cancel" onclick="cancelDelete(\'' + e.id + '\')">取消</button></div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
 function toggleEntry(id) {
-  var card = document.getElementById('card-' + id);
+  var card = document.getElementById('entry-' + id);
   var isExpanded = card.classList.contains('expanded');
   document.querySelectorAll('.entry-card.expanded').forEach(function(c) {
     c.classList.remove('expanded');
-    var dc = c.querySelector('.delete-confirm');
-    if (dc) dc.classList.remove('show');
+    c.querySelectorAll('.delete-confirm').forEach(function(d) { d.classList.remove('show'); });
   });
   if (!isExpanded) {
     card.classList.add('expanded');
-    setTimeout(function() { card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 50);
+    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 }
 
 function copyEntryCmd(id) {
-  var links = {
-    '001': 'https://mp.weixin.qq.com/s/35LxCdlJnDwhZr-dxswytQ',
-    '002': 'https://mp.weixin.qq.com/s/PEs3wGfnM9Ct-9kkd8DYpQ',
-    '003': 'https://mp.weixin.qq.com/s/mAVUpEUu_OdHxX8KmqJ7vw',
-    '004': 'https://mp.weixin.qq.com/s/qhoQju3lLQeCRHEzOzonww'
-  };
-  copyText('/CONTENT-GOLDMINE\n' + (links[id] || ''));
-  showToast('✓ 命令已复制，去 WorkBuddy 粘贴');
+  var entry = entries.find(function(e) { return e.id === id; });
+  if (entry && entry.url) {
+    copyText('/CONTENT-GOLDMINE\n' + entry.url);
+    showToast('✓ 命令已复制');
+  }
 }
 
-// ══════════════════════════════════════
-//  删除流程
-// ══════════════════════════════════════
-function askDelete(id) {
-  document.querySelectorAll('.delete-confirm.show').forEach(function(d) { d.classList.remove('show'); });
-  document.getElementById('dc-' + id).classList.add('show');
-  setTimeout(function() { document.getElementById('dc-' + id).scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 50);
-}
 function cancelDelete(id) {
   document.getElementById('dc-' + id).classList.remove('show');
 }
-function doDelete(id) {
-  var card = document.getElementById('card-' + id);
-  card.classList.add('deleting');
-  var countEl = document.getElementById('count-entries');
-  var current = parseInt(countEl.textContent) || 0;
-  if (current > 0) countEl.textContent = current - 1;
-  setTimeout(function() {
-    card.remove();
-    var list = document.getElementById('entry-list');
-    if (list.querySelectorAll('.entry-card').length === 0) {
-      list.innerHTML = '<div class="empty-block"><div class="emoji">📭</div><div>素材库已清空<br>使用 /CONTENT-GOLDMINE 添加新素材</div></div>';
-    }
-  }, 320);
-  showToast('✓ 已隐藏，文件仍在 WorkBuddy 素材库中', false);
-}
-</script>
-<script>
-// 动态加载真实数据（看板数字自动同步）
-function syncData() {
-  var syncEl = document.getElementById('sync-status');
-  if (syncEl) syncEl.textContent = '🔄';
-  fetch('data.json?t=' + Date.now())
-    .then(r => r.json())
-    .then(data => {
-      // 顶部看板数字
-      var e = document.getElementById('count-entries');
-      var i = document.getElementById('count-ideas');
-      var d = document.getElementById('count-drafts');
-      if (e) { e.textContent = data.entries; e.classList.add('pop'); }
-      if (i) { i.textContent = data.ideas;   i.classList.add('pop'); }
-      if (d) { d.textContent = data.drafts; d.classList.add('pop'); }
-      // 区块标题栏数字
-      var ib = document.getElementById('idea-count-badge');
-      var db = document.getElementById('draft-count-badge');
-      if (ib) ib.textContent = data.ideas;
-      if (db) db.textContent = data.drafts;
-      // 更新时间
-      if (data.updated) {
-        var ut = document.getElementById('update-time');
-        if (ut) ut.textContent = data.updated;
-      }
-      // 同步成功
-      if (syncEl) syncEl.textContent = '✅';
-    })
-    .catch(function(){
-      // 同步失败提示
-      if (syncEl) syncEl.textContent = '⚠️';
-    });
-}
-syncData(); // 页面加载时自动同步
 
-// ══════════════════════════════════════
-//  草稿处理
-// ══════════════════════════════════════
-function showDraftBannerFn() {
-  if (window.showDraftBanner && window.pendingDraft) {
-    var title = window.pendingDraft.title || '未命名素材';
-    document.getElementById('draft-banner-title').textContent = title;
-    document.getElementById('draft-banner').style.display = 'block';
-    // 自动填充到命令生成器
-    var cmdInput = document.getElementById('cmd-input');
-    if (cmdInput) {
-      cmdInput.value = window.pendingDraft.source_url || title;
-      cmdInput.focus();
-    }
+// ══ 渲染创意方向 ══
+function renderIdeas() {
+  var list = document.getElementById('idea-list');
+  document.getElementById('stat-ideas').textContent = ideas.length;
+  document.getElementById('idea-count-badge').textContent = ideas.length + ' 条';
+
+  if (ideas.length === 0) {
+    list.innerHTML = '<div class="empty-state"><div class="empty-icon">💡</div><div class="empty-text">暂无创意方向</div><div class="empty-sub">先添加素材，再用 IDEA-GEN 生成</div></div>';
+    return;
+  }
+
+  // 按优先级排序
+  var sorted = ideas.slice().sort(function(a, b) {
+    return b.priority.localeCompare(a.priority);
+  });
+
+  list.innerHTML = sorted.map(function(item) {
+    var expanded = window['_idea_' + item.id] ? ' expanded' : '';
+    var highClass = item.high ? ' priority-high' : '';
+    return '<div class="idea-card' + expanded + highClass + '" id="idea-' + item.id + '">' +
+      '<div class="idea-head" onclick="toggleIdea(\'' + item.id + '\')">' +
+        '<div class="idea-num">IDEA-' + item.id + '</div>' +
+        '<div class="idea-priority">' + item.priority + '</div>' +
+        '<div class="idea-info">' +
+          '<div class="idea-title">' + escapeHtml(item.title) + '</div>' +
+          '<div class="idea-source">来自：' + item.source + '</div>' +
+        '</div>' +
+        '<div class="idea-arrow">▼</div>' +
+      '</div>' +
+      '<div class="idea-detail">' +
+        '<div class="idea-angle">' + escapeHtml(item.angle) + '</div>' +
+        '<div class="idea-row"><div class="idea-row-label">推荐标题</div><div class="idea-row-value" style="color:var(--gold)">' + escapeHtml(item.titles) + '</div></div>' +
+        '<div class="idea-row"><div class="idea-row-label">目标读者</div><div class="idea-row-value">' + escapeHtml(item.target) + '</div></div>' +
+        '<div class="idea-row"><div class="idea-row-label">核心论点</div><div class="idea-row-value">' + escapeHtml(item.points) + '</div></div>' +
+        '<div class="idea-row"><div class="idea-row-label">创意积木</div><div class="idea-tags">' + item.tags.map(function(t) { return '<span class="idea-tag">' + escapeHtml(t) + '</span>'; }).join('') + '</div></div>' +
+        '<div class="idea-actions">' +
+          '<button class="idea-btn idea-btn-write" onclick="copyWriteCmd(\'' + item.id + '\')">✍️ 直接写稿</button>' +
+          '<button class="idea-btn idea-btn-copy" onclick="copyIdeaDetails(\'' + item.id + '\')">📋 复制详情</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function toggleIdea(id) {
+  var card = document.getElementById('idea-' + id);
+  var isExpanded = card.classList.contains('expanded');
+  document.querySelectorAll('.idea-card.expanded').forEach(function(c) { c.classList.remove('expanded'); });
+  if (!isExpanded) {
+    card.classList.add('expanded');
+    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 }
 
-function useDraft() {
-  if (window.pendingDraft) {
-    // 复制拆解内容到剪贴板
-    var content = '【拆解结构】\n' + (window.pendingDraft.structure || '') + 
-                  '\n\n【金句】\n' + (window.pendingDraft.highlight || '') +
-                  '\n\n【创意方向】\n' + (window.pendingDraft.idea_direction || '');
-    navigator.clipboard.writeText(content).catch(function(){});
-    showToast('✓ 已复制拆解内容！切换到 WRITING-CLONE 开始写稿');
-    // 选中写作命令
-    document.querySelectorAll('.cmd-tab').forEach(function(t) { 
-      t.classList.remove('active'); 
-      if (t.dataset.cmd === 'WRITING-CLONE') t.classList.add('active');
-    });
-    document.getElementById('cmd-input').placeholder = '输入文章标题';
-    closeDraftBanner();
+function copyWriteCmd(id) {
+  var idea = ideas.find(function(i) { return i.id === id; });
+  if (idea) {
+    copyText('/WRITING-CLONE ' + idea.title);
+    showToast('✓ 写作命令已复制！去 WorkBuddy');
   }
 }
 
-function closeDraftBanner() {
-  document.getElementById('draft-banner').style.display = 'none';
-  localStorage.removeItem('draftMaterial');
-  localStorage.removeItem('draftMaterialTime');
+function copyIdeaDetails(id) {
+  var idea = ideas.find(function(i) { return i.id === id; });
+  if (!idea) return;
+  var text = '【创意方向：IDEA-' + id + '】\n标题：' + idea.title + '\n角度：' + idea.angle + '\n论点：' + idea.points + '\n积木：' + idea.tags.join(' + ') + '\n参考：' + idea.source;
+  copyText(text);
+  showToast('✓ 详情已复制');
 }
 
-// 页面加载后显示草稿提示
-if (window.addEventListener) {
-  window.addEventListener('load', showDraftBannerFn);
-} else {
-  window.onload = showDraftBannerFn;
+// ══ 渲染完稿 ══
+function renderDrafts() {
+  var list = document.getElementById('draft-list');
+  document.getElementById('stat-drafts').textContent = drafts.length;
+  document.getElementById('draft-count-badge').textContent = drafts.length + ' 篇';
+
+  if (drafts.length === 0) {
+    list.innerHTML = '<div class="empty-state"><div class="empty-icon">📄</div><div class="empty-text">暂无完稿</div><div class="empty-sub">从创意方向开始写第一篇</div></div>';
+    return;
+  }
+
+  list.innerHTML = drafts.map(function(d) {
+    var expanded = window['_draft_' + d.id] ? ' expanded' : '';
+    return '<div class="draft-card' + expanded + '" id="draft-' + d.id + '">' +
+      '<div class="draft-head" onclick="toggleDraft(\'' + d.id + '\')">' +
+        '<div class="draft-num">' + d.id + '</div>' +
+        '<div class="draft-info">' +
+          '<div class="draft-title">' + escapeHtml(d.title) + '</div>' +
+          '<div class="draft-meta">方向 ' + d.idea + ' · ' + d.date + '</div>' +
+        '</div>' +
+        '<div class="draft-status">✓ ' + d.status + '</div>' +
+        '<div class="draft-arrow">▼</div>' +
+      '</div>' +
+      '<div class="draft-detail">' +
+        '<div class="draft-preview">' + d.preview + '</div>' +
+        '<div class="draft-meta-detail">' + d.tags.map(function(t) { return '🏷 ' + t; }).join(' ') + '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
 }
+
+function toggleDraft(id) {
+  var card = document.getElementById('draft-' + id);
+  var isExpanded = card.classList.contains('expanded');
+  document.querySelectorAll('.draft-card.expanded').forEach(function(c) { c.classList.remove('expanded'); });
+  if (!isExpanded) {
+    card.classList.add('expanded');
+    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+}
+
+// ══ 初始化 ══
+renderEntries();
+renderIdeas();
+renderDrafts();
+
+// 同步状态
+var syncBadge = document.getElementById('sync-badge');
+var syncTime = document.getElementById('sync-time');
+syncBadge.classList.add('ok');
+syncTime.textContent = new Date().toLocaleTimeString('zh-CN', {hour: '2-digit', minute: '2-digit'});
 </script>
 </body>
 </html>
