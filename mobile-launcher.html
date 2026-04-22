@@ -97,46 +97,41 @@
   }
   .sync-badge.ok .sync-dot { background: var(--success); }
   .sync-badge.ok .sync-time { color: var(--success); }
-  .sync-badge.fail .sync-dot { background: var(--danger); }
-  .sync-badge.fail .sync-time { color: var(--danger); }
 
-  /* ── 核心操作区 ── */
-  .action-zone {
-    padding: 0 16px 20px;
-  }
-  .action-tabs {
+  /* ── 场景指示器 ── */
+  .scene-nav {
     display: flex;
-    background: var(--card);
-    border-radius: var(--radius);
-    padding: 4px;
-    margin-bottom: 16px;
-    gap: 4px;
+    gap: 8px;
+    padding: 0 16px 16px;
   }
-  .action-tab {
+  .scene-btn {
     flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
-    padding: 12px 8px;
-    border-radius: var(--radius-sm);
+    gap: 6px;
+    padding: 14px 10px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
     cursor: pointer;
     transition: all 0.2s;
-    border: none;
-    background: none;
-    color: var(--muted);
-    font-family: inherit;
   }
-  .action-tab.active {
+  .scene-btn.active {
     background: var(--card-hover);
-    color: var(--text);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px var(--accent-glow);
   }
-  .action-tab-icon { font-size: 22px; line-height: 1; }
-  .action-tab-name { font-size: 13px; font-weight: 600; }
-  .action-tab-desc { font-size: 10px; opacity: 0.7; }
+  .scene-icon { font-size: 24px; line-height: 1; }
+  .scene-name { font-size: 13px; font-weight: 600; color: var(--text); }
+  .scene-desc { font-size: 10px; color: var(--muted); text-align: center; }
+  .scene-btn.active .scene-name { color: var(--accent-light); }
 
-  /* 命令输入框 */
+  /* ── 操作面板 ── */
+  .panel { display: none; padding: 0 16px 24px; }
+  .panel.active { display: block; }
+
+  /* 场景1：拆解入库 */
   .input-card {
     background: var(--card);
     border: 1px solid var(--border);
@@ -195,7 +190,7 @@
   }
   .paste-btn:active { transform: scale(0.95); opacity: 0.9; }
 
-  /* 生成预览 */
+  /* 命令预览 */
   .cmd-preview {
     display: none;
     background: rgba(0,0,0,0.4);
@@ -246,6 +241,10 @@
     box-shadow: none;
     transform: none;
   }
+  .main-btn.success {
+    background: linear-gradient(135deg, var(--green), #4ad68a);
+    box-shadow: 0 4px 16px rgba(106,247,165,0.3);
+  }
 
   /* Toast */
   .toast {
@@ -269,6 +268,189 @@
   }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   .toast.fail { border-color: var(--danger); color: var(--danger); }
+
+  /* ── 场景2：灵感写作 ── */
+  .write-flow {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  /* 步骤卡片 */
+  .step-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    transition: all 0.2s;
+  }
+  .step-card.active {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px var(--accent-glow);
+  }
+  .step-card.done {
+    border-color: var(--green);
+    background: rgba(106,247,165,0.03);
+  }
+  .step-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .step-num {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--accent-glow);
+    color: var(--accent-light);
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .step-card.done .step-num {
+    background: rgba(106,247,165,0.2);
+    color: var(--green);
+  }
+  .step-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .step-desc {
+    font-size: 11px;
+    color: var(--muted);
+    margin-left: auto;
+  }
+
+  /* 主题输入 */
+  .theme-input {
+    width: 100%;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    font-size: 14px;
+    color: var(--text);
+    outline: none;
+    font-family: inherit;
+    margin-bottom: 12px;
+  }
+  .theme-input:focus {
+    border-color: var(--accent);
+  }
+
+  /* 推荐创意列表 */
+  .recommend-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+  .recommend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: rgba(0,0,0,0.2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .recommend-item:hover { background: var(--card-hover); }
+  .recommend-item.selected {
+    border-color: var(--green);
+    background: rgba(106,247,165,0.05);
+  }
+  .recommend-check {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid var(--border-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.15s;
+  }
+  .recommend-item.selected .recommend-check {
+    background: var(--green);
+    border-color: var(--green);
+    color: var(--bg);
+    font-size: 12px;
+  }
+  .recommend-info { flex: 1; min-width: 0; }
+  .recommend-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .recommend-meta {
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .recommend-priority {
+    font-size: 12px;
+    color: var(--gold);
+    flex-shrink: 0;
+  }
+
+  /* 标题输入 */
+  .title-input-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  .title-input {
+    flex: 1;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    font-size: 14px;
+    color: var(--text);
+    outline: none;
+    font-family: inherit;
+  }
+  .title-input:focus { border-color: var(--gold); }
+  .title-input::placeholder { color: var(--muted); }
+
+  /* 写作命令预览 */
+  .write-preview {
+    background: rgba(0,0,0,0.4);
+    border: 1px solid var(--gold);
+    border-radius: var(--radius-sm);
+    padding: 12px;
+  }
+  .write-preview-label {
+    font-size: 10px;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+  }
+  .write-preview-content {
+    font-size: 13px;
+    color: var(--blue-light);
+    font-family: monospace;
+    line-height: 1.6;
+    word-break: break-all;
+  }
+  .write-preview-meta {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+  }
 
   /* ── 统计数据 ── */
   .stats-row {
@@ -329,15 +511,6 @@
     color: var(--muted);
     font-weight: 500;
   }
-  .section-more {
-    font-size: 12px;
-    color: var(--muted);
-    cursor: pointer;
-    padding: 4px 8px;
-    border-radius: 6px;
-    transition: all 0.15s;
-  }
-  .section-more:active { background: var(--card); color: var(--text); }
 
   /* ── 素材卡片 ── */
   .entry-card {
@@ -389,7 +562,6 @@
   }
   .entry-card.expanded .entry-arrow { transform: rotate(180deg); }
 
-  /* 展开详情 */
   .entry-detail {
     display: none;
     border-top: 1px solid var(--border);
@@ -397,7 +569,6 @@
     background: rgba(0,0,0,0.2);
   }
   .entry-card.expanded .entry-detail { display: block; }
-
   .entry-section { padding: 12px 0; border-bottom: 1px solid var(--border); }
   .entry-section:last-child { border-bottom: none; }
   .entry-section-title {
@@ -437,7 +608,6 @@
     border-radius: 20px;
   }
 
-  /* 操作按钮 */
   .entry-actions {
     display: flex;
     gap: 8px;
@@ -470,7 +640,6 @@
     border-color: rgba(77,166,255,0.3);
     color: var(--blue-light);
   }
-  .entry-btn-link:active { background: rgba(77,166,255,0.2); }
 
   /* ── 创意方向 ── */
   .idea-card {
@@ -682,6 +851,16 @@
     margin-bottom: 12px;
   }
 
+  /* ── 空状态 ── */
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--muted);
+  }
+  .empty-icon { font-size: 40px; margin-bottom: 12px; opacity: 0.5; }
+  .empty-text { font-size: 14px; }
+  .empty-sub { font-size: 12px; margin-top: 6px; opacity: 0.7; }
+
   /* ── 快捷操作 ── */
   .quick-actions {
     display: flex;
@@ -704,16 +883,6 @@
   .quick-btn:active { transform: scale(0.96); background: var(--card-hover); }
   .quick-icon { font-size: 20px; }
   .quick-label { font-size: 11px; color: var(--text-secondary); font-weight: 500; }
-
-  /* ── 空状态 ── */
-  .empty-state {
-    text-align: center;
-    padding: 40px 20px;
-    color: var(--muted);
-  }
-  .empty-icon { font-size: 40px; margin-bottom: 12px; opacity: 0.5; }
-  .empty-text { font-size: 14px; }
-  .empty-sub { font-size: 12px; margin-top: 6px; opacity: 0.7; }
 
   /* ── 删除确认 ── */
   .delete-confirm {
@@ -751,37 +920,6 @@
     to { opacity: 1; transform: translateY(0); }
   }
   .fade-up { animation: fadeUp 0.3s ease; }
-
-  /* 流程图 */
-  .flow-strip {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 16px;
-    gap: 0;
-    margin-bottom: 8px;
-  }
-  .flow-step {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-  }
-  .flow-icon {
-    width: 38px;
-    height: 38px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-  }
-  .flow-step:nth-child(1) .flow-icon { background: var(--accent-glow); }
-  .flow-step:nth-child(3) .flow-icon { background: rgba(77,166,255,0.15); }
-  .flow-step:nth-child(5) .flow-icon { background: rgba(247,199,106,0.15); }
-  .flow-step:nth-child(7) .flow-icon { background: rgba(106,247,165,0.15); }
-  .flow-label { font-size: 10px; color: var(--muted); text-align: center; }
-  .flow-arrow { color: var(--border); font-size: 14px; padding: 0 4px; }
 </style>
 </head>
 <body>
@@ -803,57 +941,114 @@
   </div>
 </div>
 
-<!-- 流程指示 -->
-<div class="flow-strip">
-  <div class="flow-step"><div class="flow-icon">🔍</div><div class="flow-label">拆解</div></div>
-  <div class="flow-arrow">→</div>
-  <div class="flow-step"><div class="flow-icon">💡</div><div class="flow-label">创意</div></div>
-  <div class="flow-arrow">→</div>
-  <div class="flow-step"><div class="flow-icon">✍️</div><div class="flow-label">写作</div></div>
-  <div class="flow-arrow">→</div>
-  <div class="flow-step"><div class="flow-icon">♻️</div><div class="flow-label">迭代</div></div>
+<!-- 场景导航 -->
+<div class="scene-nav">
+  <div class="scene-btn active" data-scene="analyze" onclick="switchScene(this)">
+    <div class="scene-icon">🔍</div>
+    <div class="scene-name">拆解入库</div>
+    <div class="scene-desc">爆款 → 结构+金句</div>
+  </div>
+  <div class="scene-btn" data-scene="write" onclick="switchScene(this)">
+    <div class="scene-icon">✍️</div>
+    <div class="scene-name">灵感写作</div>
+    <div class="scene-desc">创意 → 完稿</div>
+  </div>
+  <div class="scene-btn" data-scene="ideas" onclick="switchScene(this)">
+    <div class="scene-icon">💡</div>
+    <div class="scene-name">创意库</div>
+    <div class="scene-desc">管理创意方向</div>
+  </div>
 </div>
 
-<!-- 核心操作 -->
-<div class="action-zone">
-  <div class="action-tabs">
-    <button class="action-tab active" data-tab="analyze" onclick="switchTab(this)">
-      <div class="action-tab-icon">🔍</div>
-      <div class="action-tab-name">拆解入库</div>
-      <div class="action-tab-desc">CONTENT-GOLDMINE</div>
-    </button>
-    <button class="action-tab" data-tab="idea" onclick="switchTab(this)">
-      <div class="action-tab-icon">💡</div>
-      <div class="action-tab-name">创意生成</div>
-      <div class="action-tab-desc">IDEA-GEN</div>
-    </button>
-    <button class="action-tab" data-tab="write" onclick="switchTab(this)">
-      <div class="action-tab-icon">✍️</div>
-      <div class="action-tab-name">执行写作</div>
-      <div class="action-tab-desc">WRITING-CLONE</div>
-    </button>
-  </div>
-
+<!-- ══ 场景1：拆解入库 ══ -->
+<div class="panel active" id="panel-analyze">
   <div class="input-card">
     <div class="input-label">
       <div class="input-label-dot"></div>
-      <span id="input-hint">粘贴微信公众号链接</span>
+      <span>粘贴微信公众号文章链接</span>
     </div>
     <div class="input-row">
-      <input class="cmd-input" id="cmd-input" type="text" placeholder="粘贴链接或输入内容" oninput="onInput()" autocomplete="off"/>
-      <button class="paste-btn" onclick="doPaste()">📋</button>
+      <input class="cmd-input" id="analyze-input" type="text" placeholder="粘贴链接" oninput="updateAnalyzePreview()" autocomplete="off"/>
+      <button class="paste-btn" onclick="pasteAnalyze()">📋</button>
     </div>
   </div>
 
-  <div class="cmd-preview" id="cmd-preview">
-    <div class="cmd-preview-label">生成的命令</div>
-    <div class="cmd-preview-text" id="cmd-preview-text"></div>
+  <div class="cmd-preview" id="analyze-preview">
+    <div class="cmd-preview-label">CONTENT-GOLDMINE 命令</div>
+    <div class="cmd-preview-text" id="analyze-preview-text"></div>
   </div>
 
-  <button class="main-btn" id="main-btn" disabled onclick="doExecute()">
-    <span id="btn-icon">🚀</span>
-    <span id="btn-text">复制命令</span>
+  <button class="main-btn" id="analyze-btn" disabled onclick="copyAnalyzeCmd()">
+    🚀 复制命令
   </button>
+</div>
+
+<!-- ══ 场景2：灵感写作 ══ -->
+<div class="panel" id="panel-write">
+  <div class="write-flow">
+    <!-- 步骤1：写主题 -->
+    <div class="step-card active" id="step-theme">
+      <div class="step-header">
+        <div class="step-num">1</div>
+        <div class="step-title">我想写一篇关于</div>
+        <div class="step-desc">输入主题</div>
+      </div>
+      <input class="theme-input" id="theme-input" type="text" placeholder="例如：职场中年危机、返乡置业、第一次买房..." oninput="onThemeInput()" autocomplete="off"/>
+      
+      <!-- 推荐创意 -->
+      <div id="recommend-section" style="display:none;">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:8px;">为你推荐相关创意方向（★★★优先）：</div>
+        <div class="recommend-list" id="recommend-list"></div>
+      </div>
+    </div>
+
+    <!-- 步骤2：选创意 -->
+    <div class="step-card" id="step-ideas">
+      <div class="step-header">
+        <div class="step-num">2</div>
+        <div class="step-title">参考这些创意角度</div>
+        <div class="step-desc" id="selected-count">已选 0 个</div>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:8px;">点击上方推荐或从创意库选择（选1-3个最佳）</div>
+      <div class="recommend-list" id="selected-ideas-list"></div>
+    </div>
+
+    <!-- 步骤3：写标题 -->
+    <div class="step-card" id="step-title">
+      <div class="step-header">
+        <div class="step-num">3</div>
+        <div class="step-title">拟定文章标题</div>
+        <div class="step-desc">可自定义</div>
+      </div>
+      <input class="title-input" id="title-input" type="text" placeholder="例如：35岁，我被降薪了" oninput="updateWritePreview()" autocomplete="off"/>
+    </div>
+
+    <!-- 步骤4：生成命令 -->
+    <div class="step-card" id="step-cmd">
+      <div class="step-header">
+        <div class="step-num">4</div>
+        <div class="step-title">开始写作</div>
+        <div class="step-desc">复制命令</div>
+      </div>
+      
+      <div class="write-preview" id="write-preview">
+        <div class="write-preview-label">WRITING-CLONE 命令</div>
+        <div class="write-preview-content" id="write-preview-content"></div>
+        <div class="write-preview-meta" id="write-preview-meta"></div>
+      </div>
+    </div>
+  </div>
+
+  <button class="main-btn success" id="write-btn" disabled onclick="copyWriteCmd()">
+    ✍️ 复制命令，去 WorkBuddy 写作
+  </button>
+</div>
+
+<!-- ══ 场景3：创意库 ══ -->
+<div class="panel" id="panel-ideas">
+  <div id="entry-list"></div>
+  <div id="idea-list"></div>
+  <div id="draft-list"></div>
 </div>
 
 <!-- 统计 -->
@@ -888,7 +1083,7 @@
   </div>
 </div>
 
-<!-- ══ 素材库 ══ -->
+<!-- ══ 素材库（场景3内） ══ -->
 <div id="entry-section">
   <div class="section">
     <div class="section-header">
@@ -898,11 +1093,11 @@
         <span class="section-badge" id="entry-count">9 条</span>
       </div>
     </div>
-    <div id="entry-list"></div>
+    <div id="entry-list-scene3"></div>
   </div>
 </div>
 
-<!-- ══ 创意方向 ══ -->
+<!-- ══ 创意方向（场景3内） ══ -->
 <div id="idea-section">
   <div class="section">
     <div class="section-header">
@@ -912,11 +1107,11 @@
         <span class="section-badge" id="idea-count-badge">10 条</span>
       </div>
     </div>
-    <div id="idea-list"></div>
+    <div id="idea-list-scene3"></div>
   </div>
 </div>
 
-<!-- ══ 完稿 ══ -->
+<!-- ══ 完稿（场景3内） ══ -->
 <div id="draft-section">
   <div class="section">
     <div class="section-header">
@@ -926,7 +1121,7 @@
         <span class="section-badge" id="draft-count-badge">1 篇</span>
       </div>
     </div>
-    <div id="draft-list"></div>
+    <div id="draft-list-scene3"></div>
   </div>
 </div>
 
@@ -934,60 +1129,73 @@
 <div class="toast" id="toast"></div>
 
 <script>
-// ══ 配置 ══
-var currentTab = 'analyze';
-var cmdConfig = {
-  analyze: {
-    cmd: 'CONTENT-GOLDMINE',
-    prefix: '/CONTENT-GOLDMINE\n',
-    hint: '粘贴微信公众号链接',
-    btnIcon: '🚀',
-    btnText: '复制命令',
-    toast: '✓ 已复制！去 WorkBuddy 粘贴发送'
-  },
-  idea: {
-    cmd: 'IDEA-GEN',
-    prefix: '/IDEA-GEN\n',
-    hint: '粘贴网站链接 / 输入内容',
-    btnIcon: '💡',
-    btnText: '复制命令',
-    toast: '✓ 已复制！去 WorkBuddy 粘贴发送'
-  },
-  write: {
-    cmd: 'WRITING-CLONE',
-    prefix: '/WRITING-CLONE ',
-    hint: '输入文章标题',
-    btnIcon: '✍️',
-    btnText: '复制命令',
-    toast: '✓ 已复制！去 WorkBuddy 粘贴发送'
-  }
-};
+// ══ 数据 ══
+var entries = [
+  { id: '001', title: '捡垃圾，是不是一种自我感动的善行', source: '真实故事计划', date: '2026-04-14', url: 'https://mp.weixin.qq.com/s/35LxCdlJnDwhZr-dxswytQ', structure: '冲突引爆 → 人物速写 → 虚无者意外行动 → 多米诺收束', quotes: ['垃圾是人类的，大海是宇宙的。', '无法推倒高墙，但可以推第一张骨牌。'], tags: ['人物速写法', '悖论转折', '微小行动', '多米诺收尾'] },
+  { id: '002', title: '一位中科院院士的成绩单', source: '宋诗之河', date: '2026-04-14', url: 'https://mp.weixin.qq.com/s/PEs3wGfnM9Ct-9kkd8DYpQ', structure: '细节切入 → 行动代替形容词 → 实物锚定 → 他人之口收束人格', quotes: ['给家乡递上了一份份满分答卷。', '"亲爱的常山乡亲们"——五个字，让记者既亲切又震撼。'], tags: ['方言破冰法', '行动代替形容', '实物锚定法', '首尾意象呼应'] },
+  { id: '003', title: '自从知道了"熵"的概念，我再也不玩手机了', source: '青野成长', date: '2026-04-14', url: 'https://mp.weixin.qq.com/s/mAVUpEUu_OdHxX8KmqJ7vw', structure: '科学概念锚定 → 二元对照表格 → 三步递进实践 → 哲学升华收束', quotes: ['越舒适熵增长越大。', '熵减的终极目标——自由，而非束缚。'], tags: ['科学概念包装法', '二元对照表格', '层层递进排比', '最小行动入口'] },
+  { id: '004', title: '广州官宣：新房提标准，老房能改造，"停车难"有解！', source: '南方网', date: '2026-04-15', url: 'https://mp.weixin.qq.com/s/qhoQju3lLQeCRHEzOzonww', structure: '政策悬念 → 核心承诺 → 三亮点并列 → 生活图景收束', quotes: ['"这不是楼盘广告，是广州市新出炉的红头文件。"', '让房子回归住的本质：老人方便、小孩有地儿玩、车子有地儿停。'], tags: ['否定反转开头', '具象化代替抽象', '三亮点并列', '替用户出气'] },
+  { id: '005', title: '汕尾买房避坑清单', source: '原创', date: '2026-04-15', url: '', structure: '反常识痛点切入 → 五坑横排展开 → 已在坑里怎么办 → 行动号召收束', quotes: ['上周，朋友老张兴冲冲地跟我说，他在汕尾看中了一套海景房。两个月后，房子烂尾了。', '"能贷≠好贷、能用≠靠谱、特价≠捡漏"'], tags: ['人物踩坑开头', '悖论句式', '三问清单法', '已在坑里收尾'] },
+  { id: '006', title: '公积金贷款三大"潜规则"', source: '原创', date: '2026-04-15', url: '', structure: '蹲点采访切入 → 三条潜规则横排 → 关键动作清单 → 写给被拒的人', quotes: ['"我在汕尾公积金管理中心蹲了三天，采访完第17个购房者之后，发现一个规律..."', '"断缴=清零，连续缴纳年限从0开始计算。"'], tags: ['蹲点采访开头', '反常识开场', '潜规则框架', '可投诉赋权'] },
+  { id: '007', title: '又抢地！金茂大战保利，2.6万/平吞下老西关江景靓地', source: '广州房产', date: '2026-04-15', url: 'https://mp.weixin.qq.com/s/xxxxx', structure: '竞拍悬念 → 结局揭晓 → 反差强化 → 优势纵深 → 前景预测', quotes: ['"马场之后，广州土拍再现抢地大戏！"', '"有点意外，该地块由金茂拿下了。"'], tags: ['双雄对决开头', '意外强化句', '数据对比矩阵', '低密稀缺三合一'] },
+  { id: '008', title: '地铁吐血女孩的二三事', source: '真实故事计划', date: '2026-04-15', url: 'https://mp.weixin.qq.com/s/xxxxx', structure: '戏剧性瞬间切入 → 8年病史回溯 → 核心矛盾揭示 → 情感转折 → 心态蜕变', quotes: ['"在地铁里吐血的那一刻，她最担心的不是自己的身体，而是弄脏了别人的衣服。"', '"8年来，她一个人去医院，一个人签字，一个人签病危通知书。"'], tags: ['戏剧性瞬间切入', '时间线回溯', '核心矛盾揭示', '情感转折'] },
+  { id: '009', title: '广州六运小区餐饮店6月起全面清退？', source: '羊城晚报', date: '2026-04-22', url: 'https://mp.weixin.qq.com/s/xxxxx', structure: '政策风声 → 记者走访反差 → 多方声音 → 历史溯源 → 政策背景 → 未来展望', quotes: ['"六运小区95%都是\'住改商\'，而新的热食证去年就不再允许办理。"', '"天塌了，一口热乎的都吃不上了。"'], tags: ['反差开头法', '数据锚定法', '历史溯源法', '多方声音法'] }
+];
 
-// ══ Tab 切换 ══
-function switchTab(btn) {
-  document.querySelectorAll('.action-tab').forEach(t => t.classList.remove('active'));
+var ideas = [
+  { id: '001', title: '广州楼市新28条：汕尾可以抄哪些？', source: 'ENTRY-001+004', priority: '★★★', high: true, angle: '广州新28条落地，对汕尾购房者/业主/开发商的直接影响。配套、停车、改造——汕尾虽小，购房逻辑类似。', titles: '「广州出了28条，汕尾人买房要注意什么？」', target: '汕尾本地购房者、打算在汕尾买房的人', points: '配套、停车、改造——汕尾买房看这三条就够了', tags: ['替用户出气', '生活场景具象化', '三点并列'] },
+  { id: '002', title: '从院士成绩单到汕尾骄傲：人物故事的新写法', source: 'ENTRY-002', priority: '★★☆', angle: '借用院士成绩单的结构，写汕尾本地"递上成绩单"的人物故事。用细节切入、行动代替形容、他人之口定格。', titles: '「汕尾人，递上了一份怎样的成绩单？」', target: '汕尾本地读者、对家乡有感情的用户', points: '每个人都有自己的"成绩单"——不是分数，是那些被时间沉淀下来的选择', tags: ['人物速写', '行动代替形容词', '首尾意象呼应'] },
+  { id: '003', title: '职场版：最说"努力没用"的人悄悄在加班', source: 'ENTRY-001', priority: '★★☆', angle: '职场中存在一类人：用虚无主义作盔甲，嘴上说"躺平"，身体却最诚实。这类人比谁都努力，只是不好意思承认。', titles: '「那个每天说\'努力没用\'的同事，下班后悄悄把方案改了3版」', target: '职场人、Z世代', points: '最怀疑意义的人，往往是最认真行动的人——这是悖论，也是人性', tags: ['悖论句式', '人物速写', '多米诺收尾'] },
+  { id: '004', title: '亲密关系版：最说"不需要爱情"的人比谁都渴望', source: 'ENTRY-001', priority: '★★☆', angle: '写一种"情感虚无主义者"——说不需要爱情的人，家里却养了三盆植物、取名叫小明小红小刚。不是不需要，是太怕失望。', titles: '「那个说不需要爱情的人，家里植物取名叫小明、小红、小刚」', target: '单身人士、对"恐恋/恐婚"话题有共鸣的读者', points: '用虚无主义保护自己的人，往往比谁都渴望连接', tags: ['犀利开头', '微小转折法', '西西弗斯劳作'] },
+  { id: '005', title: '汕尾版：逃离北上广的人，最后发现答案在海边', source: 'ENTRY-001', priority: '★★☆', angle: '汕尾人年轻时拼了命去广深，觉得小城市装不下野心。十年后发现：汕尾的海滩比深圳湾安静，房价差距让体面生活触手可及。', titles: '「深圳CBD里飞得最用力的燕子，最后成了汕尾海边最慢的那道波浪」', target: '在外奋斗的汕尾人、考虑返乡的用户', points: '逃离北上广不是失败，是发现自己真正需要什么的开始', tags: ['人物速写', '替用户出气', '具象化对比'] },
+  { id: '006', title: '政策解密：公积金贷款3大"潜规则"', source: 'ENTRY-003+004', priority: '★★★', high: true, angle: '公积金贷款3大"潜规则"，银行永远不会主动告诉你！银行和开发商都有各自的利益算盘，普通人不懂规则就等于白送钱。', titles: '「公积金贷款3大\'潜规则\'，银行永远不会主动告诉你！」', target: '首次购房刚需客户、置换改善型买家', points: '银行和开发商都有各自的利益算盘，普通人不懂规则就等于白送钱', tags: ['否定反转开头', '二元对照表格', '替用户出气', '四有句式收尾'] },
+  { id: '007', title: '科学框架：买房是一场"机会成本"计算', source: 'ENTRY-003', priority: '★★☆', angle: '买房的本质是一场"机会成本"计算：你放弃的那笔钱，值多少？买房不是买房子，而是买你对未来现金流的判断力。', titles: '「买房的本质是一场\'机会成本\'计算：你放弃的那笔钱，值多少？」', target: '30-45岁有投资意识的读者、城市白领', points: '买房不是买房子，而是买你对未来现金流的判断力', tags: ['科学概念包装法', '层层递进排比', '对仗升华结尾'] },
+  { id: '008', title: '本地人物：有人在老城区守了30年', source: 'ENTRY-002', priority: '★☆☆', angle: '汕尾人的房子：有人在老城区守了30年，有人把家安在了海边。房子是家的容器，但家的意义是汕尾人自己定义的。', titles: '「汕尾人的房子：有人在老城区守了30年，有人把家安在了海边」', target: '汕尾本地读者、有乡愁情结的外出务工群体', points: '房子是家的容器，但家的意义是汕尾人自己定义的', tags: ['实物锚定法', '方言破冰法', '行动代替形容'] },
+  { id: '009', title: '热点解读：广州救市，汕尾跟不跟？', source: 'ENTRY-001+004', priority: '★★☆', angle: '广州救市，汕尾跟不跟？看完这3个信号你就懂了。政策传导有滞后性，看懂一线城市的风向标比追政策本身更重要。', titles: '「广州救市，汕尾跟不跟？看完这3个信号你就懂了」', target: '投资型买家、关注宏观趋势的改善置换型买家', points: '政策传导有滞后性，看懂一线城市的风向标比追政策本身更重要', tags: ['多米诺骨牌收尾', '悬念开头', '三亮点并列'] },
+  { id: '010', title: '行动指南：汕尾买房避坑清单', source: 'ENTRY-001+003', priority: '★★★', high: true, angle: '2024汕尾买房避坑指南：看房前、签约时、交钱后分别要注意什么？买房最怕的不是买贵，而是买完才发现踩了坑。', titles: '「2024汕尾买房避坑指南：看房前、签约时、交钱后分别要注意什么？」', target: '预算有限的刚需买家、第一次买房的年轻人', points: '买房最怕的不是买贵，而是买完才发现踩了坑，一步一步教你避开', tags: ['三步递进结构', '悖论句式', '最小行动入口', '二元对照表格'] }
+];
+
+var drafts = [
+  { id: '001', title: '逃离北上广的人，最后发现答案在海边', idea: 'IDEA-005', date: '2026-04-15', status: 'done', preview: '<strong>你有没有想过：一个人可以在深圳什么都有，却在最繁华的地方，感到彻底的失落？</strong> 林小满就经历了这一切。她来自汕尾甲子镇...', tags: ['返乡叙事', '人物故事', '汕尾视角'] }
+];
+
+// ══ 写作状态 ══
+var selectedIdeas = [];
+var currentTheme = '';
+
+// ══ 场景切换 ══
+function switchScene(btn) {
+  document.querySelectorAll('.scene-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  currentTab = btn.dataset.tab;
-  var config = cmdConfig[currentTab];
-  document.getElementById('input-hint').textContent = config.hint;
-  document.getElementById('cmd-input').placeholder = config.hint;
-  document.getElementById('btn-icon').textContent = config.btnIcon;
-  document.getElementById('btn-text').textContent = config.btnText;
-  document.getElementById('cmd-input').value = '';
-  document.getElementById('cmd-preview').classList.remove('show');
-  document.getElementById('main-btn').disabled = true;
+  var scene = btn.dataset.scene;
+  
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + scene).classList.add('active');
+  
+  // 更新步骤状态
+  resetWriteFlow();
 }
 
-// ══ 输入处理 ══
-function onInput() {
-  var val = document.getElementById('cmd-input').value.trim();
-  var preview = document.getElementById('cmd-preview');
-  var previewText = document.getElementById('cmd-preview-text');
-  var btn = document.getElementById('main-btn');
+// ══ 场景1：拆解入库 ══
+function pasteAnalyze() {
+  if (navigator.clipboard && navigator.clipboard.readText) {
+    navigator.clipboard.readText().then(function(text) {
+      document.getElementById('analyze-input').value = text;
+      updateAnalyzePreview();
+    }).catch(function() {
+      showToast('请长按输入框选择「粘贴」', true);
+    });
+  }
+}
 
+function updateAnalyzePreview() {
+  var val = document.getElementById('analyze-input').value.trim();
+  var preview = document.getElementById('analyze-preview');
+  var previewText = document.getElementById('analyze-preview-text');
+  var btn = document.getElementById('analyze-btn');
+  
   if (val) {
-    var config = cmdConfig[currentTab];
-    previewText.textContent = config.prefix + val;
+    previewText.textContent = '/CONTENT-GOLDMINE\n' + val;
     preview.classList.add('show');
     btn.disabled = false;
   } else {
@@ -996,37 +1204,423 @@ function onInput() {
   }
 }
 
-// ══ 粘贴 ══
-function doPaste() {
-  if (navigator.clipboard && navigator.clipboard.readText) {
-    navigator.clipboard.readText().then(function(text) {
-      document.getElementById('cmd-input').value = text;
-      onInput();
-    }).catch(function() {
-      showToast('请长按输入框选择「粘贴」', true);
-    });
+function copyAnalyzeCmd() {
+  var val = document.getElementById('analyze-input').value.trim();
+  if (!val) return;
+  copyText('/CONTENT-GOLDMINE\n' + val);
+  showToast('✓ 已复制！去 WorkBuddy 粘贴发送');
+}
+
+// ══ 场景2：灵感写作 ══
+function onThemeInput() {
+  var theme = document.getElementById('theme-input').value.trim();
+  currentTheme = theme;
+  
+  // 显示推荐区域
+  var recommendSection = document.getElementById('recommend-section');
+  
+  if (theme.length >= 2) {
+    recommendSection.style.display = 'block';
+    
+    // 根据主题关键词匹配创意
+    var matchedIdeas = matchIdeas(theme);
+    renderRecommendations(matchedIdeas);
+    
+    // 更新步骤2
+    updateStepState(2);
   } else {
-    showToast('请长按输入框选择「粘贴」', true);
+    recommendSection.style.display = 'none';
+    resetWriteFlow();
+  }
+  
+  updateWritePreview();
+}
+
+function matchIdeas(theme) {
+  // 关键词匹配
+  var keywords = theme.toLowerCase();
+  var matched = [];
+  
+  // 主题关键词映射
+  var themeMap = {
+    '职场': ['职场', '工作', '上班', '老板', '同事', '辞职', '加班'],
+    '买房': ['买房', '房子', '购房', '房价', '公积金', '贷款', '选房', '汕尾'],
+    '返乡': ['返乡', '回家', '汕尾', '小镇', '家乡', '故乡'],
+    '中年': ['中年', '35岁', '40岁', '危机'],
+    '爱情': ['爱情', '感情', '单身', '相亲', '结婚'],
+    '努力': ['努力', '躺平', '奋斗', '内卷', '摆烂'],
+    '科学': ['熵', '机会成本', '科学', '概念'],
+    '政策': ['政策', '救市', '公积金', '广州', '楼市'],
+    '避坑': ['避坑', '坑', '陷阱', '骗', '踩坑']
+  };
+  
+  // 检查匹配的分类
+  var matchedCategories = [];
+  for (var cat in themeMap) {
+    for (var kw of themeMap[cat]) {
+      if (keywords.includes(kw)) {
+        matchedCategories.push(cat);
+        break;
+      }
+    }
+  }
+  
+  // 匹配创意
+  for (var idea of ideas) {
+    var score = 0;
+    var ideaText = (idea.title + ' ' + idea.angle + ' ' + idea.tags.join(' ')).toLowerCase();
+    
+    // 标题直接包含主题词
+    if (ideaText.includes(keywords)) {
+      score += 10;
+    }
+    
+    // 分类匹配
+    for (var cat of matchedCategories) {
+      if (ideaText.includes(cat)) {
+        score += 5;
+      }
+    }
+    
+    // 优先级加权
+    if (idea.high) score += 3;
+    
+    if (score > 0) {
+      matched.push({ idea: idea, score: score });
+    }
+  }
+  
+  // 按分数排序，取前5
+  matched.sort(function(a, b) { return b.score - a.score; });
+  return matched.slice(0, 5).map(function(m) { return m.idea; });
+}
+
+function renderRecommendations(matchedIdeas) {
+  var list = document.getElementById('recommend-list');
+  
+  if (matchedIdeas.length === 0) {
+    list.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:12px;">暂无匹配创意，去「创意库」添加</div>';
+    return;
+  }
+  
+  list.innerHTML = matchedIdeas.map(function(idea) {
+    var isSelected = selectedIdeas.some(function(s) { return s.id === idea.id; });
+    return '<div class="recommend-item' + (isSelected ? ' selected' : '') + '" onclick="toggleIdeaSelection(\'' + idea.id + '\', this)">' +
+      '<div class="recommend-check">' + (isSelected ? '✓' : '') + '</div>' +
+      '<div class="recommend-info">' +
+        '<div class="recommend-title">' + escapeHtml(idea.title) + '</div>' +
+        '<div class="recommend-meta">' + idea.source + '</div>' +
+      '</div>' +
+      '<div class="recommend-priority">' + idea.priority + '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function toggleIdeaSelection(id, el) {
+  var idea = ideas.find(function(i) { return i.id === id; });
+  if (!idea) return;
+  
+  var existingIndex = selectedIdeas.findIndex(function(s) { return s.id === id; });
+  
+  if (existingIndex >= 0) {
+    // 取消选择
+    selectedIdeas.splice(existingIndex, 1);
+    el.classList.remove('selected');
+    el.querySelector('.recommend-check').textContent = '';
+  } else {
+    // 最多选3个
+    if (selectedIdeas.length >= 3) {
+      showToast('最多选3个创意方向', true);
+      return;
+    }
+    selectedIdeas.push(idea);
+    el.classList.add('selected');
+    el.querySelector('.recommend-check').textContent = '✓';
+  }
+  
+  // 更新已选列表
+  renderSelectedIdeas();
+  updateStepState(2);
+  updateWritePreview();
+}
+
+function renderSelectedIdeas() {
+  var list = document.getElementById('selected-ideas-list');
+  document.getElementById('selected-count').textContent = '已选 ' + selectedIdeas.length + ' 个';
+  
+  if (selectedIdeas.length === 0) {
+    list.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:12px;">在上方选择或输入主题获取推荐</div>';
+    return;
+  }
+  
+  list.innerHTML = selectedIdeas.map(function(idea) {
+    return '<div class="recommend-item selected" onclick="removeIdeaSelection(\'' + idea.id + '\')">' +
+      '<div class="recommend-check">✓</div>' +
+      '<div class="recommend-info">' +
+        '<div class="recommend-title">' + escapeHtml(idea.title) + '</div>' +
+        '<div class="recommend-meta">' + idea.priority + ' · 点击移除</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function removeIdeaSelection(id) {
+  selectedIdeas = selectedIdeas.filter(function(s) { return s.id !== id; });
+  renderSelectedIdeas();
+  renderRecommendations(matchIdeas(currentTheme));
+  updateStepState(2);
+  updateWritePreview();
+}
+
+function updateWritePreview() {
+  var title = document.getElementById('title-input').value.trim();
+  var preview = document.getElementById('write-preview');
+  var content = document.getElementById('write-preview-content');
+  var meta = document.getElementById('write-preview-meta');
+  var btn = document.getElementById('write-btn');
+  
+  // 生成命令
+  var cmdTitle = title || (currentTheme ? '关于「' + currentTheme + '」的文章' : '');
+  
+  if (cmdTitle && selectedIdeas.length > 0) {
+    // 构建完整命令
+    var ideaRefs = selectedIdeas.map(function(i) { return 'IDEA-' + i.id; }).join(' + ');
+    var ideaTitles = selectedIdeas.map(function(i) { return i.titles; }).join('\n');
+    var ideaPoints = selectedIdeas.map(function(i) { return i.points; }).join('；');
+    
+    content.textContent = '/WRITING-CLONE ' + cmdTitle;
+    meta.innerHTML = '📚 参考创意：' + ideaRefs + '<br>' +
+      '💡 参考角度：' + ideaPoints;
+    
+    preview.style.display = 'block';
+    btn.disabled = false;
+    
+    // 更新步骤状态
+    updateStepState(3);
+    updateStepState(4);
+  } else if (cmdTitle) {
+    content.textContent = '/WRITING-CLONE ' + cmdTitle;
+    meta.textContent = '💡 无参考创意，可直接写作';
+    preview.style.display = 'block';
+    btn.disabled = false;
+    updateStepState(3);
+    updateStepState(4);
+  } else {
+    preview.style.display = 'none';
+    btn.disabled = true;
   }
 }
 
-// ══ 执行 ══
-function doExecute() {
-  var val = document.getElementById('cmd-input').value.trim();
-  if (!val) return;
-  var config = cmdConfig[currentTab];
-  var fullCmd = config.prefix + val;
+function updateStepState(step) {
+  var stepEl = document.getElementById('step-' + ['theme', 'ideas', 'title', 'cmd'][step - 1]);
+  if (stepEl) {
+    stepEl.classList.add('active');
+  }
+}
+
+function resetWriteFlow() {
+  selectedIdeas = [];
+  currentTheme = '';
+  document.getElementById('theme-input').value = '';
+  document.getElementById('title-input').value = '';
+  document.getElementById('recommend-section').style.display = 'none';
+  renderSelectedIdeas();
+  document.getElementById('write-preview').style.display = 'none';
+  document.getElementById('write-btn').disabled = true;
+  
+  // 重置步骤状态
+  ['theme', 'ideas', 'title', 'cmd'].forEach(function(s) {
+    document.getElementById('step-' + s).classList.remove('active', 'done');
+  });
+  document.getElementById('step-theme').classList.add('active');
+}
+
+function copyWriteCmd() {
+  var title = document.getElementById('title-input').value.trim() || (currentTheme ? '关于「' + currentTheme + '」的文章' : '');
+  
+  if (!title) {
+    showToast('请输入标题', true);
+    return;
+  }
+  
+  var fullCmd = '/WRITING-CLONE ' + title;
+  
+  // 如果有选中的创意，添加注释说明
+  if (selectedIdeas.length > 0) {
+    var ideaInfo = selectedIdeas.map(function(i) {
+      return '【' + i.titles + '】' + i.points;
+    }).join('\n');
+    fullCmd = fullCmd + '\n\n参考创意：\n' + ideaInfo;
+  }
+  
   copyText(fullCmd);
-  showToast(config.toast);
+  showToast('✓ 已复制！去 WorkBuddy 粘贴发送');
 }
 
-// ══ 复制任意命令 ══
-function copyCmd(text) {
-  copyText(text);
-  showToast('✓ 已复制！');
+// ══ 场景3：创意库（复用渲染函数） ══
+function renderEntriesScene3() {
+  var list = document.getElementById('entry-list-scene3');
+  document.getElementById('stat-entries').textContent = entries.length;
+  document.getElementById('entry-count').textContent = entries.length + ' 条';
+
+  if (entries.length === 0) {
+    list.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div><div class="empty-text">素材库为空</div><div class="empty-sub">使用「拆解入库」添加第一个素材</div></div>';
+    return;
+  }
+
+  list.innerHTML = entries.map(function(e) {
+    var expanded = window['_entry_' + e.id] ? ' expanded' : '';
+    return '<div class="entry-card' + expanded + '" id="entry-scene3-' + e.id + '">' +
+      '<div class="entry-head" onclick="toggleEntryScene3(\'' + e.id + '\')">' +
+        '<div class="entry-num">' + e.id + '</div>' +
+        '<div class="entry-info">' +
+          '<div class="entry-title">' + escapeHtml(e.title) + '</div>' +
+          '<div class="entry-meta">' + e.source + ' · ' + e.date + '</div>' +
+        '</div>' +
+        '<div class="entry-arrow">▼</div>' +
+      '</div>' +
+      '<div class="entry-detail">' +
+        (e.url ? '<div class="entry-section"><div class="entry-section-title">原文链接</div><a href="' + e.url + '" target="_blank" class="entry-structure" style="display:block;text-decoration:none;color:var(--blue-light);">' + escapeHtml(e.url.substring(0,50)) + '...</a></div>' : '') +
+        '<div class="entry-section"><div class="entry-section-title">核心结构</div><div class="entry-structure">' + escapeHtml(e.structure) + '</div></div>' +
+        '<div class="entry-section"><div class="entry-section-title">精选金句</div><div class="entry-quotes">' + e.quotes.map(function(q) { return '<div class="entry-quote">' + escapeHtml(q) + '</div>'; }).join('') + '</div></div>' +
+        '<div class="entry-section"><div class="entry-section-title">创意积木</div><div class="entry-tags">' + e.tags.map(function(t) { return '<span class="entry-tag">' + escapeHtml(t) + '</span>'; }).join('') + '</div></div>' +
+        '<div class="entry-actions">' +
+          '<button class="entry-btn entry-btn-copy" onclick="copyEntryCmd(\'' + e.id + '\')">📋 复制命令</button>' +
+          (e.url ? '<a class="entry-btn entry-btn-link" href="' + e.url + '" target="_blank">🔗 原文</a>' : '') +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
 }
 
-// ══ 通用工具 ══
+function toggleEntryScene3(id) {
+  var card = document.getElementById('entry-scene3-' + id);
+  var isExpanded = card.classList.contains('expanded');
+  document.querySelectorAll('.entry-card.expanded').forEach(function(c) { c.classList.remove('expanded'); });
+  if (!isExpanded) {
+    card.classList.add('expanded');
+    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+}
+
+function renderIdeasScene3() {
+  var list = document.getElementById('idea-list-scene3');
+  document.getElementById('stat-ideas').textContent = ideas.length;
+  document.getElementById('idea-count-badge').textContent = ideas.length + ' 条';
+
+  if (ideas.length === 0) {
+    list.innerHTML = '<div class="empty-state"><div class="empty-icon">💡</div><div class="empty-text">暂无创意方向</div><div class="empty-sub">先添加素材，再用 IDEA-GEN 生成</div></div>';
+    return;
+  }
+
+  var sorted = ideas.slice().sort(function(a, b) { return b.priority.localeCompare(a.priority); });
+
+  list.innerHTML = sorted.map(function(item) {
+    var expanded = window['_idea_' + item.id] ? ' expanded' : '';
+    var highClass = item.high ? ' priority-high' : '';
+    return '<div class="idea-card' + expanded + highClass + '" id="idea-scene3-' + item.id + '">' +
+      '<div class="idea-head" onclick="toggleIdeaScene3(\'' + item.id + '\')">' +
+        '<div class="idea-num">IDEA-' + item.id + '</div>' +
+        '<div class="idea-priority">' + item.priority + '</div>' +
+        '<div class="idea-info">' +
+          '<div class="idea-title">' + escapeHtml(item.title) + '</div>' +
+          '<div class="idea-source">来自：' + item.source + '</div>' +
+        '</div>' +
+        '<div class="idea-arrow">▼</div>' +
+      '</div>' +
+      '<div class="idea-detail">' +
+        '<div class="idea-angle">' + escapeHtml(item.angle) + '</div>' +
+        '<div class="idea-row"><div class="idea-row-label">推荐标题</div><div class="idea-row-value" style="color:var(--gold)">' + escapeHtml(item.titles) + '</div></div>' +
+        '<div class="idea-row"><div class="idea-row-label">目标读者</div><div class="idea-row-value">' + escapeHtml(item.target) + '</div></div>' +
+        '<div class="idea-row"><div class="idea-row-label">核心论点</div><div class="idea-row-value">' + escapeHtml(item.points) + '</div></div>' +
+        '<div class="idea-row"><div class="idea-row-label">创意积木</div><div class="idea-tags">' + item.tags.map(function(t) { return '<span class="idea-tag">' + escapeHtml(t) + '</span>'; }).join('') + '</div></div>' +
+        '<div class="idea-actions">' +
+          '<button class="idea-btn idea-btn-write" onclick="useIdeaInWrite(\'' + item.id + '\')">✍️ 用于写作</button>' +
+          '<button class="idea-btn idea-btn-copy" onclick="copyIdeaDetails(\'' + item.id + '\')">📋 复制详情</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function toggleIdeaScene3(id) {
+  var card = document.getElementById('idea-scene3-' + id);
+  var isExpanded = card.classList.contains('expanded');
+  document.querySelectorAll('.idea-card.expanded').forEach(function(c) { c.classList.remove('expanded'); });
+  if (!isExpanded) {
+    card.classList.add('expanded');
+    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+}
+
+function useIdeaInWrite(id) {
+  var idea = ideas.find(function(i) { return i.id === id; });
+  if (!idea) return;
+  
+  // 切换到写作场景
+  document.querySelectorAll('.scene-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector('[data-scene="write"]').classList.add('active');
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-write').classList.add('active');
+  
+  // 添加创意
+  if (!selectedIdeas.some(function(s) { return s.id === id; })) {
+    if (selectedIdeas.length >= 3) {
+      selectedIdeas.shift(); // 移除第一个
+    }
+    selectedIdeas.push(idea);
+  }
+  
+  // 填入标题
+  document.getElementById('title-input').value = idea.titles.replace(/[「」]/g, '');
+  
+  // 更新UI
+  renderSelectedIdeas();
+  updateWritePreview();
+  showToast('✓ 已添加创意方向');
+}
+
+function renderDraftsScene3() {
+  var list = document.getElementById('draft-list-scene3');
+  document.getElementById('stat-drafts').textContent = drafts.length;
+  document.getElementById('draft-count-badge').textContent = drafts.length + ' 篇';
+
+  if (drafts.length === 0) {
+    list.innerHTML = '<div class="empty-state"><div class="empty-icon">📄</div><div class="empty-text">暂无完稿</div><div class="empty-sub">从创意方向开始写第一篇</div></div>';
+    return;
+  }
+
+  list.innerHTML = drafts.map(function(d) {
+    var expanded = window['_draft_' + d.id] ? ' expanded' : '';
+    return '<div class="draft-card' + expanded + '" id="draft-scene3-' + d.id + '">' +
+      '<div class="draft-head" onclick="toggleDraftScene3(\'' + d.id + '\')">' +
+        '<div class="draft-num">' + d.id + '</div>' +
+        '<div class="draft-info">' +
+          '<div class="draft-title">' + escapeHtml(d.title) + '</div>' +
+          '<div class="draft-meta">方向 ' + d.idea + ' · ' + d.date + '</div>' +
+        '</div>' +
+        '<div class="draft-status">✓ ' + d.status + '</div>' +
+        '<div class="draft-arrow">▼</div>' +
+      '</div>' +
+      '<div class="draft-detail">' +
+        '<div class="draft-preview">' + d.preview + '</div>' +
+        '<div class="draft-meta-detail">' + d.tags.map(function(t) { return '🏷 ' + t; }).join(' ') + '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function toggleDraftScene3(id) {
+  var card = document.getElementById('draft-scene3-' + id);
+  var isExpanded = card.classList.contains('expanded');
+  document.querySelectorAll('.draft-card.expanded').forEach(function(c) { c.classList.remove('expanded'); });
+  if (!isExpanded) {
+    card.classList.add('expanded');
+    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+}
+
+// ══ 通用工具函数 ══
 function copyText(text) {
   if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(text).catch(function() { fallbackCopy(text); });
@@ -1034,6 +1628,7 @@ function copyText(text) {
     fallbackCopy(text);
   }
 }
+
 function fallbackCopy(text) {
   var ta = document.createElement('textarea');
   ta.value = text;
@@ -1061,143 +1656,9 @@ function escapeHtml(text) {
   return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 
-// ══ 数据 ══
-var entries = [
-  {
-    id: '001', title: '捡垃圾，是不是一种自我感动的善行', source: '真实故事计划', date: '2026-04-14',
-    url: 'https://mp.weixin.qq.com/s/35LxCdlJnDwhZr-dxswytQ',
-    structure: '冲突引爆 → 人物速写 → 虚无者意外行动 → 多米诺收束',
-    quotes: ['垃圾是人类的，大海是宇宙的。', '无法推倒高墙，但可以推第一张骨牌。'],
-    tags: ['人物速写法', '悖论转折', '微小行动', '多米诺收尾']
-  },
-  {
-    id: '002', title: '一位中科院院士的成绩单', source: '宋诗之河', date: '2026-04-14',
-    url: 'https://mp.weixin.qq.com/s/PEs3wGfnM9Ct-9kkd8DYpQ',
-    structure: '细节切入 → 行动代替形容词 → 实物锚定 → 他人之口收束人格',
-    quotes: ['给家乡递上了一份份满分答卷。', '"亲爱的常山乡亲们"——五个字，让记者既亲切又震撼。'],
-    tags: ['方言破冰法', '行动代替形容', '实物锚定法', '首尾意象呼应']
-  },
-  {
-    id: '003', title: '自从知道了"熵"的概念，我再也不玩手机了', source: '青野成长', date: '2026-04-14',
-    url: 'https://mp.weixin.qq.com/s/mAVUpEUu_OdHxX8KmqJ7vw',
-    structure: '科学概念锚定 → 二元对照表格 → 三步递进实践 → 哲学升华收束',
-    quotes: ['越舒适熵增长越大。', '熵减的终极目标——自由，而非束缚。'],
-    tags: ['科学概念包装法', '二元对照表格', '层层递进排比', '最小行动入口']
-  },
-  {
-    id: '004', title: '广州官宣：新房提标准，老房能改造，"停车难"有解！', source: '南方网', date: '2026-04-15',
-    url: 'https://mp.weixin.qq.com/s/qhoQju3lLQeCRHEzOzonww',
-    structure: '政策悬念 → 核心承诺 → 三亮点并列 → 生活图景收束',
-    quotes: ['"这不是楼盘广告，是广州市新出炉的红头文件。"', '让房子回归住的本质：老人方便、小孩有地儿玩、车子有地儿停。'],
-    tags: ['否定反转开头', '具象化代替抽象', '三亮点并列', '替用户出气']
-  },
-  {
-    id: '005', title: '汕尾买房避坑清单', source: '原创', date: '2026-04-15',
-    structure: '反常识痛点切入 → 五坑横排展开 → 已在坑里怎么办 → 行动号召收束',
-    quotes: ['上周，朋友老张兴冲冲地跟我说，他在汕尾看中了一套海景房。两个月后，房子烂尾了。', '"能贷≠好贷、能用≠靠谱、特价≠捡漏"', '"房子是用来住的，不是用来赌的。"'],
-    tags: ['人物踩坑开头', '悖论句式', '三问清单法', '已在坑里收尾']
-  },
-  {
-    id: '006', title: '公积金贷款三大"潜规则"', source: '原创', date: '2026-04-15',
-    structure: '蹲点采访切入 → 三条潜规则横排 → 关键动作清单 → 写给被拒的人',
-    quotes: ['"我在汕尾公积金管理中心蹲了三天，采访完第17个购房者之后，发现一个规律..."', '"断缴=清零，连续缴纳年限从0开始计算。"'],
-    tags: ['蹲点采访开头', '反常识开场', '潜规则框架', '可投诉赋权']
-  },
-  {
-    id: '007', title: '又抢地！金茂大战保利，2.6万/平吞下老西关江景靓地', source: '广州房产', date: '2026-04-15',
-    url: 'https://mp.weixin.qq.com/s/xxxxx',
-    structure: '竞拍悬念 → 结局揭晓 → 反差强化 → 优势纵深 → 前景预测',
-    quotes: ['"马场之后，广州土拍再现抢地大戏！"', '"有点意外，该地块由金茂拿下了。"'],
-    tags: ['双雄对决开头', '意外强化句', '数据对比矩阵', '低密稀缺三合一']
-  },
-  {
-    id: '008', title: '地铁吐血女孩的二三事', source: '真实故事计划', date: '2026-04-15',
-    url: 'https://mp.weixin.qq.com/s/xxxxx',
-    structure: '戏剧性瞬间切入 → 8年病史回溯 → 核心矛盾揭示 → 情感转折 → 心态蜕变',
-    quotes: ['"在地铁里吐血的那一刻，她最担心的不是自己的身体，而是弄脏了别人的衣服。"', '"8年来，她一个人去医院，一个人签字，一个人签病危通知书。"'],
-    tags: ['戏剧性瞬间切入', '时间线回溯', '核心矛盾揭示', '情感转折']
-  },
-  {
-    id: '009', title: '广州六运小区餐饮店6月起全面清退？', source: '羊城晚报', date: '2026-04-22',
-    url: 'https://mp.weixin.qq.com/s/xxxxx',
-    structure: '政策风声 → 记者走访反差 → 多方声音 → 历史溯源 → 政策背景 → 未来展望',
-    quotes: ['"六运小区95%都是\'住改商\'，而新的热食证去年就不再允许办理。"', '"天塌了，一口热乎的都吃不上了。"'],
-    tags: ['反差开头法', '数据锚定法', '历史溯源法', '多方声音法']
-  }
-];
-
-var ideas = [
-  { id: '001', title: '广州楼市新28条：汕尾可以抄哪些？', source: 'ENTRY-001+004', priority: '★★★', high: true, angle: '广州新28条落地，对汕尾购房者/业主/开发商的直接影响。配套、停车、改造——汕尾虽小，购房逻辑类似。', titles: '「广州出了28条，汕尾人买房要注意什么？」', target: '汕尾本地购房者、打算在汕尾买房的人', points: '配套、停车、改造——汕尾买房看这三条就够了', tags: ['替用户出气', '生活场景具象化', '三点并列'] },
-  { id: '002', title: '从院士成绩单到汕尾骄傲：人物故事的新写法', source: 'ENTRY-002', priority: '★★☆', angle: '借用院士成绩单的结构，写汕尾本地"递上成绩单"的人物故事。用细节切入、行动代替形容、他人之口定格。', titles: '「汕尾人，递上了一份怎样的成绩单？」', target: '汕尾本地读者、对家乡有感情的用户', points: '每个人都有自己的"成绩单"——不是分数，是那些被时间沉淀下来的选择', tags: ['人物速写', '行动代替形容词', '首尾意象呼应'] },
-  { id: '003', title: '职场版：最说"努力没用"的人悄悄在加班', source: 'ENTRY-001', priority: '★★☆', angle: '职场中存在一类人：用虚无主义作盔甲，嘴上说"躺平"，身体却最诚实。这类人比谁都努力，只是不好意思承认。', titles: '「那个每天说\'努力没用\'的同事，下班后悄悄把方案改了3版」', target: '职场人、Z世代', points: '最怀疑意义的人，往往是最认真行动的人——这是悖论，也是人性', tags: ['悖论句式', '人物速写', '多米诺收尾'] },
-  { id: '004', title: '亲密关系版：最说"不需要爱情"的人比谁都渴望', source: 'ENTRY-001', priority: '★★☆', angle: '写一种"情感虚无主义者"——说不需要爱情的人，家里却养了三盆植物、取名叫小明小红小刚。不是不需要，是太怕失望。', titles: '「那个说不需要爱情的人，家里植物取名叫小明、小红、小刚」', target: '单身人士、对"恐恋/恐婚"话题有共鸣的读者', points: '用虚无主义保护自己的人，往往比谁都渴望连接', tags: ['犀利开头', '微小转折法', '西西弗斯劳作'] },
-  { id: '005', title: '汕尾版：逃离北上广的人，最后发现答案在海边', source: 'ENTRY-001', priority: '★★☆', angle: '汕尾人年轻时拼了命去广深，觉得小城市装不下野心。十年后发现：汕尾的海滩比深圳湾安静，房价差距让体面生活触手可及。', titles: '「深圳CBD里飞得最用力的燕子，最后成了汕尾海边最慢的那道波浪」', target: '在外奋斗的汕尾人、考虑返乡的用户', points: '逃离北上广不是失败，是发现自己真正需要什么的开始', tags: ['人物速写', '替用户出气', '具象化对比'] },
-  { id: '006', title: '政策解密：公积金贷款3大"潜规则"', source: 'ENTRY-003+004', priority: '★★★', high: true, angle: '公积金贷款3大"潜规则"，银行永远不会主动告诉你！银行和开发商都有各自的利益算盘，普通人不懂规则就等于白送钱。', titles: '「公积金贷款3大\'潜规则\'，银行永远不会主动告诉你！」', target: '首次购房刚需客户、置换改善型买家', points: '银行和开发商都有各自的利益算盘，普通人不懂规则就等于白送钱', tags: ['否定反转开头', '二元对照表格', '替用户出气', '四有句式收尾'] },
-  { id: '007', title: '科学框架：买房是一场"机会成本"计算', source: 'ENTRY-003', priority: '★★☆', angle: '买房的本质是一场"机会成本"计算：你放弃的那笔钱，值多少？买房不是买房子，而是买你对未来现金流的判断力。', titles: '「买房的本质是一场\'机会成本\'计算：你放弃的那笔钱，值多少？」', target: '30-45岁有投资意识的读者、城市白领', points: '买房不是买房子，而是买你对未来现金流的判断力', tags: ['科学概念包装法', '层层递进排比', '对仗升华结尾'] },
-  { id: '008', title: '本地人物：有人在老城区守了30年', source: 'ENTRY-002', priority: '★☆☆', angle: '汕尾人的房子：有人在老城区守了30年，有人把家安在了海边。房子是家的容器，但家的意义是汕尾人自己定义的。', titles: '「汕尾人的房子：有人在老城区守了30年，有人把家安在了海边」', target: '汕尾本地读者、有乡愁情结的外出务工群体', points: '房子是家的容器，但家的意义是汕尾人自己定义的', tags: ['实物锚定法', '方言破冰法', '行动代替形容'] },
-  { id: '009', title: '热点解读：广州救市，汕尾跟不跟？', source: 'ENTRY-001+004', priority: '★★☆', angle: '广州救市，汕尾跟不跟？看完这3个信号你就懂了。政策传导有滞后性，看懂一线城市的风向标比追政策本身更重要。', titles: '「广州救市，汕尾跟不跟？看完这3个信号你就懂了」', target: '投资型买家、关注宏观趋势的改善置换型买家', points: '政策传导有滞后性，看懂一线城市的风向标比追政策本身更重要', tags: ['多米诺骨牌收尾', '悬念开头', '三亮点并列'] },
-  { id: '010', title: '行动指南：汕尾买房避坑清单', source: 'ENTRY-001+003', priority: '★★★', high: true, angle: '2024汕尾买房避坑指南：看房前、签约时、交钱后分别要注意什么？买房最怕的不是买贵，而是买完才发现踩了坑。', titles: '「2024汕尾买房避坑指南：看房前、签约时、交钱后分别要注意什么？」', target: '预算有限的刚需买家、第一次买房的年轻人', points: '买房最怕的不是买贵，而是买完才发现踩了坑，一步一步教你避开', tags: ['三步递进结构', '悖论句式', '最小行动入口', '二元对照表格'] }
-];
-
-var drafts = [
-  {
-    id: '001', title: '逃离北上广的人，最后发现答案在海边', idea: 'IDEA-005', date: '2026-04-15',
-    status: 'done', preview: '<strong>你有没有想过：一个人可以在深圳什么都有，却在最繁华的地方，感到彻底的失落？</strong> 林小满就经历了这一切。她来自汕尾甲子镇...',
-    tags: ['返乡叙事', '人物故事', '汕尾视角']
-  }
-];
-
-// ══ 渲染素材库 ══
-function renderEntries() {
-  var list = document.getElementById('entry-list');
-  document.getElementById('stat-entries').textContent = entries.length;
-  document.getElementById('entry-count').textContent = entries.length + ' 条';
-
-  if (entries.length === 0) {
-    list.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div><div class="empty-text">素材库为空</div><div class="empty-sub">使用「拆解入库」添加第一个素材</div></div>';
-    return;
-  }
-
-  list.innerHTML = entries.map(function(e) {
-    var expanded = window['_entry_' + e.id] ? ' expanded' : '';
-    return '<div class="entry-card' + expanded + '" id="entry-' + e.id + '">' +
-      '<div class="entry-head" onclick="toggleEntry(\'' + e.id + '\')">' +
-        '<div class="entry-num">' + e.id + '</div>' +
-        '<div class="entry-info">' +
-          '<div class="entry-title">' + escapeHtml(e.title) + '</div>' +
-          '<div class="entry-meta">' + e.source + ' · ' + e.date + '</div>' +
-        '</div>' +
-        '<div class="entry-arrow">▼</div>' +
-      '</div>' +
-      '<div class="entry-detail">' +
-        (e.url ? '<div class="entry-section"><div class="entry-section-title">原文链接</div><a href="' + e.url + '" target="_blank" class="entry-structure" style="display:block;text-decoration:none;">' + escapeHtml(e.url.substring(0,50)) + '...</a></div>' : '') +
-        '<div class="entry-section"><div class="entry-section-title">核心结构</div><div class="entry-structure">' + escapeHtml(e.structure) + '</div></div>' +
-        '<div class="entry-section"><div class="entry-section-title">精选金句</div><div class="entry-quotes">' + e.quotes.map(function(q) { return '<div class="entry-quote">' + escapeHtml(q) + '</div>'; }).join('') + '</div></div>' +
-        '<div class="entry-section"><div class="entry-section-title">创意积木</div><div class="entry-tags">' + e.tags.map(function(t) { return '<span class="entry-tag">' + escapeHtml(t) + '</span>'; }).join('') + '</div></div>' +
-        '<div class="entry-actions">' +
-          '<button class="entry-btn entry-btn-copy" onclick="copyEntryCmd(\'' + e.id + '\')">📋 复制命令</button>' +
-          (e.url ? '<a class="entry-btn entry-btn-link" href="' + e.url + '" target="_blank">🔗 原文</a>' : '') +
-        '</div>' +
-        '<div class="delete-confirm" id="dc-' + e.id + '">' +
-          '<div class="delete-confirm-text">页面删除仅为隐藏，实际文件仍在 WorkBuddy 素材库中。</div>' +
-          '<div class="delete-btns"><button class="delete-confirm-btn ok" onclick="doDelete(\'' + e.id + '\')">确认</button><button class="delete-confirm-btn cancel" onclick="cancelDelete(\'' + e.id + '\')">取消</button></div>' +
-        '</div>' +
-      '</div>' +
-    '</div>';
-  }).join('');
-}
-
-function toggleEntry(id) {
-  var card = document.getElementById('entry-' + id);
-  var isExpanded = card.classList.contains('expanded');
-  document.querySelectorAll('.entry-card.expanded').forEach(function(c) {
-    c.classList.remove('expanded');
-    c.querySelectorAll('.delete-confirm').forEach(function(d) { d.classList.remove('show'); });
-  });
-  if (!isExpanded) {
-    card.classList.add('expanded');
-    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  }
+function copyCmd(text) {
+  copyText(text);
+  showToast('✓ 已复制！');
 }
 
 function copyEntryCmd(id) {
@@ -1205,72 +1666,6 @@ function copyEntryCmd(id) {
   if (entry && entry.url) {
     copyText('/CONTENT-GOLDMINE\n' + entry.url);
     showToast('✓ 命令已复制');
-  }
-}
-
-function cancelDelete(id) {
-  document.getElementById('dc-' + id).classList.remove('show');
-}
-
-// ══ 渲染创意方向 ══
-function renderIdeas() {
-  var list = document.getElementById('idea-list');
-  document.getElementById('stat-ideas').textContent = ideas.length;
-  document.getElementById('idea-count-badge').textContent = ideas.length + ' 条';
-
-  if (ideas.length === 0) {
-    list.innerHTML = '<div class="empty-state"><div class="empty-icon">💡</div><div class="empty-text">暂无创意方向</div><div class="empty-sub">先添加素材，再用 IDEA-GEN 生成</div></div>';
-    return;
-  }
-
-  // 按优先级排序
-  var sorted = ideas.slice().sort(function(a, b) {
-    return b.priority.localeCompare(a.priority);
-  });
-
-  list.innerHTML = sorted.map(function(item) {
-    var expanded = window['_idea_' + item.id] ? ' expanded' : '';
-    var highClass = item.high ? ' priority-high' : '';
-    return '<div class="idea-card' + expanded + highClass + '" id="idea-' + item.id + '">' +
-      '<div class="idea-head" onclick="toggleIdea(\'' + item.id + '\')">' +
-        '<div class="idea-num">IDEA-' + item.id + '</div>' +
-        '<div class="idea-priority">' + item.priority + '</div>' +
-        '<div class="idea-info">' +
-          '<div class="idea-title">' + escapeHtml(item.title) + '</div>' +
-          '<div class="idea-source">来自：' + item.source + '</div>' +
-        '</div>' +
-        '<div class="idea-arrow">▼</div>' +
-      '</div>' +
-      '<div class="idea-detail">' +
-        '<div class="idea-angle">' + escapeHtml(item.angle) + '</div>' +
-        '<div class="idea-row"><div class="idea-row-label">推荐标题</div><div class="idea-row-value" style="color:var(--gold)">' + escapeHtml(item.titles) + '</div></div>' +
-        '<div class="idea-row"><div class="idea-row-label">目标读者</div><div class="idea-row-value">' + escapeHtml(item.target) + '</div></div>' +
-        '<div class="idea-row"><div class="idea-row-label">核心论点</div><div class="idea-row-value">' + escapeHtml(item.points) + '</div></div>' +
-        '<div class="idea-row"><div class="idea-row-label">创意积木</div><div class="idea-tags">' + item.tags.map(function(t) { return '<span class="idea-tag">' + escapeHtml(t) + '</span>'; }).join('') + '</div></div>' +
-        '<div class="idea-actions">' +
-          '<button class="idea-btn idea-btn-write" onclick="copyWriteCmd(\'' + item.id + '\')">✍️ 直接写稿</button>' +
-          '<button class="idea-btn idea-btn-copy" onclick="copyIdeaDetails(\'' + item.id + '\')">📋 复制详情</button>' +
-        '</div>' +
-      '</div>' +
-    '</div>';
-  }).join('');
-}
-
-function toggleIdea(id) {
-  var card = document.getElementById('idea-' + id);
-  var isExpanded = card.classList.contains('expanded');
-  document.querySelectorAll('.idea-card.expanded').forEach(function(c) { c.classList.remove('expanded'); });
-  if (!isExpanded) {
-    card.classList.add('expanded');
-    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  }
-}
-
-function copyWriteCmd(id) {
-  var idea = ideas.find(function(i) { return i.id === id; });
-  if (idea) {
-    copyText('/WRITING-CLONE ' + idea.title);
-    showToast('✓ 写作命令已复制！去 WorkBuddy');
   }
 }
 
@@ -1282,57 +1677,24 @@ function copyIdeaDetails(id) {
   showToast('✓ 详情已复制');
 }
 
-// ══ 渲染完稿 ══
-function renderDrafts() {
-  var list = document.getElementById('draft-list');
-  document.getElementById('stat-drafts').textContent = drafts.length;
-  document.getElementById('draft-count-badge').textContent = drafts.length + ' 篇';
-
-  if (drafts.length === 0) {
-    list.innerHTML = '<div class="empty-state"><div class="empty-icon">📄</div><div class="empty-text">暂无完稿</div><div class="empty-sub">从创意方向开始写第一篇</div></div>';
-    return;
-  }
-
-  list.innerHTML = drafts.map(function(d) {
-    var expanded = window['_draft_' + d.id] ? ' expanded' : '';
-    return '<div class="draft-card' + expanded + '" id="draft-' + d.id + '">' +
-      '<div class="draft-head" onclick="toggleDraft(\'' + d.id + '\')">' +
-        '<div class="draft-num">' + d.id + '</div>' +
-        '<div class="draft-info">' +
-          '<div class="draft-title">' + escapeHtml(d.title) + '</div>' +
-          '<div class="draft-meta">方向 ' + d.idea + ' · ' + d.date + '</div>' +
-        '</div>' +
-        '<div class="draft-status">✓ ' + d.status + '</div>' +
-        '<div class="draft-arrow">▼</div>' +
-      '</div>' +
-      '<div class="draft-detail">' +
-        '<div class="draft-preview">' + d.preview + '</div>' +
-        '<div class="draft-meta-detail">' + d.tags.map(function(t) { return '🏷 ' + t; }).join(' ') + '</div>' +
-      '</div>' +
-    '</div>';
-  }).join('');
-}
-
-function toggleDraft(id) {
-  var card = document.getElementById('draft-' + id);
-  var isExpanded = card.classList.contains('expanded');
-  document.querySelectorAll('.draft-card.expanded').forEach(function(c) { c.classList.remove('expanded'); });
-  if (!isExpanded) {
-    card.classList.add('expanded');
-    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  }
-}
-
 // ══ 初始化 ══
-renderEntries();
-renderIdeas();
-renderDrafts();
+function init() {
+  // 渲染场景3的数据
+  renderEntriesScene3();
+  renderIdeasScene3();
+  renderDraftsScene3();
+  
+  // 初始化已选创意列表
+  renderSelectedIdeas();
+  
+  // 同步状态
+  var syncBadge = document.getElementById('sync-badge');
+  var syncTime = document.getElementById('sync-time');
+  syncBadge.classList.add('ok');
+  syncTime.textContent = new Date().toLocaleTimeString('zh-CN', {hour: '2-digit', minute: '2-digit'});
+}
 
-// 同步状态
-var syncBadge = document.getElementById('sync-badge');
-var syncTime = document.getElementById('sync-time');
-syncBadge.classList.add('ok');
-syncTime.textContent = new Date().toLocaleTimeString('zh-CN', {hour: '2-digit', minute: '2-digit'});
+init();
 </script>
 </body>
 </html>
