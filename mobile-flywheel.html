@@ -449,7 +449,7 @@ textarea:focus { border-color: var(--primary); background: white; }
 <div class="main" id="homeView">
   <!-- 刚拆解的素材提示 -->
   <div class="fresh-material" id="freshMaterial">
-    <div class="label">✨ 刚刚拆解</div>
+    <div class="label" id="freshLabel">✨ 刚刚拆解</div>
     <div class="title" id="freshTitle">-</div>
     <div class="actions">
       <button class="btn-write-fresh" onclick="writeWithFresh()">✍️ 立即写稿</button>
@@ -557,6 +557,27 @@ const API_BASE = 'http://127.0.0.1:3847';
 let currentScenario = null;
 let freshResult = null;
 let allMaterials = [];
+let recentMaterials = []; // 本地最近素材（离线也可用）
+
+// 本地最近素材存储
+function saveRecentMaterials() {
+  localStorage.setItem('recentMaterials', JSON.stringify(recentMaterials));
+}
+
+function loadRecentMaterials() {
+  try {
+    const stored = localStorage.getItem('recentMaterials');
+    if (stored) {
+      recentMaterials = JSON.parse(stored);
+    }
+  } catch (e) {
+    recentMaterials = [];
+  }
+}
+
+function refreshRecentList() {
+  renderMaterialList(recentMaterials.slice(0, 5));
+}
 
 function $(id) { return document.getElementById(id); }
 
@@ -633,11 +654,23 @@ async function submit() {
     showToast('⚠️ 离线模式');
   }
 
-  // 保存到本地
+  // 保存到本地（离线模式也要保存）
   freshResult = result;
   $('freshTitle').textContent = result.title || '素材整理';
 
+  // 保存到本地最近素材列表
+  const newMaterial = {
+    id: Date.now(),
+    title: result.title || '素材整理',
+    source_url: result.source_url || '',
+    type: currentScenario === 'idea' ? '灵感' : '拆解'
+  };
+  recentMaterials.unshift(newMaterial);
+  if (recentMaterials.length > 20) recentMaterials.pop(); // 最多保留20条
+  saveRecentMaterials();
+
   showResult(result);
+  refreshRecentList(); // 立即刷新最近素材显示
 
   $('submitBtn').disabled = false;
   $('submitBtn').textContent = currentScenario === 'analyze' ? '🤖 开始分析' : '💾 保存灵感';
@@ -703,7 +736,7 @@ async function saveToFeishu() {
     });
     const data = await resp.json();
     if (data.code === 0) {
-      showToast('✅ 已保存！编号: ' + data.data.number);
+      showToast('✅ 已同步到飞书！编号: ' + data.data.number);
       freshResult = null;
       backToMain();
       loadMaterials();
@@ -711,7 +744,18 @@ async function saveToFeishu() {
       throw new Error(data.msg);
     }
   } catch (e) {
-    showToast('⚠️ ' + e.message);
+    // 离线模式：保存到本地草稿
+    const offlineSave = {
+      ...freshResult,
+      savedAt: new Date().toISOString(),
+      syncStatus: 'pending'
+    };
+    const pending = JSON.parse(localStorage.getItem('pendingSync') || '[]');
+    pending.unshift(offlineSave);
+    localStorage.setItem('pendingSync', JSON.stringify(pending.slice(0, 50)));
+    showToast('⚠️ 已存本地草稿，联网后重试');
+    freshResult = null;
+    backToMain();
   }
 }
 
@@ -734,24 +778,36 @@ function goToWrite() {
 }
 
 async function loadMaterials() {
+  // 先加载本地数据（离线也能用）
+  loadRecentMaterials();
+  refreshRecentList();
+
+  // 检查草稿
+  const draft = localStorage.getItem('draftMaterial');
+  const draftTime = parseInt(localStorage.getItem('draftMaterialTime') || '0');
+  if (draft && Date.now() - draftTime < 3600000) {
+    try {
+      const d = JSON.parse(draft);
+      $('freshTitle').textContent = d.title || '未命名素材';
+      $('freshMaterial').classList.add('show');
+    } catch (e) {}
+  }
+
+  // 尝试加载飞书数据
   try {
     const resp = await fetch(`${API_BASE}/api/records?table=素材库`);
     const data = await resp.json();
     if (data.code === 0) {
       allMaterials = data.data || [];
-      renderMaterialList(data.data?.slice(0, 5) || []);
-
-      // 检查是否有未保存的草稿
-      const draft = localStorage.getItem('draftMaterial');
-      const draftTime = parseInt(localStorage.getItem('draftMaterialTime') || '0');
-      if (draft && Date.now() - draftTime < 3600000) { // 1小时内
-        const d = JSON.parse(draft);
-        $('freshTitle').textContent = d.title || '未命名素材';
-        $('freshMaterial').classList.add('show');
+      // 如果飞书有数据，可以合并或替换本地数据
+      if (allMaterials.length > 0) {
+        // 飞书数据更新了本地显示
+        $('totalCount').textContent = `共 ${allMaterials.length} 条`;
       }
     }
   } catch (e) {
-    console.log('加载素材失败', e);
+    // 离线模式，本地数据已足够
+    console.log('飞书连接失败，使用本地数据');
   }
 }
 
