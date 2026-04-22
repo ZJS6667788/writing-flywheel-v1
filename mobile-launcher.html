@@ -948,6 +948,206 @@
     to { opacity: 1; transform: translateY(0); }
   }
   .fade-up { animation: fadeUp 0.3s ease; }
+
+  /* ── 头部按钮 ── */
+  .header-btn {
+    background: var(--accent-glow);
+    border: 1px solid rgba(124,106,247,0.3);
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: 11px;
+    color: var(--accent-light);
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+  .header-btn:active { transform: scale(0.95); }
+
+  /* ── 创意生成面板 ── */
+  .gen-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.8);
+    z-index: 200;
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .gen-overlay.show { display: flex; }
+  .gen-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius) var(--radius) 0 0;
+    width: 100%;
+    max-width: 500px;
+    max-height: 85vh;
+    overflow-y: auto;
+    padding: 20px;
+    animation: slideUp 0.3s ease;
+  }
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+  .gen-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .gen-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .gen-close {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 24px;
+    cursor: pointer;
+    padding: 4px 8px;
+    line-height: 1;
+  }
+  .gen-section {
+    margin-bottom: 16px;
+  }
+  .gen-label {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .gen-input {
+    width: 100%;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    padding: 12px;
+    font-size: 14px;
+    color: var(--text);
+    outline: none;
+    font-family: inherit;
+  }
+  .gen-input:focus { border-color: var(--accent); }
+  .gen-input::placeholder { color: var(--muted); }
+  .gen-entry-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+  .gen-entry-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .gen-entry-item.selected {
+    border-color: var(--accent);
+    background: var(--accent-glow);
+  }
+  .gen-entry-check {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    border: 2px solid var(--border-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 12px;
+    color: white;
+  }
+  .gen-entry-item.selected .gen-entry-check {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  .gen-entry-info { flex: 1; min-width: 0; }
+  .gen-entry-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .gen-entry-source {
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .gen-preview {
+    background: rgba(0,0,0,0.4);
+    border: 1px solid var(--accent);
+    border-radius: var(--radius-sm);
+    padding: 12px;
+    margin-top: 16px;
+  }
+  .gen-preview-label {
+    font-size: 10px;
+    color: var(--accent-light);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+  }
+  .gen-preview-text {
+    font-size: 13px;
+    color: var(--blue-light);
+    font-family: monospace;
+    word-break: break-all;
+    line-height: 1.6;
+  }
+  .gen-preview-note {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+    line-height: 1.5;
+  }
+  .gen-btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--accent), #5e6af7);
+    border: none;
+    border-radius: var(--radius);
+    color: white;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-family: inherit;
+  }
+  .gen-btn:active { transform: scale(0.98); }
+  .gen-btn:disabled {
+    background: var(--card-hover);
+    color: var(--muted);
+    cursor: not-allowed;
+    transform: none;
+  }
+  .gen-tips {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 12px;
+    text-align: center;
+    line-height: 1.5;
+  }
 </style>
 </head>
 <body>
@@ -1134,6 +1334,7 @@
         <span>创意方向</span>
         <span class="section-badge" id="idea-count-badge">10 条</span>
       </div>
+      <button class="header-btn" onclick="openIdeaGen()">✨ 生成创意</button>
     </div>
     <div id="idea-list-scene3"></div>
   </div>
@@ -1155,6 +1356,44 @@
 
 <!-- Toast -->
 <div class="toast" id="toast"></div>
+
+<!-- ══ 创意生成面板 ══ -->
+<div class="gen-overlay" id="gen-overlay" onclick="if(event.target===this)closeGenPanel()">
+  <div class="gen-panel">
+    <div class="gen-header">
+      <div class="gen-title">✨ 生成创意方向</div>
+      <button class="gen-close" onclick="closeGenPanel()">×</button>
+    </div>
+    
+    <div class="gen-section">
+      <div class="gen-label">
+        <span>📝</span> 话题关键词
+      </div>
+      <input class="gen-input" id="gen-topic" type="text" placeholder="例如：返乡置业、职场焦虑、买房避坑..." oninput="updateGenPreview()" autocomplete="off"/>
+    </div>
+    
+    <div class="gen-section">
+      <div class="gen-label">
+        <span>📚</span> 参考素材（可选，最多选3个）
+      </div>
+      <div class="gen-entry-list" id="gen-entry-list"></div>
+    </div>
+    
+    <div class="gen-preview" id="gen-preview" style="display:none;">
+      <div class="gen-preview-label">IDEA-SPARK 命令</div>
+      <div class="gen-preview-text" id="gen-preview-text"></div>
+      <div class="gen-preview-note" id="gen-preview-note"></div>
+    </div>
+    
+    <button class="gen-btn" id="gen-copy-btn" disabled onclick="copyGenCmd()">
+      📋 复制命令
+    </button>
+    
+    <div class="gen-tips">
+      💡 复制命令后去 WorkBuddy 粘贴发送，生成创意方向后可一键导入
+    </div>
+  </div>
+</div>
 
 <script>
 // ══ 数据 ══
@@ -1729,6 +1968,116 @@ function copyDraftContent(draftId) {
     .catch(function() {
       showToast('复制失败，请手动复制', true);
     });
+}
+
+// ══ 创意生成 ══
+var genSelectedEntries = [];
+
+function openIdeaGen() {
+  var overlay = document.getElementById('gen-overlay');
+  overlay.classList.add('show');
+  genSelectedEntries = [];
+  
+  // 渲染素材列表
+  var list = document.getElementById('gen-entry-list');
+  list.innerHTML = entries.map(function(e) {
+    return '<div class="gen-entry-item" id="gen-entry-' + e.id + '" onclick="toggleGenEntry(\'' + e.id + '\')">' +
+      '<div class="gen-entry-check"></div>' +
+      '<div class="gen-entry-info">' +
+        '<div class="gen-entry-title">' + escapeHtml(e.title) + '</div>' +
+        '<div class="gen-entry-source">' + e.source + '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+  
+  // 清空输入
+  document.getElementById('gen-topic').value = '';
+  document.getElementById('gen-preview').style.display = 'none';
+  document.getElementById('gen-copy-btn').disabled = true;
+}
+
+function closeGenPanel() {
+  document.getElementById('gen-overlay').classList.remove('show');
+}
+
+function toggleGenEntry(id) {
+  var item = document.getElementById('gen-entry-' + id);
+  var idx = genSelectedEntries.indexOf(id);
+  
+  if (idx >= 0) {
+    genSelectedEntries.splice(idx, 1);
+    item.classList.remove('selected');
+    item.querySelector('.gen-entry-check').textContent = '';
+  } else {
+    if (genSelectedEntries.length >= 3) {
+      showToast('最多选择3个参考素材', true);
+      return;
+    }
+    genSelectedEntries.push(id);
+    item.classList.add('selected');
+    item.querySelector('.gen-entry-check').textContent = '✓';
+  }
+  
+  updateGenPreview();
+}
+
+function updateGenPreview() {
+  var topic = document.getElementById('gen-topic').value.trim();
+  var preview = document.getElementById('gen-preview');
+  var previewText = document.getElementById('gen-preview-text');
+  var previewNote = document.getElementById('gen-preview-note');
+  var btn = document.getElementById('gen-copy-btn');
+  
+  if (topic.length >= 2 || genSelectedEntries.length > 0) {
+    // 构建命令
+    var cmd = '/IDEA-SPARK';
+    var parts = [];
+    
+    if (topic) {
+      parts.push(topic);
+    }
+    
+    if (genSelectedEntries.length > 0) {
+      var refs = genSelectedEntries.map(function(id) { return 'ENTRY-' + id; }).join(' + ');
+      parts.push('参考：' + refs);
+    }
+    
+    cmd = '/IDEA-SPARK ' + parts.join(' ');
+    
+    previewText.textContent = cmd;
+    
+    var note = '生成 3-5 个创意方向，每个包含：\n• 方向名称 + 角度说明\n• 可复用积木（标注来源）\n• 推荐结构\n• 写作难度评估';
+    previewNote.textContent = note;
+    
+    preview.style.display = 'block';
+    btn.disabled = false;
+  } else {
+    preview.style.display = 'none';
+    btn.disabled = true;
+  }
+}
+
+function copyGenCmd() {
+  var topic = document.getElementById('gen-topic').value.trim();
+  var cmd = '/IDEA-SPARK';
+  var parts = [];
+  
+  if (topic) {
+    parts.push(topic);
+  }
+  
+  if (genSelectedEntries.length > 0) {
+    var refs = genSelectedEntries.map(function(id) { return 'ENTRY-' + id; }).join(' + ');
+    parts.push('参考：' + refs);
+  }
+  
+  if (parts.length > 0) {
+    cmd = '/IDEA-SPARK ' + parts.join(' ');
+  }
+  
+  copyText(cmd);
+  showToast('✓ 命令已复制！去 WorkBuddy 粘贴发送');
+  closeGenPanel();
 }
 
 // ══ 初始化 ══
