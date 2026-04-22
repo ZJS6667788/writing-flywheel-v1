@@ -816,41 +816,71 @@ function renderMaterialList(materials) {
     $('materialList').innerHTML = '<div class="empty-state"><div class="icon">📭</div><p>暂无素材</p></div>';
     return;
   }
-  $('materialList').innerHTML = materials.map(item => `
+  $('materialList').innerHTML = materials.map(item => {
+    // 兼容飞书格式(item.fields)和本地格式(item.title)
+    const title = item.fields?.标题 || item.title || '-';
+    const num = item.fields?.编号 || item.type || '';
+    const url = item.fields?.来源链接 || item.source_url || '';
+    return `
     <div class="material-item">
       <div class="top">
-        <span class="tag">${item.fields.编号 || '-'}</span>
-        <span class="title">${item.fields.标题 || '-'}</span>
+        ${num ? `<span class="tag">${num}</span>` : ''}
+        <span class="title">${title}</span>
       </div>
       <div class="meta">
-        ${item.fields.来源链接 ? `<a href="${item.fields.来源链接}" target="_blank">原文链接</a>` : ''}
+        ${url ? `<a href="${url}" target="_blank">原文链接</a>` : ''}
       </div>
     </div>
-  `).join('');
+  `}).join('');
 }
 
 async function loadFullLibrary() {
+  // 先显示本地数据
+  loadRecentMaterials();
+  renderFullList(recentMaterials);
+
+  // 尝试加载飞书数据
   try {
     const resp = await fetch(`${API_BASE}/api/records?table=素材库`);
     const data = await resp.json();
     if (data.code === 0) {
       const items = data.data || [];
       $('totalCount').textContent = `共 ${items.length} 条`;
-      $('fullMaterialList').innerHTML = items.map(item => `
-        <div class="material-item">
-          <div class="top">
-            <span class="tag">${item.fields.编号 || '-'}</span>
-            <span class="title">${item.fields.标题 || '-'}</span>
-          </div>
-          <div class="meta">
-            ${item.fields.来源链接 ? `<a href="${item.fields.来源链接}" target="_blank">原文链接</a>` : ''}
-          </div>
-        </div>
-      `).join('') || '<div class="empty-state"><div class="icon">📭</div><p>暂无素材</p></div>';
+      if (items.length > 0) {
+        // 如果飞书有数据，优先显示飞书
+        renderFullList(items);
+      }
     }
   } catch (e) {
-    $('fullMaterialList').innerHTML = '<div class="empty-state"><div class="icon">⚠️</div><p>加载失败</p></div>';
+    // 离线模式：显示本地数据即可
+    const count = recentMaterials.length;
+    $('totalCount').textContent = `本地 ${count} 条`;
+    if (count === 0) {
+      $('fullMaterialList').innerHTML = '<div class="empty-state"><div class="icon">📭</div><p>暂无素材</p></div>';
+    }
   }
+}
+
+function renderFullList(materials) {
+  if (!materials || materials.length === 0) {
+    $('fullMaterialList').innerHTML = '<div class="empty-state"><div class="icon">📭</div><p>暂无素材</p></div>';
+    return;
+  }
+  $('fullMaterialList').innerHTML = materials.map(item => {
+    const title = item.fields?.标题 || item.title || '-';
+    const num = item.fields?.编号 || item.type || '';
+    const url = item.fields?.来源链接 || item.source_url || '';
+    return `
+    <div class="material-item">
+      <div class="top">
+        ${num ? `<span class="tag">${num}</span>` : ''}
+        <span class="title">${title}</span>
+      </div>
+      <div class="meta">
+        ${url ? `<a href="${url}" target="_blank">原文链接</a>` : ''}
+      </div>
+    </div>
+  `}).join('');
 }
 
 async function loadIdeas() {
